@@ -1,7 +1,8 @@
 /server/node_modules
 /client/node_modules
 DS_Store
-.env
+/server/.env
+/client/.env
 /server/coverage
 /client/coverage
 /client/build
