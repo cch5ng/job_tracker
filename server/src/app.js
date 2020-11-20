@@ -1,3 +1,4 @@
+require('dotenv').config();
 var logger = require('morgan');
 var express = require('express');
 var cookieParser = require('cookie-parser');
