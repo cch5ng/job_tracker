@@ -5,13 +5,17 @@ const Profile = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const [userMetadata, setUserMetadata] = useState(null);
 
-  let accessToken; 
-  getAccessTokenSilently()
-    .then(token => {
-      console.log('token', token)
-      accessToken = token;
-    })
+  // let accessToken; 
+  // getAccessTokenSilently({
+  //   audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
+  //   scope: "read:current_user read:current_user_metadata read:companies",
+  // })
+  //   .then(token => {
+  //     console.log('token', token)
+  //     accessToken = token;
+  //   })
 //  console.log('accessToken', accessToken);
+
 
   useEffect(() => {
     const getUserMetadata = async () => {
@@ -19,9 +23,10 @@ const Profile = () => {
   
       try {
         const accessToken = await getAccessTokenSilently({
-          audience: `https://${domain}/api/v2/`,
+          audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
           scope: "read:current_user read:current_user_metadata",
         });
+        console.log('accessToken', accessToken)
   
         const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
   
