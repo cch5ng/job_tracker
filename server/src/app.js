@@ -49,11 +49,11 @@ app.get('/api/private', checkJwt, function(req, res) {
   });
 });
 
-const checkScopes = jwtAuthz([ 'read:messages' ]);
+const checkScopes = jwtAuthz([ 'read:companies' ]);
 
 app.get('/api/private-scoped', checkJwt, checkScopes, function(req, res) {
   res.json({
-    message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
+    message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:companies to see this.'
   });
 });
 
