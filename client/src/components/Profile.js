@@ -1,71 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+import Loading from "../components/Loading";
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
-  const [userMetadata, setUserMetadata] = useState(null);
-
-  // let accessToken; 
-  // getAccessTokenSilently({
-  //   audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
-  //   scope: "read:current_user read:current_user_metadata read:companies",
-  // })
-  //   .then(token => {
-  //     console.log('token', token)
-  //     accessToken = token;
-  //   })
-//  console.log('accessToken', accessToken);
-
-
-  useEffect(() => {
-    const getUserMetadata = async () => {
-      const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-  
-      try {
-        const accessToken = await getAccessTokenSilently({
-          audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
-          scope: "read:current_user read:current_user_metadata",
-        });
-        console.log('accessToken', accessToken)
-  
-        const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
-  
-        const metadataResponse = await fetch(userDetailsByIdUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-  
-        const { user_metadata } = await metadataResponse.json();
-        console.log('user_metadata', user_metadata)
-  
-        setUserMetadata(user_metadata);
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
-  
-    getUserMetadata();
-  }, []);
-
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+  const { user } = useAuth0();
+  const { name, picture, email } = user;
 
   return (
-    isAuthenticated && (
-      <div>
-        <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
-        <h3>User Metadata</h3>
-        {userMetadata ? (
-          <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
-        ) : (
-          "No user metadata defined"
-        )}
+    <div>
+      <div className="row align-items-center profile-header">
+        <div className="col-md-2 mb-3">
+          <img
+            src={picture}
+            alt="Profile"
+            className="rounded-circle img-fluid profile-picture mb-3 mb-md-0"
+          />
+        </div>
+        <div className="col-md text-center text-md-left">
+          <h2>{name}</h2>
+          <p className="lead text-muted">{email}</p>
+        </div>
       </div>
-    )
+      <div className="row">
+        <pre className="col-12 text-light bg-dark p-4">
+          {JSON.stringify(user, null, 2)}
+        </pre>
+      </div>
+    </div>
   );
 };
 
