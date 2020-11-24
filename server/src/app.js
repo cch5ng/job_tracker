@@ -1,6 +1,7 @@
 require('dotenv').config();
 var logger = require('morgan');
 var express = require('express');
+const cors = require("cors");
 var cookieParser = require('cookie-parser');
 const jwt = require('express-jwt');
 const jwtAuthz = require('express-jwt-authz');
@@ -9,6 +10,7 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 app.use(logger('dev'));
+app.use(cors({ origin: process.env.CLIENT_ORIGIN_URL }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
