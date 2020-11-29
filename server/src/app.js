@@ -6,8 +6,9 @@ var cookieParser = require('cookie-parser');
 const jwt = require('express-jwt');
 const jwtAuthz = require('express-jwt-authz');
 const jwksRsa = require('jwks-rsa');
-var indexRouter = require('./routes/index');
+var indexRouter = require('./api/index');
 var app = express();
+const jobRouter = require('./api/job');
 
 app.use(logger('dev'));
 app.use(cors({ origin: process.env.CLIENT_ORIGIN_URL }));
@@ -35,6 +36,10 @@ const checkJwt = jwt({
 });
 
 //app.use(checkJwt);
+
+
+app.use('/api/job', jobRouter);
+
 app.use('/v1', indexRouter);
 
 // This route doesn't need authentication
