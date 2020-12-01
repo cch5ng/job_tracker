@@ -28,18 +28,4 @@ function App() {
   );
 };
 
-//   return (
-//     <div className="App">
-//       <h1>hello oauth test</h1>
-//       {!isAuthenticated && (
-//         <LoginButton />
-//       )}
-//       <Profile />
-//       {isAuthenticated && (
-//         <LogoutButton />
-//       )}
-//     </div>
-//   );
-// }
-
 export default App;
