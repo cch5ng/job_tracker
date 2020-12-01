@@ -9,6 +9,7 @@ const jwksRsa = require('jwks-rsa');
 var indexRouter = require('./api/index');
 var app = express();
 const jobRouter = require('./api/job');
+const authRouter = require('./api/auth');
 
 app.use(logger('dev'));
 app.use(cors({ origin: process.env.CLIENT_ORIGIN_URL }));
@@ -39,6 +40,7 @@ const checkJwt = jwt({
 
 
 app.use('/api/job', jobRouter);
+app.use('/api/auth', authRouter);
 
 app.use('/v1', indexRouter);
 
