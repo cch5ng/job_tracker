@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config()
-const db = require('../../databasePool');
+const db = require('../databasePool');
 
 class JobTable {
   static postJob({name, status, description, link, company, questions, source}) {
