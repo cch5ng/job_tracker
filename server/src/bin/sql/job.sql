@@ -8,5 +8,7 @@ CREATE TABLE job(
   status VARCHAR(64),
   company_id INT,
   company_name VARCHAR(255),
-  FOREIGN KEY (company_id) REFERENCES company(id)
+  user_guid VARCHAR(64),
+  FOREIGN KEY (company_id) REFERENCES company(id),
+  FOREIGN KEY (user_guid) REFERENCES job_tracker_user(guid)
 );
