@@ -3,25 +3,41 @@ require('dotenv').config()
 const db = require('../databasePool');
 
 class JobTable {
-  static postJob({name, status, description, link, company, questions, source}) {
+  static postJob({name, status, description, link, company, questions, source, user_guid}) {
     let guid = uuidv4();
     let db = process.env.PGDATABASE;
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO ${db} (name, status, description, link, company, questions, source, guid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
-        [name, status, description, link, company, questions, source, guid],
+        `INSERT INTO ${db} (name, status, description, link, company, questions, source, guid, user_guid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+        [name, status, description, link, company, questions, source, guid, user_guid],
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
             const jobId = response.rows[0].id;
             if (jobId) {
-              resolve({ message: `job ${guid} was created successfully`});
-            } else {
-              reject({ message: 'the job could not be created'})
+              resolve({ message: `The job: ${guid} was created successfully`});
             }
+          } else {
+            resolve({ message: 'The job could not be saved'})
           }
         }
       )
+    })
+  }
+
+  static getJobs({ user_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, status, description, link, company, questions, source, FROM job WHERE user_guid=$1`,
+        [user_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({jobs: response.rows, message: `${response.rows.length} jobs were retrieved`})
+          } else {
+            resolve({jobs: [], message: 'No jobs were found'})
+          }
+        })
     })
   }
 
@@ -97,19 +113,6 @@ class JobTable {
   //   })
   // }
 
-  // //userId
-  // //doublecheck where user_id is currently stored
-  // static getUserTimezone({ emailHash }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `SELECT time_zone FROM wastenot_user WHERE "emailHash"=$1`,
-  //       [emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         resolve({ time_zone: response.rows[0]})
-  //       })
-  //   })
-  // }
 }
 
 module.exports = JobTable;
