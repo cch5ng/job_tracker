@@ -1,5 +1,6 @@
 CREATE TABLE job(
   id SERIAL PRIMARY KEY,
+  guid VARCHAR(64),
   name VARCHAR(64),
   source VARCHAR(255),
   url VARCHAR(350),

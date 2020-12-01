@@ -3,13 +3,12 @@ require('dotenv').config()
 const db = require('../databasePool');
 
 class JobTable {
-  static postJob({name, status, description, link, company, questions, source, user_guid}) {
+  static postJob({name, status, description, url, company_name, questions, source, user_guid}) {
     let guid = uuidv4();
-    let db = process.env.PGDATABASE;
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO ${db} (name, status, description, link, company, questions, source, guid, user_guid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-        [name, status, description, link, company, questions, source, guid, user_guid],
+        `INSERT INTO job (name, status, description, url, company_name, questions, source, guid, user_guid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+        [name, status, description, url, company_name, questions, source, guid, user_guid],
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
@@ -28,7 +27,7 @@ class JobTable {
   static getJobs({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, link, company, questions, source, FROM job WHERE user_guid=$1`,
+        `SELECT name, status, description, url, company_name, questions, source FROM job WHERE user_guid=$1`,
         [user_guid],
         (error, response) => {
           if (error) return reject(error);

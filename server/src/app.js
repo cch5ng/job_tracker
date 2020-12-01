@@ -39,7 +39,7 @@ const checkJwt = jwt({
 //app.use(checkJwt);
 
 
-app.use('/api/job', jobRouter);
+app.use('/api/jobs', jobRouter);
 app.use('/api/auth', authRouter);
 
 app.use('/v1', indexRouter);

@@ -8,14 +8,14 @@ const router = Router();
 //create new job
 //should take into consideration creating a new company (vs an existing company)
 //for now just create a new company
-router.post('/jobs', (req, res, next) => {
-  const {name, status, description, link, company, questions, source, user_email} = req.body;
+router.post('/', (req, res, next) => {
+  const {name, status, description, url, company_name, questions, source, user_guid} = req.body;
 
-  AuthTable.getUserGuid({email: user_email})
-    .then(resp => {
-      let {user_guid} = resp;
+  // AuthTable.getUserGuid({email: user_email})
+  //   .then(resp => {
+  //     let {user_guid} = resp;
       if (user_guid) {
-        JobTable.createJob({name, status, description, link, company, questions, source, user_guid})
+        JobTable.postJob({name, status, description, url, company_name, questions, source, user_guid})
         .then(({message}) => {
           res.status(201).json({message})
         })
@@ -23,9 +23,8 @@ router.post('/jobs', (req, res, next) => {
       } else {
         res.status(200).json({message: 'Could not save job because there is an issue with the current user email authorization'})
       }
-    })
-    .catch(err => next(err))
-
+    // })
+    // .catch(err => next(err))
 });
 
 //update a job given jobId
@@ -33,8 +32,8 @@ router.post('/jobs', (req, res, next) => {
 // })
 
 //retrieve all jobs (later search/filter)
-router.get('/jobs', (req, res, next) => {
-  const {user_guid} = req.body;
+router.get('/:user_guid', (req, res, next) => {
+  const {user_guid} = req.params;
   JobTable.getJobs({user_guid})
     .then(resp => res.status(200).json(resp))
     .catch(err => next(err));
