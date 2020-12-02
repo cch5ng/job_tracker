@@ -14,7 +14,7 @@ createdb -U ${DB_USER} ${DB}
 
 psql -U ${DB_USER} ${DB} < ./bin/sql/job_tracker_user.sql
 psql -U ${DB_USER} ${DB} < ./bin/sql/company.sql
-psql -U ${DB_USER} ${DB} < ./bin/sql/role.sql
+psql -U ${DB_USER} ${DB} < ./bin/sql/job.sql
 psql -U ${DB_USER} ${DB} < ./bin/sql/event.sql
 
 echo 'db configured'

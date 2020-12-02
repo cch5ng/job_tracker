@@ -27,6 +27,14 @@ const MainNav = () => (
     >
       External API
     </NavLink>
+    <NavLink
+      to="/jobs"
+      exact
+      className="nav-link"
+      activeClassName="router-link-exact-active"
+    >
+      Jobs
+    </NavLink>
   </div>
 );
 
