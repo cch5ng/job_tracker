@@ -24,6 +24,26 @@ class JobTable {
     })
   }
 
+  static updateJob({name, status, description, url, company_name, questions, source, user_guid, guid}) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `UPDATE job SET name=$3, status=$4, description=$5, url=$6, company_name=$7, questions=$8, source=$9 WHERE guid=$1 AND user_guid=$2 RETURNING id`,
+        [guid, user_guid, name, status, description, url, company_name, questions, source],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            const jobId = response.rows[0].id;
+            if (jobId) {
+              resolve({ message: `The job: ${guid} was updated successfully`});
+            }
+          } else {
+            resolve({ message: 'The job could not be saved'})
+          }
+        }
+      )
+    })
+  }
+
   static getJobs({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(

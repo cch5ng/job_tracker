@@ -27,9 +27,19 @@ router.post('/', (req, res, next) => {
     // .catch(err => next(err))
 });
 
-//update a job given jobId
-// router.put('/jobs', (req, res, next) => {
-// })
+router.put('/update/:job_guid', (req, res, next) => {
+  const guid = req.params.job_guid;
+  const {name, status, description, url, company_name, questions, source, user_guid} = req.body;
+  if (user_guid) {
+    JobTable.updateJob({name, status, description, url, company_name, questions, source, user_guid, guid})
+    .then(({message}) => {
+      res.status(201).json({message})
+    })
+    .catch(error => next(error))    
+  } else {
+    res.status(200).json({message: 'Could not save job because there is an issue with the current user email authorization'})
+  } 
+});
 
 //retrieve all jobs (later search/filter)
 router.get('/:user_guid', (req, res, next) => {
