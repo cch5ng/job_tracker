@@ -7,6 +7,7 @@ import LogoutButton from './components/LogoutButton';
 import Profile from './components/Profile';
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ExternalApi from './views/ExternalApi';
+import Jobs from './components/Jobs';
 // import Login from './components/Login';
 // import Logout from './components/Logout';
 
@@ -21,6 +22,7 @@ function App() {
           {/* <Route path="/" exact component={Home} /> */}
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/external-api" component={ExternalApi} />
+          <ProtectedRoute path="/jobs" component={Jobs} />
         </Switch>
       </div>
       {/* <Footer /> */}
