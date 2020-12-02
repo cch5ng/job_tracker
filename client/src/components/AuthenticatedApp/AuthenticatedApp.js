@@ -10,7 +10,7 @@ import NavBar from "../NavBar"; //, Footer, Loading
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
-import Jobs from '../Jobs';
+import Jobs from '../Jobs/Jobs';
 //import { useAuth } from '../../context/auth-context';
 
 const AuthenticatedApp = () => {

@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import {useAppAuth} from '../context/auth-context';
+import {useAppAuth} from '../../context/auth-context';
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -42,7 +42,13 @@ function Jobs() {
       <h1>JOBS LIST</h1>
       {jobs.map(job => (
         <div>
-          Name: {job.name}
+          <div>Name: {job.name}</div>
+          <div>status: {job.status}</div>
+          <div>company_name: {job.name}</div>
+          <div>url: {job.url}</div>
+          <div>description: {job.description}</div>
+          <div>questions: {job.questions}</div>
+          <div>source: {job.source}</div>
         </div>
       ))}
 
