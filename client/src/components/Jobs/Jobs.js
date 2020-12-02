@@ -8,34 +8,33 @@ function Jobs() {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
 
-  const callSecureApi = async () => {
+  const callSecureApi = async (uGuid) => {
     try {
       const token = await getAccessTokenSilently();
       login({userEmail: email, sessionToken: token})
+
+      if (uGuid && token) {
+        fetch(`http://localhost:3000/api/jobs/${uGuid}`, {
+          headers: {Authorization: `Bearer ${token}`}
+        })
+          .then(resp => resp.json())
+          .then(json => {
+            let {jobs} = json;
+            setJobs(jobs);
+          })
+          .catch(err => console.error('err', err))  
+      }  
     } catch (error) {
       console.error('error', error)
     }
   };
 
   useEffect(() => {
-    callSecureApi();
-    getUserGuid({userEmail: email});
-  }, [])
-
-  useEffect(() => {
-    if (userGuid && sessionToken) {
-      fetch(`http://localhost:3000/api/jobs/${userGuid}`, {
-        headers: {Authorization: `Bearer ${sessionToken}`}
+    getUserGuid({userEmail: email})
+      .then(uGuid => {
+        callSecureApi(uGuid);
       })
-        .then(resp => resp.json())
-        .then(json => {
-          let {jobs} = json;
-          setJobs(jobs);
-        })
-        .catch(err => console.error('err', err))  
-    }
-  
-  }, [sessionToken, userGuid]);
+  }, [])
 
   return (
     <div>
@@ -43,7 +42,7 @@ function Jobs() {
 
       <h1>JOBS LIST</h1>
       {jobs.map(job => (
-        <div>
+        <div key={job.guid}>
           <div>Name: {job.name}</div>
           <div>status: {job.status}</div>
           <div>company_name: {job.name}</div>
