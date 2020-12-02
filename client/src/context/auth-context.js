@@ -8,7 +8,7 @@ function AuthProvider({children}) {
     sessionToken: null
   });
 
-  const login = (userEmail, sessionToken) => {
+  const login = ({userEmail, sessionToken}) => {
     setState({...state, userEmail, sessionToken});
   }
 
@@ -20,10 +20,21 @@ function AuthProvider({children}) {
     });
   }
 
-  const getUserGuid = () => {
+  const getUserGuid = ({userEmail}) => {
     //make api request
-    let sessionToken;
-    setState({...state, sessionToken});
+    fetch('http://localhost:3000/api/auth/guid', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email: userEmail})
+    })
+      .then(resp => resp.json())
+      .then(json => {
+        let userGuid = json.user_guid;
+        setState({...state, userGuid});
+      })
+      .catch(err => console.error('err', err))        
   }
 
   let authState = {...state, logout, getUserGuid, login};
