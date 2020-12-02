@@ -27,7 +27,7 @@ class JobTable {
   static getJobs({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, url, company_name, questions, source FROM job WHERE user_guid=$1`,
+        `SELECT name, status, description, url, company_name, questions, source, guid FROM job WHERE user_guid=$1`,
         [user_guid],
         (error, response) => {
           if (error) return reject(error);
@@ -53,64 +53,22 @@ class JobTable {
   //   })
   // }
 
-  // static deletePushSubscription({ emailHash }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `UPDATE wastenot_user SET push_subscription=null WHERE "emailHash"=$1`,
-  //       [emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         resolve({ message: 'user acct was updated where pushSubscription was removed' });
-  //       }
-  //     )
-  //   })
-  // }
-
-  // static getPushSubscription({ emailHash }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `SELECT push_subscription FROM wastenot_user WHERE "emailHash"=$1`,
-  //       [emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         if (response.rows) {
-  //           resolve({
-  //             subscription: JSON.parse(response.rows[0].push_subscription), 
-  //             message: 'user pushSubscription was retrieved' });
-  //         }
-  //       }
-  //     )
-  //   })
-  // }
-
-  // static getAccount({ emailHash }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `SELECT id, "passwordHash", "sessionId" from wastenot_user WHERE "emailHash"=$1`,
-  //       [emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         if (response.rows) {
-  //          resolve({ account: response.rows[0] })
-  //         }
-  //       }
-  //     )
-  //   })
-  // }
-
-  // //userId, timezone
-  // //doublecheck where user_id is currently stored
-  // static storeUserTimezone({ timezone, emailHash }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `UPDATE wastenot_user SET time_zone=$1 WHERE "emailHash"=$2`,
-  //       [timezone, emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         resolve({ message: `Timezone was saved for user`})
-  //       })
-  //   })
-  // }
+  static archiveJob({ job_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `UPDATE job SET status='archived' WHERE guid=$1 RETURNING id`,
+        [job_guid],
+        (error, response) => {
+          if (error) return reject(error);
+            if (response.rows.length && response.rows[0].id) {
+              resolve({ message: `Job: ${job_guid} was archived` });
+            } else {
+              resolve({message: 'The job could not be archived. Please wait a few moments and try again.'})
+            }
+        }
+      )
+    })
+  }
 
 }
 

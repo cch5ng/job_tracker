@@ -40,7 +40,13 @@ router.get('/:user_guid', (req, res, next) => {
 })
 
 //update job given jobId to set to status archived (maybe reuse the generic put route?)
-// router.put('/jobs/archive', (req, res, next) => {
-// })
+router.put('/archive/:job_guid', (req, res, next) => {
+  const {job_guid} = req.params;
+  JobTable.archiveJob({job_guid})
+    .then(resp => res.status(200).json(resp))
+    .catch(err => next(err));
+})
+
+
 
 module.exports = router;
