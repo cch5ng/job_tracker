@@ -6,7 +6,7 @@ function Jobs() {
   const [jobs, setJobs] = useState([]);
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
-  const {login, getUserGuid, userGuid, userEmail} = useAppAuth();
+  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
 
   const callSecureApi = async () => {
     try {
@@ -23,8 +23,10 @@ function Jobs() {
   }, [])
 
   useEffect(() => {
-    if (userGuid) {
-      fetch(`http://localhost:3000/api/jobs/${userGuid}`)
+    if (userGuid && sessionToken) {
+      fetch(`http://localhost:3000/api/jobs/${userGuid}`, {
+        headers: {Authorization: `Bearer ${sessionToken}`}
+      })
         .then(resp => resp.json())
         .then(json => {
           let {jobs} = json;
@@ -33,7 +35,7 @@ function Jobs() {
         .catch(err => console.error('err', err))  
     }
   
-  }, userGuid);
+  }, [sessionToken, userGuid]);
 
   return (
     <div>
