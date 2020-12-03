@@ -30,7 +30,7 @@ function JobsForm(props) {
   const [jobQuestions, setJobQuestions] = useState('');
   const [jobSource, setJobSource] = useState('');
 
-  const {userGuid, sessionToken} = useAppAuth();
+  const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -59,10 +59,53 @@ function JobsForm(props) {
     ev.preventDefault();
     const {id} = ev.target;
 
-    //handle buttonSave
+    getUserGuid({userEmail})
+      .then(uGuid => {
+        if (id === 'buttonSave') {
+          //handle buttonSave
+          let body = {
+            name: jobName, 
+            status: jobStatus, 
+            description: jobDescription, 
+            url: jobUrl, 
+            company_name: companyName, 
+            questions: jobQuestions, 
+            source: jobSource, 
+            user_guid: uGuid
+          }
+          if (type === 'create') {
+            fetch(`http://localhost:3000/api/jobs/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+              },
+              body: JSON.stringify(body)
+            })
+            .then(resp => resp.json())
+            .then(json => console.log('json', json))
+            .catch(err => console.error('err', err))
+          } else if (type === 'edit') {
+            console.log('TODO')
+          }
+        } 
+      })
 
-    //handle buttonCancel
+    if (id === 'buttonCancel') {
+      //handle buttonCancel
+      if (type === 'create') {
+        setJobName('');
+        setJobStatus('');
+        setCompanyName('');
+        setJobUrl('');
+        setJobDescription('');
+        setJobQuestions('');
+        setJobSource('');
+      } else if (type === 'edit') {
 
+      }
+
+    }
   }
 
   //if type=edit, get existing form fields
@@ -82,6 +125,7 @@ function JobsForm(props) {
         <div>
           <label>status</label>
           <select name="jobStatus" value={jobStatus} onChange={inputOnChangeHandler}>
+            <option value="none">Select a status</option>
             {JOB_STATUS_OPTIONS.map(option => (
               <option value={option}>{option}</option>
             ))}
@@ -106,6 +150,7 @@ function JobsForm(props) {
         <div>
           <label>source</label>
           <select name="jobSource" value={jobSource} onChange={inputOnChangeHandler}>
+            <option value="none">Select a source</option>
             {JOB_SOURCE_OPTIONS.map(option => (
               <option value={option}>{option}</option>
             ))}
