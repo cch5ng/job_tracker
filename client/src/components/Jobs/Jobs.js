@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
+import {Link} from 'react-router-dom';
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -38,9 +39,9 @@ function Jobs() {
 
   return (
     <div>
-      <h1>JOBS TODO</h1>
-
       <h1>JOBS LIST</h1>
+      <Link to="/jobs/new">New</Link>
+
       {jobs.map(job => (
         <div key={job.guid}>
           <div>Name: {job.name}</div>
