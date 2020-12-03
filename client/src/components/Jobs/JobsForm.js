@@ -86,7 +86,17 @@ function JobsForm(props) {
             .then(json => console.log('json', json))
             .catch(err => console.error('err', err))
           } else if (type === 'edit') {
-            console.log('TODO')
+            fetch(`http://localhost:3000/api/jobs/`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+              },
+              body: JSON.stringify(body)
+            })
+            .then(resp => resp.json())
+            .then(json => console.log('json', json))
+            .catch(err => console.error('err', err))
           }
         } 
       })
