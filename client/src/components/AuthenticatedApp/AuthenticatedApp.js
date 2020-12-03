@@ -5,13 +5,13 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-//import {Route, Switch} from 'react-router-dom';
 import NavBar from "../NavBar"; //, Footer, Loading 
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
 import Jobs from '../Jobs/Jobs';
-//import { useAuth } from '../../context/auth-context';
+import JobsFormCreate from '../Jobs/JobsFormCreate';
+import JobsFormEdit from '../Jobs/JobsFormEdit';
 
 const AuthenticatedApp = () => {
   return (
@@ -22,6 +22,8 @@ const AuthenticatedApp = () => {
           {/* <Route path="/" exact component={Home} /> */}
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/external-api" component={ExternalApi} />
+          <ProtectedRoute exact path="/jobs/new" component={JobsFormCreate} />
+          <ProtectedRoute exact path="/jobs/:jobId" component={JobsFormEdit} />
           <ProtectedRoute path="/jobs" component={Jobs} />
         </Switch>
       </div>
