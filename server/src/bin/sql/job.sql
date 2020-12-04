@@ -10,6 +10,7 @@ CREATE TABLE job(
   company_id INT,
   company_name VARCHAR(255),
   user_guid VARCHAR(64),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   FOREIGN KEY (company_id) REFERENCES company(id),
   FOREIGN KEY (user_guid) REFERENCES job_tracker_user(guid)
 );
