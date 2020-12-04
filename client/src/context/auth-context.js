@@ -22,7 +22,7 @@ function AuthProvider({children}) {
 
   const getUserGuid = ({userEmail}) => {
     //make api request
-    fetch('http://localhost:3000/api/auth/guid', {
+    return fetch('http://localhost:3000/api/auth/guid', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -33,6 +33,7 @@ function AuthProvider({children}) {
       .then(json => {
         let userGuid = json.user_guid;
         setState({...state, userGuid});
+        return userGuid;
       })
       .catch(err => console.error('err', err))        
   }

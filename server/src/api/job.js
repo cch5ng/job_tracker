@@ -45,9 +45,23 @@ router.put('/update/:job_guid', checkJwt, (req, res, next) => {
 });
 
 //retrieve all jobs (later search/filter)
-router.get('/:user_guid', checkJwt, (req, res, next) => {
+router.get('/all/:user_guid', checkJwt, (req, res, next) => {
   const {user_guid} = req.params;
   JobTable.getJobs({user_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(200).json(resp)
+      }
+    })
+    .catch(err => next(err));
+})
+
+//retrieve all jobs (later search/filter)
+router.get('/:job_guid', checkJwt, (req, res, next) => {
+  const {job_guid} = req.params;
+  JobTable.getJobByGuid({job_guid})
     .then(resp => {
       if (resp.status_code === 401) {
         res.status(401).json({error: 'Please log in and try again.'})

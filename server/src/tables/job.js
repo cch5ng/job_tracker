@@ -47,7 +47,7 @@ class JobTable {
   static getJobs({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, url, company_name, questions, source, guid FROM job WHERE user_guid=$1`,
+        `SELECT name, status, description, url, company_name, questions, source, guid, created_at FROM job WHERE user_guid=$1`,
         [user_guid],
         (error, response) => {
           if (error) return reject(error);
@@ -60,18 +60,21 @@ class JobTable {
     })
   }
 
-  // static storePushSubscription({ emailHash, pushSubscription }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `UPDATE wastenot_user SET push_subscription=$1 WHERE "emailHash"=$2`,
-  //       [pushSubscription, emailHash],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         resolve({ message: 'user acct was updated with pushSubscription' });
-  //       }
-  //     )
-  //   })
-  // }
+  static getJobByGuid({ job_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, status, description, url, company_name, questions, source, guid FROM job WHERE guid=$1`,
+        [job_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({job: response.rows[0], message: 'The job was retrieved'})
+          } else {
+            resolve({jobs: [], message: 'No jobs were found'})
+          }
+        })
+    })
+  }
 
   static archiveJob({ job_guid }) {
     return new Promise((resolve, reject) => {
@@ -81,7 +84,10 @@ class JobTable {
         (error, response) => {
           if (error) return reject(error);
             if (response.rows.length && response.rows[0].id) {
-              resolve({ message: `Job: ${job_guid} was archived` });
+              resolve({ 
+                message: `Job: ${job_guid} was archived`,
+                status: 'success'
+              });
             } else {
               resolve({message: 'The job could not be archived. Please wait a few moments and try again.'})
             }
