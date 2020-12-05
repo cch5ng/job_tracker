@@ -39,7 +39,7 @@ function AuthProvider({children}) {
           return userGuid;  
         } else {
           //no
-          return fetch('http://localhost:3000/api/auth/guid', {
+          return fetch('http://localhost:3000/api/auth/user', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -48,6 +48,7 @@ function AuthProvider({children}) {
           })
             .then(resp => resp.json())
             .then(json => {
+              console.log('json', json)
               if (json.user_guid) {
                 //yes
                 let userGuid = json.user_guid;
@@ -58,12 +59,6 @@ function AuthProvider({children}) {
         }
       })
       .catch(err => console.error('err', err))        
-
-
-
-
-
-
   }
 
   let authState = {...state, logout, getUserGuid, login};
