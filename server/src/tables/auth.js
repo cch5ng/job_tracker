@@ -1,5 +1,5 @@
-const { v4: uuidv4 } = require('uuid');
 require('dotenv').config()
+const { v4: uuidv4 } = require('uuid');
 const db = require('../databasePool');
 
 class AuthTable {
