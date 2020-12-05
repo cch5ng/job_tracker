@@ -47,57 +47,57 @@ class EventTable {
     })
   }
 
-  // static getJobs({ user_guid }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `SELECT name, status, description, url, company_name, questions, source, guid, created_at FROM job WHERE user_guid=$1`,
-  //       [user_guid],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         if (response.rows.length) {
-  //           resolve({jobs: response.rows, message: `${response.rows.length} jobs were retrieved`})
-  //         } else {
-  //           resolve({jobs: [], message: 'No jobs were found'})
-  //         }
-  //       })
-  //   })
-  // }
+  static getEventsByUserGuid({ user_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE user_guid=$1`,
+        [user_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({events: response.rows, message: `${response.rows.length} events were retrieved`})
+          } else {
+            resolve({events: [], message: 'No events were found'})
+          }
+        })
+    })
+  }
 
-  // static getJobByGuid({ job_guid }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `SELECT name, status, description, url, company_name, questions, source, guid FROM job WHERE guid=$1`,
-  //       [job_guid],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //         if (response.rows.length) {
-  //           resolve({job: response.rows[0], message: 'The job was retrieved'})
-  //         } else {
-  //           resolve({jobs: [], message: 'No jobs were found'})
-  //         }
-  //       })
-  //   })
-  // }
+  static getEventsByJobGuid({ job_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE job_guid=$1`,
+        [job_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({events: response.rows, message: `${response.rows.length} events were retrieved`})
+          } else {
+            resolve({events: [], message: 'No events were found'})
+          }
+        })
+    })
+  }
 
-  // static archiveJob({ job_guid }) {
-  //   return new Promise((resolve, reject) => {
-  //     db.query(
-  //       `UPDATE job SET status='archived' WHERE guid=$1 RETURNING id`,
-  //       [job_guid],
-  //       (error, response) => {
-  //         if (error) return reject(error);
-  //           if (response.rows.length && response.rows[0].id) {
-  //             resolve({ 
-  //               message: `Job: ${job_guid} was archived`,
-  //               status: 'success'
-  //             });
-  //           } else {
-  //             resolve({message: 'The job could not be archived. Please wait a few moments and try again.'})
-  //           }
-  //       }
-  //     )
-  //   })
-  // }
+  static deleteEvent({ event_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `DELETE FROM event WHERE guid=$1 RETURNING id`,
+        [event_guid],
+        (error, response) => {
+          if (error) return reject(error);
+            if (response.rows.length && response.rows[0].id) {
+              resolve({ 
+                message: `Event: ${event_guid} was removed`,
+                status: 'success'
+              });
+            } else {
+              resolve({message: 'The event could not be removed. Please wait a few moments and try again.'})
+            }
+        }
+      )
+    })
+  }
 
 }
 

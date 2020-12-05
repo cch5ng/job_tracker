@@ -43,47 +43,45 @@ router.put('/:event_guid', checkJwt, (req, res, next) => {
 });
 
 //get events for given user guid (later search/filter)
-// router.get('/all/:user_guid', checkJwt, (req, res, next) => {
-//   const {user_guid} = req.params;
-//   JobTable.getJobs({user_guid})
-//     .then(resp => {
-//       if (resp.status_code === 401) {
-//         res.status(401).json({error: 'Please log in and try again.'})
-//       } else {
-//         res.status(200).json(resp)
-//       }
-//     })
-//     .catch(err => next(err));
-// })
+//TODO review logic for join retrieve
+router.get('/user/:user_guid', checkJwt, (req, res, next) => {
+  const {user_guid} = req.params;
+  EventTable.getEventsByUserGuid({user_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(200).json(resp)
+      }
+    })
+    .catch(err => next(err));
+})
 
 //get events for given job guid
-// router.get('/job/:job_guid', checkJwt, (req, res, next) => {
-//   const {job_guid} = req.params;
-//   JobTable.getJobByGuid({job_guid})
-//     .then(resp => {
-//       if (resp.status_code === 401) {
-//         res.status(401).json({error: 'Please log in and try again.'})
-//       } else {
-//         res.status(200).json(resp)
-//       }
-//     })
-//     .catch(err => next(err));
-// })
+router.get('/job/:job_guid', checkJwt, (req, res, next) => {
+  const {job_guid} = req.params;
+  EventTable.getEventsByJobGuid({job_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(200).json(resp)
+      }
+    })
+    .catch(err => next(err));
+})
 
-// TODO delete
-// router.put('/archive/:job_guid', checkJwt, (req, res, next) => {
-//   const {job_guid} = req.params;
-//   JobTable.archiveJob({job_guid})
-//     .then(resp => {
-//       if (resp.status_code === 401) {
-//         res.status(401).json({error: 'Please log in and try again.'})
-//       } else {
-//         res.status(200).json(resp)
-//       }
-//     })
-//     .catch(err => next(err));
-// })
-
-
+router.delete('/:event_guid', checkJwt, (req, res, next) => {
+  const {event_guid} = req.params;
+  EventTable.deleteEvent({event_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(200).json(resp)
+      }
+    })
+    .catch(err => next(err));
+})
 
 module.exports = router;
