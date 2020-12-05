@@ -22,6 +22,7 @@ function AuthProvider({children}) {
 
   const getUserGuid = ({userEmail}) => {
     //make api request
+    //check if the user exists in the db
     return fetch('http://localhost:3000/api/auth/guid', {
       method: 'POST',
       headers: {
@@ -31,11 +32,38 @@ function AuthProvider({children}) {
     })
       .then(resp => resp.json())
       .then(json => {
-        let userGuid = json.user_guid;
-        setState({...state, userGuid});
-        return userGuid;
+        if (json.user_guid) {
+          //yes
+          let userGuid = json.user_guid;
+          setState({...state, userGuid});
+          return userGuid;  
+        } else {
+          //no
+          return fetch('http://localhost:3000/api/auth/guid', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: userEmail})
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              if (json.user_guid) {
+                //yes
+                let userGuid = json.user_guid;
+                setState({...state, userGuid});
+                return userGuid;  
+              }
+            })
+        }
       })
       .catch(err => console.error('err', err))        
+
+
+
+
+
+
   }
 
   let authState = {...state, logout, getUserGuid, login};

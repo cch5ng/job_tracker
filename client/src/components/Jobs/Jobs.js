@@ -10,6 +10,8 @@ function Jobs() {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
 
+  console.log('sessionToken', sessionToken)
+
   const handleArchiveButtonClick = (ev) => {
     ev.preventDefault();
     const {name} = ev.target;
