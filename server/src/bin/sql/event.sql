@@ -1,5 +1,6 @@
 CREATE TABLE event(
   id SERIAL PRIMARY KEY,
+  guid VARCHAR(64) UNIQUE NOT NULL,
   name VARCHAR(64),
   format VARCHAR(64),
   contact VARCHAR(255),
