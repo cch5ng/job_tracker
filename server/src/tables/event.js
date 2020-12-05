@@ -47,10 +47,12 @@ class EventTable {
     })
   }
 
+  //get all jobs for user_guid
+  //per job, get events for job_guid
   static getEventsByUserGuid({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE user_guid=$1`,
+        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE event.job_guid IN(SELECT guid FROM job WHERE job.user_guid = $1)`,
         [user_guid],
         (error, response) => {
           if (error) return reject(error);

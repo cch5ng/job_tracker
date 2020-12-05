@@ -1,5 +1,7 @@
-const { Router } = require('express');
+const { Router, json } = require('express');
 const EventTable = require('../tables/event');
+const JobTable = require('../tables/job');
+
 const {checkJwt} = require('../utils');
 
 const router = Router();
@@ -43,7 +45,6 @@ router.put('/:event_guid', checkJwt, (req, res, next) => {
 });
 
 //get events for given user guid (later search/filter)
-//TODO review logic for join retrieve
 router.get('/user/:user_guid', checkJwt, (req, res, next) => {
   const {user_guid} = req.params;
   EventTable.getEventsByUserGuid({user_guid})
@@ -51,10 +52,10 @@ router.get('/user/:user_guid', checkJwt, (req, res, next) => {
       if (resp.status_code === 401) {
         res.status(401).json({error: 'Please log in and try again.'})
       } else {
-        res.status(200).json(resp)
+        res.status(201).json(resp)
       }
     })
-    .catch(err => next(err));
+    .catch(error => next(error)) 
 })
 
 //get events for given job guid
