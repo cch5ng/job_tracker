@@ -3,24 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
 
-const JOB_STATUS_OPTIONS = [
-  'applied',
-  'interview scheduled',
-  'in process',
-  'archived'
-];
-const JOB_SOURCE_OPTIONS = [
-  'hacker news',
-  'women who code',
-  'diversify tech',
-  'stack overflow',
-  'remotive.io',
-  'we work remotely',
-  'remote woman',
-  'teal community'
-];
-
-function JobsForm(props) {
+function EventsForm(props) {
   const {type} = props;
   let jobId;
   if (type === 'edit') {
@@ -191,7 +174,7 @@ function JobsForm(props) {
   if (formStatus === 'inProgress') {
     return (
       <div>
-        <h1>JOBS FORM</h1>
+        <h1>EVENTS FORM</h1>
         <form>
           <div>
             <label>name</label>
@@ -243,4 +226,4 @@ function JobsForm(props) {
 
 };
 
-export default JobsForm;
+export default EventsForm;

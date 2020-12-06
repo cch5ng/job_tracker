@@ -25,6 +25,8 @@ const AuthenticatedApp = () => {
           <ProtectedRoute exact path="/jobs/new" component={JobsFormCreate} />
           <ProtectedRoute exact path="/jobs/:jobId" component={JobsFormEdit} />
           <ProtectedRoute path="/jobs" component={Jobs} />
+          <ProtectedRoute exact path="/events/new/:jobId" component={EventsFormCreate} />
+          <ProtectedRoute exact path="/events/:eventId" component={EventsFormEdit} />
         </Switch>
       </div>
     </div>
