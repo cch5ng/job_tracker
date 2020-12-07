@@ -14,7 +14,9 @@ class JobTable {
           if (response.rows.length) {
             const jobId = response.rows[0].id;
             if (jobId) {
-              resolve({ message: `The job: ${guid} was created successfully`});
+              resolve({ message: `The job: ${guid} was created successfully`,
+                        job_guid: guid
+              });
             }
           } else {
             resolve({ message: 'The job could not be saved'})
