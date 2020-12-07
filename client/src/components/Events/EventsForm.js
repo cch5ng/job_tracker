@@ -2,6 +2,25 @@ import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
+import {convertLocalDateTimeToISOStr} from '../../utils';
+
+const EVENT_NAME_OPTIONS = [
+  'meeting',
+  'test',
+  'assessment'
+];
+const EVENT_FORMAT_OPTIONS_DICT = {
+  meeting: ['phone', 'video', 'group'],
+  test: [
+    'online (with interviewer)',
+    'online (timed alone)',
+    'online (unscheduled alone)'
+  ],
+  assessment: [
+    'take-home scheduled timed',
+    'take-home unscheduled'
+  ]
+};
 
 function EventsForm(props) {
   const {type} = props;
@@ -13,10 +32,10 @@ function EventsForm(props) {
   if (type === 'edit') {
     eventId = props.eventId;
   }
-  const [formStatus, setFormStatus] = useState('inProgress'); //redirectJobs, redirectEventForm
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [eventDateTime, setEventDateTime] = useState('');
-  const [eventName, setEventName] = useState('');
-  const [eventFormat, setEventFormat] = useState('');
+  const [eventName, setEventName] = useState('meeting');
+  const [eventFormat, setEventFormat] = useState('phone');
   const [eventContact, setEventContact] = useState('');
   const [eventNotes, setEventNotes] = useState('');
   const [eventDescription, setEventDescription] = useState('');
@@ -27,21 +46,23 @@ function EventsForm(props) {
   //input change handlers
   const inputOnChangeHandler = (ev) => {
     const {name, value} = ev.target;
+    console.log('name', name)
+    console.log('value', value)
     const nameToSetterDict = {
-      'jobName': function(v) {
-        setJobName(v)},
-      'jobStatus': function(v) {
-        setJobStatus(v)},
-      'companyName': function(v) {
-        setCompanyName(v)},
-      'jobUrl': function(v) {
-        setJobUrl(v)},
-      'jobDescription': function(v) {
-        setJobDescription(v)},
-      'jobQuestions': function(v) {
-        setJobQuestions(v)},
-      'jobSource': function(v) {
-        setJobSource(v)}
+      'eventName': function(v) {
+        setEventName(v)},
+      'eventFormat': function(v) {
+        setEventFormat(v)},
+      'eventContact': function(v) {
+        setEventContact(v)},
+      'eventNotes': function(v) {
+        setEventNotes(v)},
+      'eventDescription': function(v) {
+        setEventDescription(v)},
+      'eventFollowUp': function(v) {
+        setEventFollowUp(v)},
+      'eventDateTime': function(v) {
+        setEventDateTime(v)}
     }
     nameToSetterDict[name](value);
   }
@@ -54,13 +75,13 @@ function EventsForm(props) {
     if (id === 'buttonCancel') {
       //handle buttonCancel
       if (type === 'create') {
-        setJobName('');
-        setJobStatus('');
-        setCompanyName('');
-        setJobUrl('');
-        setJobDescription('');
-        setJobQuestions('');
-        setJobSource('');
+        setEventName('');
+        setEventFormat('');
+        setEventContact('');
+        setEventNotes('');
+        setEventDescription('');
+        setEventFollowUp('');
+        setEventDateTime('');
       } else if (type === 'edit') {
       }
     }
@@ -70,17 +91,17 @@ function EventsForm(props) {
         .then(uGuid => {
             //handle buttonSave
             let body = {
-              name: jobName, 
-              status: jobStatus, 
-              description: jobDescription, 
-              url: jobUrl, 
-              company_name: companyName, 
-              questions: jobQuestions, 
-              source: jobSource, 
-              user_guid: uGuid
+              job_guid: jobId, 
+              name: eventName, 
+              format: eventFormat, 
+              contact: eventContact, 
+              notes: eventNotes, 
+              description: eventDescription, 
+              follow_up: eventFollowUp, 
+              date_time: convertLocalDateTimeToISOStr(eventDateTime)
             }
             if (type === 'create') {
-              fetch(`http://localhost:3000/api/jobs/`, {
+              fetch(`http://localhost:3000/api/events/`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -92,7 +113,7 @@ function EventsForm(props) {
               .then(json => console.log('json', json))
               .catch(err => console.error('err', err))
             } else if (type === 'edit') {
-              fetch(`http://localhost:3000/api/jobs/`, {
+              fetch(`http://localhost:3000/api/events/${eventId}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -108,10 +129,7 @@ function EventsForm(props) {
     } 
 
     if (id === 'buttonSave') {
-      setFormStatus('redirectJobs')
-    }
-    if (id === 'buttonSaveJobEvent') {
-      setFormStatus('redirectEventForm')
+      setFormSubmitted(true);
     }
   }
 
@@ -154,6 +172,12 @@ function EventsForm(props) {
   //  }
   }, [])
 
+  if (formSubmitted) {
+    return (
+      <Redirect to="/jobs" />
+    )
+  }
+
   //name, format, contact, notes, description, follow_up, job_guid, date_time
   return (
     <div>
@@ -161,11 +185,21 @@ function EventsForm(props) {
       <form>
         <div>
           <label>name</label>
-          <input type="text" value={eventName} name="eventName" onChange={inputOnChangeHandler}/>
+          <select value={eventName} name="eventName" onChange={inputOnChangeHandler}>
+            <option value="none">Select a name</option>
+            {EVENT_NAME_OPTIONS.map(option => (
+              <option value={option}>{option}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label>format</label>
-          <input type="text" value={eventFormat} name="eventFormat" onChange={inputOnChangeHandler}/>
+          <select value={eventFormat} name="eventFormat" onChange={inputOnChangeHandler}>
+            <option value="none">Select a format</option>
+            {EVENT_FORMAT_OPTIONS_DICT[eventName].map(option => (
+              <option value={option}>{option}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label>contact</label>
@@ -185,7 +219,7 @@ function EventsForm(props) {
         </div>
         <div>
           <label>date time</label>
-          <input type="datetime-local" name="event_date_time" value={eventDateTime}/>
+          <input type="datetime-local" name="eventDateTime" value={eventDateTime} onChange={inputOnChangeHandler}/>
         </div>
         <div>
           <button id="buttonSave" onClick={buttonOnClickHandler}>Save</button>
