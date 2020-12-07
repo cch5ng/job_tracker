@@ -32,4 +32,9 @@ const orderArByCreatedDate = (ar) => {
   });
 }
 
-export {getDictFromAr, getArFromDict};
+const convertLocalDateTimeToISOStr = (dateStr) => {
+  let newDate = new Date(dateStr);
+  return newDate.toISOString();
+}
+
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr};
