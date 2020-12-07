@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict} from '../../utils';
 
 function Jobs() {
@@ -27,7 +27,6 @@ function Jobs() {
         })
         .catch(err => console.error('err', err))  
     }
-
   }
 
   const callSecureApi = async (uGuid) => {
@@ -67,10 +66,13 @@ function Jobs() {
       <Link to="/jobs/new">New</Link>
 
       {jobsAr.map(job => {
-        let url = `/jobs/${job.guid}`
+        let url = `/jobs/${job.guid}`;
+        let newEventUrl = `events/new/${job.guid}`;
         return (
           <div key={job.guid}>
             <button onClick={handleArchiveButtonClick} name={job.guid}>Archive</button>
+            <Link to={newEventUrl}>Add new event</Link>
+            <Link to={newEventUrl}>Get events</Link>
             <Link to={url}>
               <div>Name: {job.name}</div>
               <div>status: {job.status}</div>
