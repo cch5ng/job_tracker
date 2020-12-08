@@ -47,6 +47,23 @@ class EventTable {
     })
   }
 
+  
+  static getEventByGuid({ event_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE guid = $1`,
+        [event_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({event: response.rows[0], message: `Event was retrieved`})
+          } else {
+            resolve({message: 'No events were found'})
+          }
+        })
+    })
+  }
+
   //get all jobs for user_guid
   //per job, get events for job_guid
   static getEventsByUserGuid({ user_guid }) {

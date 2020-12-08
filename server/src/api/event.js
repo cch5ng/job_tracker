@@ -45,6 +45,20 @@ router.put('/:event_guid', checkJwt, (req, res, next) => {
 });
 
 //get events for given user guid (later search/filter)
+router.get('/:event_guid', checkJwt, (req, res, next) => {
+  const {event_guid} = req.params;
+  EventTable.getEventByGuid({event_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(201).json(resp)
+      }
+    })
+    .catch(error => next(error)) 
+})
+
+//get events for given user guid (later search/filter)
 router.get('/user/:user_guid', checkJwt, (req, res, next) => {
   const {user_guid} = req.params;
   EventTable.getEventsByUserGuid({user_guid})
