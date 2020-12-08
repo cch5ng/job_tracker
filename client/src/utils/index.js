@@ -7,6 +7,14 @@ const getDictFromAr = (ar) => {
   return dict;
 }
 
+const getArFromDictBasic = (dict) => {
+  let ar = [];
+  Object.keys(dict).forEach(key => {
+    ar.push(dict[key])
+  })
+  return ar;
+}
+
 const getArFromDict = (dict) => {
   let ar = [];
   Object.keys(dict).forEach(key => {
@@ -32,6 +40,31 @@ const orderArByCreatedDate = (ar) => {
   });
 }
 
+const orderArByProp = (ar, prop, order) => {
+  ar.sort(function(a, b) {
+    var elA = new Date(a[prop]);
+    var elB = new Date(b[prop]);
+    let compareElA = elA.getTime();
+    let compareElB = elB.getTime();
+    if (order === 'asc') {
+      if (compareElA > compareElB) {
+        return -1;
+      }
+      if (compareElA < compareElB) {
+        return 1;
+      }  
+    } else if (order === 'desc') {
+      if (compareElA < compareElB) {
+        return -1;
+      }
+      if (compareElA > compareElB) {
+        return 1;
+      }  
+    }
+    return 0;
+  });
+}
+
 const convertLocalDateTimeToISOStr = (dateStr) => {
   let newDate = new Date(dateStr);
   return newDate.toISOString();
@@ -42,4 +75,4 @@ const convertISOStrToLocalDateTime = (dateStr) => {
   return newDate.toLocaleString();
 }
 
-export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime};
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, getArFromDictBasic};
