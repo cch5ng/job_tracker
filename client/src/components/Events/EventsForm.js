@@ -86,6 +86,22 @@ function EventsForm(props) {
       }
     }
 
+    if (id === 'buttonDelete') {
+      fetch(`http://localhost:3000/api/events/${eventId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`
+          }
+        })
+        .then(resp => resp.json())
+        .then(json => {
+          console.log('json', json)
+          setFormSubmitted(true);
+        })
+        .catch(err => console.error('err', err))
+    }
+
     if (id === 'buttonSave') {
       let body = {
         job_guid: type === 'create' ? createJobId : editJobGuid, 
@@ -238,6 +254,9 @@ function EventsForm(props) {
         <div>
           <button id="buttonSave" onClick={buttonOnClickHandler}>Save</button>
           <button id="buttonCancel" onClick={buttonOnClickHandler}>Cancel</button>
+          {type === 'edit' && (
+            <button id="buttonDelete" onClick={buttonOnClickHandler}>Delete</button>
+          )}
         </div>
       </form>
     </div>
