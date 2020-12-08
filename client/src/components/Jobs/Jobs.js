@@ -68,11 +68,12 @@ function Jobs() {
       {jobsAr.map(job => {
         let url = `/jobs/${job.guid}`;
         let newEventUrl = `events/new/${job.guid}`;
+        let eventsUrl = `jobs/${job.guid}/events`;
         return (
           <div key={job.guid}>
             <button onClick={handleArchiveButtonClick} name={job.guid}>Archive</button>
             <Link to={newEventUrl}>Add new event</Link>
-            <Link to={newEventUrl}>Get events</Link>
+            <Link to={eventsUrl}>Get events</Link>
             <Link to={url}>
               <div>Name: {job.name}</div>
               <div>status: {job.status}</div>
