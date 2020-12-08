@@ -32,7 +32,7 @@ function Jobs() {
   const callSecureApi = async (uGuid) => {
     try {
       const token = await getAccessTokenSilently();
-      login({userEmail: email, sessionToken: token})
+      login({userEmail: email, sessionToken: token, userGuid: uGuid})
 
       if (uGuid && token) {
         fetch(`http://localhost:3000/api/jobs/all/${uGuid}`, {
