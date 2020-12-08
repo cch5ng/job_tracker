@@ -9,7 +9,6 @@ const router = Router();
 //create new event (should be tied to an existing job guid)
 router.post('/', checkJwt, (req, res, next) => {
   const {job_guid, name, format, contact, notes, description, follow_up, date_time} = req.body;
-  console.log('gets here')
     if (job_guid) {
     EventTable.postEvent({name, format, contact, notes, description, follow_up, job_guid, date_time})
       .then(resp => {
