@@ -55,8 +55,7 @@ function Events(props) {
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDictBasic(eventsDict) : [];
-  orderArByProp(eventsAr, 'follow_up', 'desc');
-
+  orderArByProp(eventsAr, 'date_time', 'desc');
   let createUrl = `/events/new/${jobId}`;
 
   return (
