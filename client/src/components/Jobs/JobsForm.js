@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import {useParams, Redirect} from 'react-router-dom';
+import {useParams, Redirect, useHistory} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
 
 const JOB_STATUS_OPTIONS = [
@@ -26,7 +26,7 @@ function JobsForm(props) {
   if (type === 'edit') {
     jobId = props.jobId;
   }
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formStatus, setFormStatus] = useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = useState('');
   const [jobStatus, setJobStatus] = useState('');
   const [companyName, setCompanyName] = useState('');
@@ -34,6 +34,7 @@ function JobsForm(props) {
   const [jobDescription, setJobDescription] = useState('');
   const [jobQuestions, setJobQuestions] = useState('');
   const [jobSource, setJobSource] = useState('');
+  const [jobGuid, setJobGuid] = useState(null);
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
@@ -64,7 +65,23 @@ function JobsForm(props) {
     ev.preventDefault();
     const {id} = ev.target;
 
-    if (id === 'buttonSave') {
+    if (id === 'buttonCancel') {
+      //handle buttonCancel
+      if (type === 'create') {
+        setJobName('');
+        setJobStatus('');
+        setCompanyName('');
+        setJobUrl('');
+        setJobDescription('');
+        setJobQuestions('');
+        setJobSource('');
+      } else if (type === 'edit') {
+
+      }
+
+    }
+
+    if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
       getUserGuid({userEmail})
         .then(uGuid => {
             //handle buttonSave
@@ -88,7 +105,11 @@ function JobsForm(props) {
                 body: JSON.stringify(body)
               })
               .then(resp => resp.json())
-              .then(json => console.log('json', json))
+              .then(json => {
+                if (json.job_guid) {
+                  setJobGuid(json.job_guid);
+                }
+              })
               .catch(err => console.error('err', err))
             } else if (type === 'edit') {
               fetch(`http://localhost:3000/api/jobs/`, {
@@ -103,25 +124,15 @@ function JobsForm(props) {
               .then(json => console.log('json', json))
               .catch(err => console.error('err', err))
             }
-            setFormSubmitted(true);
         })
     } 
 
-    if (id === 'buttonCancel') {
-      //handle buttonCancel
-      if (type === 'create') {
-        setJobName('');
-        setJobStatus('');
-        setCompanyName('');
-        setJobUrl('');
-        setJobDescription('');
-        setJobQuestions('');
-        setJobSource('');
-      } else if (type === 'edit') {
-
-      }
-
+    if (id === 'buttonSave') {
+      setFormStatus('redirectJobs')
     }
+    // if (id === 'buttonSaveJobEvent' && jobGuid) {
+    //   setFormStatus('redirectEventForm')
+    // }
   }
 
   //if type=edit, get existing form fields
@@ -175,7 +186,13 @@ url: "http://jobs.com"
    }
   }, [])
 
-  if (formSubmitted) {
+  useEffect(() => {
+    if (jobGuid) {
+      setFormStatus('redirectEventForm');
+    }
+  }, [jobGuid])
+
+  if (formStatus === 'redirectJobs') {
     return (
       <Redirect
         to={{
@@ -185,7 +202,17 @@ url: "http://jobs.com"
     )
   }
 
-  if (!formSubmitted) {
+  if (formStatus === 'redirectEventForm') {
+    return (
+      <Redirect
+        to={{
+          pathname: `/events/new/${jobGuid}`
+        }}
+      />
+    )
+  }
+
+  if (formStatus === 'inProgress') {
     return (
       <div>
         <h1>JOBS FORM</h1>
@@ -229,6 +256,7 @@ url: "http://jobs.com"
             </select>
           </div>
           <div>
+            <button id="buttonSaveJobEvent" onClick={buttonOnClickHandler}>Save and Create Event</button>
             <button id="buttonSave" onClick={buttonOnClickHandler}>Save</button>
             <button id="buttonCancel" onClick={buttonOnClickHandler}>Cancel</button>
           </div>

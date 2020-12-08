@@ -9,7 +9,6 @@ const router = Router();
 //create new event (should be tied to an existing job guid)
 router.post('/', checkJwt, (req, res, next) => {
   const {job_guid, name, format, contact, notes, description, follow_up, date_time} = req.body;
-  console.log('gets here')
     if (job_guid) {
     EventTable.postEvent({name, format, contact, notes, description, follow_up, job_guid, date_time})
       .then(resp => {
@@ -43,6 +42,20 @@ router.put('/:event_guid', checkJwt, (req, res, next) => {
     res.status(200).json({message: 'Could not save event because there is an issue with the current user email authorization'})
   } 
 });
+
+//get events for given user guid (later search/filter)
+router.get('/:event_guid', checkJwt, (req, res, next) => {
+  const {event_guid} = req.params;
+  EventTable.getEventByGuid({event_guid})
+    .then(resp => {
+      if (resp.status_code === 401) {
+        res.status(401).json({error: 'Please log in and try again.'})
+      } else {
+        res.status(201).json(resp)
+      }
+    })
+    .catch(error => next(error)) 
+})
 
 //get events for given user guid (later search/filter)
 router.get('/user/:user_guid', checkJwt, (req, res, next) => {

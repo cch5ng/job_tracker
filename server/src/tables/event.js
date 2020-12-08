@@ -30,7 +30,7 @@ class EventTable {
   static updateEvent({name, format, contact, notes, description, follow_up, job_guid, date_time, guid}) {
     return new Promise((resolve, reject) => {
       db.query(
-        `UPDATE event SET name=$1, format=$2, contact=$3, notes=$4, description=$5, follow_up=$6, job_guid=$7, date_time=$8, guid=$9 RETURNING id`,
+        `UPDATE event SET name=$1, format=$2, contact=$3, notes=$4, description=$5, follow_up=$6, job_guid=$7, date_time=$8 WHERE guid=$9 RETURNING id`,
         [name, format, contact, notes, description, follow_up, job_guid, date_time, guid],
         (error, response) => {
           if (error) return reject(error);
@@ -44,6 +44,23 @@ class EventTable {
           }
         }
       )
+    })
+  }
+
+  
+  static getEventByGuid({ event_guid }) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT name, format, contact, notes, description, follow_up, job_guid, date_time, guid FROM event WHERE guid = $1`,
+        [event_guid],
+        (error, response) => {
+          if (error) return reject(error);
+          if (response.rows.length) {
+            resolve({event: response.rows[0], message: `Event was retrieved`})
+          } else {
+            resolve({message: 'No events were found'})
+          }
+        })
     })
   }
 
