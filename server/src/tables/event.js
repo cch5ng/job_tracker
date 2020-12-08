@@ -30,7 +30,7 @@ class EventTable {
   static updateEvent({name, format, contact, notes, description, follow_up, job_guid, date_time, guid}) {
     return new Promise((resolve, reject) => {
       db.query(
-        `UPDATE event SET name=$1, format=$2, contact=$3, notes=$4, description=$5, follow_up=$6, job_guid=$7, date_time=$8, guid=$9 RETURNING id`,
+        `UPDATE event SET name=$1, format=$2, contact=$3, notes=$4, description=$5, follow_up=$6, job_guid=$7, date_time=$8 WHERE guid=$9 RETURNING id`,
         [name, format, contact, notes, description, follow_up, job_guid, date_time, guid],
         (error, response) => {
           if (error) return reject(error);
