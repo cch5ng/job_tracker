@@ -47,17 +47,17 @@ const orderArByProp = (ar, prop, order) => {
     let compareElA = elA.getTime();
     let compareElB = elB.getTime();
     if (order === 'asc') {
-      if (compareElA > compareElB) {
+      if (compareElA < compareElB) {
         return -1;
       }
-      if (compareElA < compareElB) {
+      if (compareElA > compareElB) {
         return 1;
       }  
     } else if (order === 'desc') {
-      if (compareElA < compareElB) {
+      if (compareElA > compareElB) {
         return -1;
       }
-      if (compareElA > compareElB) {
+      if (compareElA < compareElB) {
         return 1;
       }  
     }
