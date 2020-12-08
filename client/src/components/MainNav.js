@@ -35,6 +35,14 @@ const MainNav = () => (
     >
       Jobs
     </NavLink>
+    <NavLink
+      to="/events/all"
+      exact
+      className="nav-link"
+      activeClassName="router-link-exact-active"
+    >
+      All Events
+    </NavLink>
   </div>
 );
 
