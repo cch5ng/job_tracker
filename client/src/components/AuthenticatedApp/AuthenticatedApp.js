@@ -14,6 +14,7 @@ import JobsFormCreate from '../Jobs/JobsFormCreate';
 import JobsFormEdit from '../Jobs/JobsFormEdit';
 import EventsFormCreate from '../Events/EventsFormCreate';
 import EventsFormEdit from '../Events/EventsFormEdit';
+import Events from '../Events/Events';
 
 const AuthenticatedApp = () => {
   return (
@@ -25,10 +26,11 @@ const AuthenticatedApp = () => {
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/external-api" component={ExternalApi} />
           <ProtectedRoute exact path="/jobs/new" component={JobsFormCreate} />
+          <ProtectedRoute exact path="/jobs/:jobId/events" component={Events} />
           <ProtectedRoute exact path="/jobs/:jobId" component={JobsFormEdit} />
           <ProtectedRoute path="/jobs" component={Jobs} />
           <ProtectedRoute exact path="/events/new/:jobId" component={EventsFormCreate} />
-          <ProtectedRoute exact path="/events/:eventId" component={EventsFormEdit} />
+          <ProtectedRoute exact path="/events/edit/:eventId" component={EventsFormEdit} />
         </Switch>
       </div>
     </div>
