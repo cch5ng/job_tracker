@@ -25,9 +25,9 @@ const EVENT_FORMAT_OPTIONS_DICT = {
 function EventsForm(props) {
   const {type} = props;
   let eventId;
-  let jobId;
+  let createJobId;
   if (type === 'create') {
-    jobId = props.jobId;
+    createJobId = props.jobId;
   }
   if (type === 'edit') {
     eventId = props.eventId;
@@ -41,7 +41,7 @@ function EventsForm(props) {
   const [eventDescription, setEventDescription] = useState('');
   const [eventFollowUp, setEventFollowUp] = useState('');
   const [eventGuid, setEventGuid] = useState('');
-  const [jobGuid, setJobGuid] = useState('');
+  const [editJobGuid, setEditJobGuid] = useState('');
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
@@ -87,45 +87,41 @@ function EventsForm(props) {
     }
 
     if (id === 'buttonSave') {
-      getUserGuid({userEmail})
-        .then(uGuid => {
-            //handle buttonSave
-            let body = {
-              job_guid: jobId, 
-              name: eventName, 
-              format: eventFormat, 
-              contact: eventContact, 
-              notes: eventNotes, 
-              description: eventDescription, 
-              follow_up: eventFollowUp, 
-              date_time: convertLocalDateTimeToISOStr(eventDateTime)
-            }
-            if (type === 'create') {
-              fetch(`http://localhost:3000/api/events/`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${sessionToken}`
-                },
-                body: JSON.stringify(body)
-              })
-              .then(resp => resp.json())
-              .then(json => console.log('json', json))
-              .catch(err => console.error('err', err))
-            } else if (type === 'edit') {
-              fetch(`http://localhost:3000/api/events/${eventId}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${sessionToken}`
-                },
-                body: JSON.stringify(body)
-              })
-              .then(resp => resp.json())
-              .then(json => console.log('json', json))
-              .catch(err => console.error('err', err))
-            }
+      let body = {
+        job_guid: type === 'create' ? createJobId : editJobGuid, 
+        name: eventName, 
+        format: eventFormat, 
+        contact: eventContact, 
+        notes: eventNotes, 
+        description: eventDescription, 
+        follow_up: eventFollowUp, 
+        date_time: convertLocalDateTimeToISOStr(eventDateTime)
+      }
+      if (type === 'create') {
+        fetch(`http://localhost:3000/api/events/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`
+          },
+          body: JSON.stringify(body)
         })
+        .then(resp => resp.json())
+        .then(json => console.log('json', json))
+        .catch(err => console.error('err', err))
+      } else if (type === 'edit') {
+        fetch(`http://localhost:3000/api/events/${eventId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`
+          },
+          body: JSON.stringify(body)
+        })
+        .then(resp => resp.json())
+        .then(json => console.log('json', json))
+        .catch(err => console.error('err', err))
+      }
     } 
 
     if (id === 'buttonSave') {
@@ -136,7 +132,6 @@ function EventsForm(props) {
   //if type=edit, get existing form fields
   useEffect(() => {
     if (type === 'edit' && eventId && sessionToken) {
-      console.log('gets here')
       let url = `http://localhost:3000/api/events/${eventId}`
       fetch(url, {
         headers: {
@@ -145,7 +140,6 @@ function EventsForm(props) {
       })
         .then(resp => resp.json())
         .then(json => {
-          console.log('json', json)
           if (json.event) {
             const {name, format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
             if (name) {
@@ -167,7 +161,7 @@ function EventsForm(props) {
               setEventFollowUp(follow_up);
             }
             if (job_guid) {
-              setJobGuid(job_guid);
+              setEditJobGuid(job_guid);
             }
             if (date_time) {
               let eventDate = new Date(date_time);
@@ -199,7 +193,6 @@ function EventsForm(props) {
     )
   }
 
-  //name, format, contact, notes, description, follow_up, job_guid, date_time
   return (
     <div>
       <h1>EVENTS FORM</h1>
