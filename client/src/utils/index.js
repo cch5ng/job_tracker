@@ -37,4 +37,9 @@ const convertLocalDateTimeToISOStr = (dateStr) => {
   return newDate.toISOString();
 }
 
-export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr};
+const convertISOStrToLocalDateTime = (dateStr) => {
+  let newDate = new Date(dateStr);
+  return newDate.toLocaleString();
+}
+
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime};
