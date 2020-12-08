@@ -8,8 +8,8 @@ function AuthProvider({children}) {
     sessionToken: null
   });
 
-  const login = ({userEmail, sessionToken}) => {
-    setState({...state, userEmail, sessionToken});
+  const login = ({userEmail, sessionToken, userGuid}) => {
+    setState({...state, userEmail, userGuid, sessionToken});
   }
 
   const logout = () => {
