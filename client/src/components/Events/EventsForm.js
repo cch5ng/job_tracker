@@ -135,7 +135,8 @@ function EventsForm(props) {
 
   //if type=edit, get existing form fields
   useEffect(() => {
-  //   if (type === 'edit' && jobId && sessionToken) {
+    if (type === 'edit' && eventId && sessionToken) {
+      console.log('gets here')
   //     let url = `http://localhost:3000/api/jobs/${jobId}`
   //     fetch(url, {
   //       headers: {
@@ -169,7 +170,7 @@ function EventsForm(props) {
   //         }
   //       })
   //       .catch(err => console.error('err', err))
-  //  }
+   }
   }, [])
 
   if (formSubmitted) {
