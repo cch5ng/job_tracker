@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
-import {convertLocalDateTimeToISOStr} from '../../utils';
+import {convertLocalDateTimeToISOStr, prettyFormatDate} from '../../utils';
 
 const EVENT_NAME_OPTIONS = [
   'meeting',
@@ -40,14 +40,14 @@ function EventsForm(props) {
   const [eventNotes, setEventNotes] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [eventFollowUp, setEventFollowUp] = useState('');
+  const [eventGuid, setEventGuid] = useState('');
+  const [jobGuid, setJobGuid] = useState('');
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
     const {name, value} = ev.target;
-    console.log('name', name)
-    console.log('value', value)
     const nameToSetterDict = {
       'eventName': function(v) {
         setEventName(v)},
@@ -137,39 +137,59 @@ function EventsForm(props) {
   useEffect(() => {
     if (type === 'edit' && eventId && sessionToken) {
       console.log('gets here')
-  //     let url = `http://localhost:3000/api/jobs/${jobId}`
-  //     fetch(url, {
-  //       headers: {
-  //         'Authorization': `Bearer ${sessionToken}`
-  //       }
-  //     })
-  //       .then(resp => resp.json())
-  //       .then(json => {
-  //         console.log('json', json)
-  //         const {company_name, description, name, questions, source, status, url} = json.job;
-  //         if (company_name) {
-  //           setCompanyName(companyName);
-  //         }
-  //         if (name) {
-  //           setJobName(name);
-  //         }
-  //         if (status) {
-  //           setJobStatus(status);
-  //         }
-  //         if (url) {
-  //           setJobUrl(url);
-  //         }
-  //         if (description) {
-  //           setJobDescription(description);
-  //         }
-  //         if (questions) {
-  //           setJobQuestions(questions);
-  //         }
-  //         if (source) {
-  //           setJobSource(source);
-  //         }
-  //       })
-  //       .catch(err => console.error('err', err))
+      let url = `http://localhost:3000/api/events/${eventId}`
+      fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${sessionToken}`
+        }
+      })
+        .then(resp => resp.json())
+        .then(json => {
+          console.log('json', json)
+          if (json.event) {
+            const {name, format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
+            if (name) {
+              setEventName(name);
+            }
+            if (format) {
+              setEventFormat(format);
+            }
+            if (contact) {
+              setEventContact(contact);
+            }
+            if (notes) {
+              setEventNotes(notes);
+            }
+            if (description) {
+              setEventDescription(description);
+            }
+            if (follow_up) {
+              setEventFollowUp(follow_up);
+            }
+            if (job_guid) {
+              setJobGuid(job_guid);
+            }
+            if (date_time) {
+              let eventDate = new Date(date_time);
+              let year = eventDate.getFullYear();
+              let month = eventDate.getMonth() + 1;
+              month = prettyFormatDate(month);
+              let date = eventDate.getDate();
+              date = prettyFormatDate(date);
+              let hour = eventDate.getHours();
+              hour = prettyFormatDate(hour);
+              let minute = eventDate.getMinutes();
+              minute = prettyFormatDate(minute);
+              let dateStr = `${year}-${month}-${date}`;
+              let timeStr = `T${hour}:${minute}`;
+              setEventDateTime(`${dateStr}${timeStr}`);
+            }
+            if (guid) {
+              setEventGuid(guid);
+            }
+          }
+        })
+        .catch(err => console.error('err', err))
    }
   }, [])
 
