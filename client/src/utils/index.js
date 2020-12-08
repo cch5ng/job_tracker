@@ -75,4 +75,13 @@ const convertISOStrToLocalDateTime = (dateStr) => {
   return newDate.toLocaleString();
 }
 
-export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, getArFromDictBasic};
+const prettyFormatDate = (dateNum) => {
+  let dateStr = dateNum.toString();
+  if (dateStr.length === 1) {
+    return `0${dateStr}`;
+  } else {
+    return dateNum;
+  }
+}
+
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, getArFromDictBasic, prettyFormatDate};
