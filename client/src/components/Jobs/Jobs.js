@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
 import {Link, useHistory} from 'react-router-dom';
-import {getDictFromAr, getArFromDict} from '../../utils';
+import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 
 function Jobs() {
   const [jobsDict, setJobsDict] = useState({});
@@ -59,6 +59,7 @@ function Jobs() {
   }, [])
 
   let jobsAr = getArFromDict(jobsDict);
+  orderArByProp(jobsAr, 'created_at', 'desc')
 
   return (
     <div>

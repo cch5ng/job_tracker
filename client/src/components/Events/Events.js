@@ -1,7 +1,7 @@
 import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {useAppAuth} from '../../context/auth-context';
-import {getDictFromAr, getArFromDictBasic, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
+import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 
 function Events(props) {
   const {jobId} = useParams();
@@ -54,9 +54,8 @@ function Events(props) {
     }
   }, [])
 
-  let eventsAr = Object.keys(eventsDict).length ? getArFromDictBasic(eventsDict) : [];
-  orderArByProp(eventsAr, 'follow_up', 'desc');
-
+  let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
+  orderArByProp(eventsAr, 'date_time', 'desc');
   let createUrl = `/events/new/${jobId}`;
 
   return (
