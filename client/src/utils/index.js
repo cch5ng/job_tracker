@@ -7,37 +7,12 @@ const getDictFromAr = (ar) => {
   return dict;
 }
 
-const getArFromDictBasic = (dict) => {
-  let ar = [];
-  Object.keys(dict).forEach(key => {
-    ar.push(dict[key])
-  })
-  return ar;
-}
-
 const getArFromDict = (dict) => {
   let ar = [];
   Object.keys(dict).forEach(key => {
     ar.push(dict[key])
   })
-  orderArByCreatedDate(ar);
   return ar;
-}
-
-//sorts array of objects by created_at date
-//most recent to oldest
-const orderArByCreatedDate = (ar) => {
-  ar.sort(function(a, b) {
-    var dateA = a.created_at;
-    var dateB = b.created_at;
-    if (dateA > dateB) {
-      return -1;
-    }
-    if (dateA < dateB) {
-      return 1;
-    }
-    return 0;
-  });
 }
 
 const orderArByProp = (ar, prop, order) => {
@@ -84,4 +59,5 @@ const prettyFormatDate = (dateNum) => {
   }
 }
 
-export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, getArFromDictBasic, prettyFormatDate};
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, prettyFormatDate};
+//getArFromDictBasic, 
