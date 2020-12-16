@@ -39,6 +39,17 @@ nav {
 
 .hamburger_icon {
   color: #fff68f;
+  font-size: 1.4rem;
+}
+
+.nav_menu {
+  background-color: #999999;
+  position: absolute;
+  left: 0;
+  top: 74px;
+  width: 40%;
+  height: 300px;
+  padding: 12px;
 }
 
 /* MainNav */

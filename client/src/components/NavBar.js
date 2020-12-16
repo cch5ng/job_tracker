@@ -13,14 +13,12 @@ const NavBar = () => {
   return (
     <header className="header">
       <nav >
-        {!showNavMenu && (
-          <div className="hamburger_icon" onClick={toggleNavMenuDisplay}>&#9776;</div>
-        )}
+        <div className="hamburger_icon" onClick={toggleNavMenuDisplay}>&#9776;</div>
         {showNavMenu && (
-          <>
+          <div className="nav_menu">
             <MainNav />
             <AuthNav />
-          </>
+          </div>
         )}
       </nav>
       <div className="logo_title">Jobs Tracker</div>
