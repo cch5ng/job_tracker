@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import NavBar from "../NavBar"; //, Footer, Loading 
+import NavBar from "../Header/NavBar"; //, Footer, Loading 
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
