@@ -2,31 +2,7 @@ import {NavLink} from "react-router-dom";
 import React from "react";
 
 const MainNav = () => (
-  <div className="navbar-nav mr-auto">
-    <NavLink
-      to="/"
-      exact
-      className="nav-link"
-      activeClassName="router-link-exact-active"
-    >
-      Home
-    </NavLink>
-    <NavLink
-      to="/profile"
-      exact
-      className="nav-link"
-      activeClassName="router-link-exact-active"
-    >
-      Profile
-    </NavLink>
-    <NavLink
-      to="/external-api"
-      exact
-      className="nav-link"
-      activeClassName="router-link-exact-active"
-    >
-      External API
-    </NavLink>
+  <div className="main_nav_container">
     <NavLink
       to="/jobs"
       exact
@@ -41,7 +17,7 @@ const MainNav = () => (
       className="nav-link"
       activeClassName="router-link-exact-active"
     >
-      All Events
+      Events
     </NavLink>
   </div>
 );

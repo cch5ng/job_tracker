@@ -1,21 +1,30 @@
 // src/components/nav-bar.js
-
-import React from "react";
-
+import React, {useState} from "react";
 import MainNav from "./MainNav";
 import AuthNav from "./AuthNav";
 
 const NavBar = () => {
+  const [showNavMenu, setShowNavMenu] = useState(false);
+
+  const toggleNavMenuDisplay = (ev) => {
+    setShowNavMenu(!showNavMenu);
+  }
+
   return (
-    <div className="nav-container mb-3">
-      <nav className="navbar navbar-expand-md navbar-light bg-light">
-        <div className="container">
-          <div className="navbar-brand logo" />
-          <MainNav />
-          <AuthNav />
-        </div>
+    <header className="header">
+      <nav >
+        {!showNavMenu && (
+          <div className="hamburger_icon" onClick={toggleNavMenuDisplay}>&#9776;</div>
+        )}
+        {showNavMenu && (
+          <>
+            <MainNav />
+            <AuthNav />
+          </>
+        )}
       </nav>
-    </div>
+      <div className="logo_title">Jobs Tracker</div>
+    </header>
   );
 };
 
