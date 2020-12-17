@@ -1,8 +1,12 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
+import classNames from 'classnames/bind';
 import {useAppAuth} from '../../context/auth-context';
 import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
+import styles from './Jobs.module.css';
+
+let cx = classNames.bind(styles);
 
 function Jobs() {
   const [jobsDict, setJobsDict] = useState({});
@@ -62,16 +66,18 @@ function Jobs() {
   orderArByProp(jobsAr, 'created_at', 'desc')
 
   return (
-    <div>
-      <h1>JOBS LIST</h1>
-      <Link to="/jobs/new">New</Link>
+    <div className={styles.jobs_container}>
+      <h1 className={styles.view_title}>JOBS LIST</h1>
+      <Link to="/jobs/new" className={styles.link_icon}>
+        <div className={styles.add_icon}>+</div>
+      </Link>
 
       {jobsAr.map(job => {
         let url = `/jobs/${job.guid}`;
         let newEventUrl = `events/new/${job.guid}`;
         let eventsUrl = `jobs/${job.guid}/events`;
         return (
-          <div key={job.guid}>
+          <div key={job.guid} className={styles.job_container}>
             <button onClick={handleArchiveButtonClick} name={job.guid}>Archive</button>
             <Link to={newEventUrl}>Add new event</Link>
             <Link to={eventsUrl}>Get events</Link>
