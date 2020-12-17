@@ -32,3 +32,29 @@ a.link_icon:active {
   border: 1px dotted #999999;
   border-radius: 8px;
 }
+
+.button_container {
+  margin-top: 8px;
+}
+
+.nav_button,
+.button {
+  height: 25px;
+  margin-right: 12px;
+  background-color: #222f5b;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.label {
+  /* font-weight: bold; */
+  margin-right: 5px;
+  font-variant: small-caps;
+}
+
+.small {
+  font-size: 0.8rem;
+  margin-top: 12px;
+}

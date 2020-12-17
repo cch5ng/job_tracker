@@ -78,21 +78,23 @@ function Jobs() {
         let eventsUrl = `jobs/${job.guid}/events`;
         return (
           <div key={job.guid} className={styles.job_container}>
-            <button onClick={handleArchiveButtonClick} name={job.guid}>Archive</button>
-            <Link to={newEventUrl}>Add new event</Link>
-            <Link to={eventsUrl}>Get events</Link>
             <Link to={url}>
-              <div>Name: {job.name}</div>
-              <div>status: {job.status}</div>
-              <div>company_name: {job.name}</div>
-              <div>url: {job.url}</div>
-              <div>description: {job.description}</div>
-              <div>questions: {job.questions}</div>
-              <div>source: {job.source}</div>
+              <h2>{job.name}</h2>
+              <div><span className={styles.label}>status</span> {job.status}</div>
+              <div><span className={styles.label}>company</span> {job.name}</div>
+              <div><span className={styles.label}>url</span> {job.url}</div>
+              <div><span className={styles.label}>description</span> {job.description}</div>
+              <div><span className={styles.label}>questions</span> {job.questions}</div>
+              <div><span className={styles.label}>source</span> {job.source}</div>
               {job.created_at && (
-                <div>created: {job.created_at}</div>
+                <div className={styles.small}>created {job.created_at}</div>
               )}
             </Link>
+            <div className={styles.button_container}>
+              <Link to={newEventUrl}><button className={styles.nav_button}>Add event</button></Link>
+              <Link to={eventsUrl}><button className={styles.nav_button}>Get events</button></Link>
+              <button onClick={handleArchiveButtonClick} name={job.guid} className={styles.button}>Hide</button>
+            </div>
           </div>
         )
       })}
