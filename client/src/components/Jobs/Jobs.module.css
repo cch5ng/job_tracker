@@ -71,7 +71,6 @@ a.link_icon:active {
     width: calc(48% - 38px);
     margin: 12px;
   }
-  
 }
 
 @media (min-width: 1050px) {
@@ -80,5 +79,4 @@ a.link_icon:active {
     width: calc(31% - 48px);
     margin: 12px;
   }
-
 }
