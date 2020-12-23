@@ -1,0 +1,9 @@
+.inputGroupContainer {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.inputGroupInline {
+  display: flex;
+  flex-flow: row wrap;
+}
