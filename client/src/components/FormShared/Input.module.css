@@ -1,9 +1,38 @@
 .inputGroupContainer {
   display: flex;
   flex-flow: column nowrap;
+  margin: 10px 0;
 }
 
 .inputGroupInline {
   display: flex;
   flex-flow: row wrap;
+}
+
+.label {
+  color: #323232;
+}
+
+.input {
+  width: calc(100% - 24px);
+  height: 25px;
+  margin-top: 5px;
+  padding-left: 8px;
+  font-size: 14px;
+  border: 1px solid #a6abbd;
+  border-radius: 5px;
+  color: #323232;
+}
+
+.input:hover,
+.input:focus {
+  background-color: #e8eaee;
+}
+
+@media (min-width: 768px) {
+
+  .input {
+    width: calc(70% - 24px);
+  }
+
 }
