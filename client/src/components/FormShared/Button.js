@@ -3,7 +3,7 @@ import styles from './Button.module.css';
 
 let cx = classNames.bind(styles);
 
-const Button = ({id, clickHandler, label, size}) => {
+const Button = ({id, clickHandler, label, size, name}) => {
 
   const buttonClassName = cx({
     button: true,
@@ -13,7 +13,7 @@ const Button = ({id, clickHandler, label, size}) => {
   });
 
   return (
-    <button id={id} className={buttonClassName}
+    <button id={id} name={name} className={buttonClassName}
       onClick={ev => clickHandler(ev)}>
       {label}
     </button>
