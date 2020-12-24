@@ -1,0 +1,39 @@
+.inputGroupContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 10px 0;
+}
+
+.inputGroupInline {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.label {
+  color: #323232;
+}
+
+.select {
+  position: relative;
+  width: calc(100% - 12px);
+  height: 30px;
+  margin-top: 5px;
+  padding-left: 8px;
+  font-size: 14px;
+  border: 1px solid #a6abbd;
+  border-radius: 5px;
+  color: #323232;
+}
+
+.select:hover,
+.select:focus {
+  background-color: #e8eaee;
+}
+
+@media (min-width: 768px) {
+
+  .select {
+    width: calc(70% - 12px);
+  }
+
+}

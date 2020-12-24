@@ -1,8 +1,22 @@
-const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList}) => {
+import classNames from 'classnames/bind';
+import styles from './SelectGroup.module.css';
+
+let cx = classNames.bind(styles);
+
+const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, inline}) => {
+
+  const selectGroupClassName = cx(
+    {
+      inputGroupContainer: !inline,
+      inputGroupInline: inline
+    }
+  );
+
   return (
-    <div>
-      <label for={name}>{label}</label>
-      <select name={name} value={value} onChange={ev => inputOnChangeHandler(ev)}>
+    <div className={selectGroupClassName}>
+      <label for={name} className={styles.label}>{label}</label>
+      <select name={name} value={value} 
+        className={styles.select} onChange={ev => inputOnChangeHandler(ev)}>
         {optionsList.map(option => (
           <option value={option.value}>{option.label}</option>
         ))}
