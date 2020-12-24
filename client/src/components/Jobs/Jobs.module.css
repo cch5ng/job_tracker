@@ -1,0 +1,78 @@
+.view_title {
+  text-align: center;
+}
+
+.add_icon {
+  width: 40px;
+  height: 40px;
+  background-color: #222f5b;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 2.2rem;
+}
+
+a.link_icon:link,
+a.link_icon,
+a.link_icon:visited,
+a.link_icon:focus,
+a.link_icon:hover,
+a.link_icon:active {
+  color: #ffffff;
+  font-size: 1.4rem;
+}
+
+.job_container {
+  margin: 30px 12px;
+  padding: 12px;
+  background-color: #e5e5e5;
+  border: 1px dotted #999999;
+  border-radius: 8px;
+}
+
+.button_container {
+  margin-top: 8px;
+}
+
+.nav_button,
+.button {
+  height: 25px;
+  margin-right: 12px;
+  background-color: #222f5b;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.label {
+  /* font-weight: bold; */
+  margin-right: 5px;
+  font-variant: small-caps;
+}
+
+.small {
+  font-size: 0.8rem;
+  margin-top: 12px;
+}
+
+@media (min-width: 700px) {
+
+  .jobs_container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+  }
+
+  .job_container {
+    width: calc(48% - 38px);
+    margin: 12px;
+  }
+}
+
+@media (min-width: 1050px) {
+
+  .job_container {
+    width: calc(31% - 48px);
+    margin: 12px;
+  }
+}

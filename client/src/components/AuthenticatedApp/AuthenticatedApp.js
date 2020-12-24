@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import NavBar from "../NavBar"; //, Footer, Loading 
+import NavBar from "../Header/NavBar"; //, Footer, Loading 
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
@@ -20,7 +20,7 @@ const AuthenticatedApp = () => {
   return (
     <div>
       <NavBar />
-      <div className="container flex-grow-1">
+      <main className="main">
         <Switch>
           {/* <Route path="/" exact component={Home} /> */}
           <ProtectedRoute path="/profile" component={Profile} />
@@ -33,7 +33,7 @@ const AuthenticatedApp = () => {
           <ProtectedRoute exact path="/events/edit/:eventId" component={EventsFormEdit} />
           <ProtectedRoute exact path="/events/all" component={Events} />
         </Switch>
-      </div>
+      </main>
     </div>
     )
 }

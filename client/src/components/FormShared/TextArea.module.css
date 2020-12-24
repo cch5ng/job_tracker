@@ -1,0 +1,39 @@
+.inputGroupContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 10px 0;
+}
+
+.inputGroupInline {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.label {
+  color: #323232;
+}
+
+.textArea {
+  width: calc(100% - 24px);
+  height: 80px;
+  margin-top: 5px;
+  padding-left: 8px;
+  font-size: 14px;
+  border: 1px solid #a6abbd;
+  border-radius: 5px;
+  color: #323232;
+  font-family: 'Lato', sans-serif;
+}
+
+.textArea:hover,
+.textArea:focus {
+  background-color: #e8eaee;
+}
+
+@media (min-width: 768px) {
+
+  .textArea {
+    width: calc(70% - 24px);
+  }
+
+}

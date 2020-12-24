@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import LoginButton from "../LoginButton";
+import LoginButton from "../Header/LoginButton";
 
 const UnauthenticatedApp = () => {
   return (
