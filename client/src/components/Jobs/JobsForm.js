@@ -5,6 +5,8 @@ import {useAppAuth} from '../../context/auth-context';
 import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
+import Button from '../FormShared/Button';
+import styles from './Jobs.module.css';
 
 const JOB_STATUS_OPTIONS = [
   {label: 'select a status', value: 'none'},
@@ -134,9 +136,6 @@ function JobsForm(props) {
     if (id === 'buttonSave') {
       setFormStatus('redirectJobs')
     }
-    // if (id === 'buttonSaveJobEvent' && jobGuid) {
-    //   setFormStatus('redirectEventForm')
-    // }
   }
 
   //if type=edit, get existing form fields
@@ -173,18 +172,6 @@ function JobsForm(props) {
           if (source) {
             setJobSource(source);
           }
-
-/*
-company_name: null
-description: "fake desc"
-guid: "7109867a-a8d8-4ef5-b3ee-e3d0023ce9fd"
-name: "test_job"
-questions: "how do you practice inclusion?"
-source: "the moogler"
-status: "applied"
-url: "http://jobs.com"
-*/
-
         })
         .catch(err => console.error('err', err))
    }
@@ -219,48 +206,29 @@ url: "http://jobs.com"
   if (formStatus === 'inProgress') {
     return (
       <div>
-        <h1>JOBS FORM</h1>
+        <h1 className={styles.view_title}>JOBS FORM</h1>
         <form>
           <Input type="text" value={jobName} name="jobName" inputOnChangeHandler={inputOnChangeHandler} label="name"/>
-
           <SelectGroup 
             label="status" name="jobStatus" value={jobStatus} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} />
-
-          {/* <div>
-            <label>status</label>
-            <select name="jobStatus" value={jobStatus} onChange={inputOnChangeHandler}>
-              {JOB_STATUS_OPTIONS.map(option => (
-                <option value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </div> */}
-
           <Input type="text" value={companyName} name="companyName" inputOnChangeHandler={inputOnChangeHandler} label="company"/>
           <Input type="url" value={jobUrl} name="jobUrl"
             inputOnChangeHandler={inputOnChangeHandler} label="url"/>
           <TextArea value={jobDescription} name="jobDescription" inputOnChangeHandler={inputOnChangeHandler}  
             label="description"/>
-
           <TextArea value={jobQuestions} name="jobQuestions" inputOnChangeHandler={inputOnChangeHandler}  
             label="questions"/>
-
           <SelectGroup 
             label="source" name="jobSource" value={jobSource} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_SOURCE_OPTIONS} />
-
-          {/* <div>
-            <label>source</label>
-            <select name="jobSource" value={jobSource} onChange={inputOnChangeHandler}>
-              {JOB_SOURCE_OPTIONS.map(option => (
-                <option value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </div> */}
           <div>
-            <button id="buttonSaveJobEvent" onClick={buttonOnClickHandler}>Save and Create Event</button>
-            <button id="buttonSave" onClick={buttonOnClickHandler}>Save</button>
-            <button id="buttonCancel" onClick={buttonOnClickHandler}>Cancel</button>
+            <Button id="buttonSaveJobEvent" clickHandler={buttonOnClickHandler} 
+              label="Save and Create Event" size="wide"/>
+            <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
+              label="Save"/>
+            <Button id="buttonCancel" clickHandler={buttonOnClickHandler} 
+              label="Cancel"/>
           </div>
         </form>
       </div>
