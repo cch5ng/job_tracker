@@ -5,6 +5,7 @@ import {useAppAuth} from '../../context/auth-context';
 import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 import styles from './Jobs.module.css';
+import Button from '../FormShared/Button';
 
 let cx = classNames.bind(styles);
 
@@ -92,9 +93,13 @@ function Jobs() {
                 )}
               </Link>
               <div className={styles.button_container}>
-                <Link to={newEventUrl}><button className={styles.nav_button}>Add event</button></Link>
-                <Link to={eventsUrl}><button className={styles.nav_button}>Get events</button></Link>
-                <button onClick={handleArchiveButtonClick} name={job.guid} className={styles.button}>Hide</button>
+                <Link to={newEventUrl}>
+                  <Button name="button_save" label="Add event" clickHandler={() => {}} size="wide"/>
+                  </Link>
+                <Link to={eventsUrl}>
+                  <Button name="button_events" label="Get events" clickHandler={() => {}} size="wide"/>
+                </Link>
+                <Button name={job.guid} label="Hide" clickHandler={handleArchiveButtonClick} size="wide"/>
               </div>
             </div>
           )
