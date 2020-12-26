@@ -3,22 +3,34 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
 import {convertLocalDateTimeToISOStr, prettyFormatDate} from '../../utils';
+import Input from '../FormShared/Input';
+import TextArea from '../FormShared/TextArea';
+import SelectGroup from '../FormShared/SelectGroup';
+import Button from '../FormShared/Button';
 
 const EVENT_NAME_OPTIONS = [
-  'meeting',
-  'test',
-  'assessment'
+  {label: 'Select a format', value: "none"},
+  {label: 'meeting', value: 'meeting'},
+  {label: 'test', value: 'test'},
+  {label: 'assessment', value: 'assessment'}
 ];
 const EVENT_FORMAT_OPTIONS_DICT = {
-  meeting: ['phone', 'video', 'group'],
+  meeting: [
+    {label: 'Select a format', value: "none"},
+    {label: 'phone', value: 'phone'},
+    {label: 'video', value: 'video'},
+    {label: 'group', value: 'group'}
+  ],
   test: [
-    'online (with interviewer)',
-    'online (timed alone)',
-    'online (unscheduled alone)'
+    {label: 'Select a format', value: "none"},
+    {label: 'online (with interviewer)', value: 'online (with interviewer)'},
+    {label: 'online (timed alone)', value: 'online (timed alone)'},
+    {label: 'online (unscheduled alone)', value: 'online (unscheduled alone)'}
   ],
   assessment: [
-    'take-home scheduled timed',
-    'take-home unscheduled'
+    {label: 'Select a format', value: "none"},
+    {label: 'take-home scheduled timed', value: 'take-home scheduled timed'},
+    {label: 'take-home unscheduled', value: 'take-home unscheduled'}
   ]
 };
 
@@ -213,49 +225,30 @@ function EventsForm(props) {
     <div>
       <h1>EVENTS FORM</h1>
       <form>
+
+        <SelectGroup 
+          label="name" name="eventName" value={eventName} 
+          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_NAME_OPTIONS} />  
+        <SelectGroup 
+          label="format" name="eventFormat" value={eventFormat} 
+          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_DICT[eventName]} />  
+        <Input type="text" value={eventContact} name="eventContact" inputOnChangeHandler={inputOnChangeHandler} label="contact"/>
+        <TextArea value={eventNotes} name="eventNotes" inputOnChangeHandler={inputOnChangeHandler}  
+          label="notes"/>
+        <TextArea value={eventDescription} name="eventDescription" inputOnChangeHandler={inputOnChangeHandler}  
+          label="description"/>
+        <Input type="text" value={eventFollowUp} name="eventFollowUp" 
+          inputOnChangeHandler={inputOnChangeHandler} label="follow up"/>
+        <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
+          inputOnChangeHandler={inputOnChangeHandler} label="date time"/>
         <div>
-          <label>name</label>
-          <select value={eventName} name="eventName" onChange={inputOnChangeHandler}>
-            <option value="none">Select a name</option>
-            {EVENT_NAME_OPTIONS.map(option => (
-              <option value={option}>{option}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>format</label>
-          <select value={eventFormat} name="eventFormat" onChange={inputOnChangeHandler}>
-            <option value="none">Select a format</option>
-            {EVENT_FORMAT_OPTIONS_DICT[eventName].map(option => (
-              <option value={option}>{option}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>contact</label>
-          <input type="text" value={eventContact} name="eventContact" onChange={inputOnChangeHandler}/>
-        </div>
-        <div>
-          <label>notes</label>
-          <textarea value={eventNotes} name="eventNotes" onChange={inputOnChangeHandler}/>
-        </div>
-        <div>
-          <label>description</label>
-          <textarea value={eventDescription} name="eventDescription" onChange={inputOnChangeHandler}/>
-        </div>
-        <div>
-          <label>follow up</label>
-          <input type="text" value={eventFollowUp} name="eventFollowUp" onChange={inputOnChangeHandler}/>
-        </div>
-        <div>
-          <label>date time</label>
-          <input type="datetime-local" name="eventDateTime" value={eventDateTime} onChange={inputOnChangeHandler}/>
-        </div>
-        <div>
-          <button id="buttonSave" onClick={buttonOnClickHandler}>Save</button>
-          <button id="buttonCancel" onClick={buttonOnClickHandler}>Cancel</button>
+          <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
+            label="Save" />
+          <Button id="buttonCancel" clickHandler={buttonOnClickHandler} 
+            label="Cancel" />
           {type === 'edit' && (
-            <button id="buttonDelete" onClick={buttonOnClickHandler}>Delete</button>
+            <Button id="buttonDelete" clickHandler={buttonOnClickHandler} 
+              label="Delete" />
           )}
         </div>
       </form>
