@@ -15,7 +15,7 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline}) => {
   return (
     <div className={inputGroupClassName}>
       {label && (
-        <label for={name} className={styles.label}>{label}</label>
+        <label htmlFor={name} className={styles.label}>{label}</label>
       )}
       <input type={type} value={value} name={name} 
         className={styles.input} onChange={ev => inputOnChangeHandler(ev)}/>
