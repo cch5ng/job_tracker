@@ -2,6 +2,7 @@ import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {useAppAuth} from '../../context/auth-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
+import Button from '../FormShared/Button';
 
 function Events(props) {
   const {jobId} = useParams();
@@ -60,25 +61,33 @@ function Events(props) {
 
   return (
     <div>
-      <h1>EVENTS</h1>
-      <Link to={createUrl}>Add Event</Link>
-      { eventsAr.map(event => {
-        let url = `/events/edit/${event.guid}`;
-        return (
-          <div key={event.guid}>
-            <button id="buttonDelete" name={event.guid} onClick={buttonOnClickHandler}>Delete</button>
-            <Link to={url}>
-              <div>name: {event.name}</div>
-              <div>format: {event.format}</div>
-              <div>contact: {event.contact}</div>
-              <div>notes: {event.notes}</div>
-              <div>description: {event.description}</div>
-              <div>follow up: {event.follow_up}</div>
-              <div>date/time: {convertISOStrToLocalDateTime(event.date_time)}</div>
-            </Link>
-          </div>
-        )
-      })}
+      <h1 className="view_title">EVENTS LIST</h1>
+      <Link to={createUrl} className="link_icon">Add Event
+        <div className="add_icon">+</div>    
+      </Link>
+      <div className="list_container">
+        { eventsAr.map(event => {
+          let url = `/events/edit/${event.guid}`;
+          return (
+            <div key={event.guid} className="list_item_container">
+              <Link to={url}>
+                <div><span className="list_item_label">name:</span> {event.name}</div>
+                <div><span className="list_item_label">format:</span> {event.format}</div>
+                <div><span className="list_item_label">contact:</span> {event.contact}</div>
+                <div><span className="list_item_label">notes:</span> {event.notes}</div>
+                <div><span className="list_item_label">description:</span> {event.description}</div>
+                <div><span className="list_item_label">follow up:</span> {event.follow_up}</div>
+                <div><span className="list_item_small">date/time:</span> {convertISOStrToLocalDateTime(event.date_time)}</div>
+              </Link>
+              <div className="button_container">
+                <Button id="buttonDelete" name={event.guid} label="Delete" clickHandler={buttonOnClickHandler} size="wide"/>
+                {/* <button id="buttonDelete" name={event.guid} onClick={buttonOnClickHandler}>Delete</button>               */}
+              </div>
+
+            </div>
+          )
+        })}        
+      </div>
     </div>
   );
 };
