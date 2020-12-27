@@ -73,7 +73,7 @@ function Jobs() {
         <div className="add_icon">+</div>
       </Link>
 
-      <div className="list_container"> {/* */}
+      <div className="list_container">
         {jobsAr.map(job => {
           let url = `/jobs/${job.guid}`;
           let newEventUrl = `events/new/${job.guid}`;
