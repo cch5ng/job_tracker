@@ -26,6 +26,10 @@ h2 {
   color: #222f5b;
 }
 
+.view_title {
+  text-align: center;
+}
+
 /* header */
 .header {
   height: 50px;
@@ -53,4 +57,37 @@ nav {
 
 .main {
   margin: 12px;
+}
+
+/* lists */
+
+.add_icon {
+  width: 40px;
+  height: 40px;
+  background-color: #222f5b;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 2.2rem;
+}
+
+a.link_icon:link,
+a.link_icon,
+a.link_icon:visited,
+a.link_icon:focus,
+a.link_icon:hover,
+a.link_icon:active {
+  color: #ffffff;
+  font-size: 1.4rem;
+}
+
+
+
+/* list item */
+
+.list_item_container {
+  margin: 30px 12px;
+  padding: 12px;
+  background-color: #e5e5e5;
+  border: 1px dotted #999999;
+  border-radius: 8px;
 }
