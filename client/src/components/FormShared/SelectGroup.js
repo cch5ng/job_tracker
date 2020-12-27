@@ -14,7 +14,9 @@ const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, in
 
   return (
     <div className={selectGroupClassName}>
-      <label htmlFor={name} className={styles.label}>{label}</label>
+      {label && (
+        <label htmlFor={name} className={styles.label}>{label}</label>
+      )}
       <select name={name} value={value} 
         className={styles.select} onChange={ev => inputOnChangeHandler(ev)}>
         {optionsList.map(option => (
