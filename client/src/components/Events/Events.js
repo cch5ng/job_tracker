@@ -4,6 +4,7 @@ import {useAppAuth} from '../../context/auth-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
 import SelectGroup from '../FormShared/SelectGroup';
+import Input from '../FormShared/Input';
 
 const EVENTS_SORT_OPTIONS = [
   {label: 'oldest to newest', value: 'oldest to newest'},
@@ -14,7 +15,7 @@ function Events(props) {
   const {jobId} = useParams();
   const [eventsDict, setEventsDict] = useState({});
   const [eventsSortBy, setEventsSortBy] = useState('oldest to newest');
-  const [eventsFilterBy, setEventsFilterBy] = useState([]);
+  const [filterHidePastEvents, setFilterHidePastEvents] = useState(true);
   const {userGuid, sessionToken} = useAppAuth();
 
   const buttonOnClickHandler = (ev) => {
@@ -41,12 +42,12 @@ function Events(props) {
   }
 
   const inputOnChangeHandler = (ev) => {
-    const {name, value} = ev.target;
-    const nameToSetterDict = {
-      'eventsSortBy': function(v) {
-        setEventsSortBy(v)}
+    const {name, value, checked} = ev.target;
+    if (name === 'eventsSortBy') {
+      setEventsSortBy(value);
+    } else if (name === 'filterHidePastEvents') {
+      setFilterHidePastEvents(checked)
     }
-    nameToSetterDict[name](value);
   }
 
 
@@ -76,6 +77,17 @@ function Events(props) {
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
   let sortOrder = eventsSortBy === 'oldest to newest' ? 'asc' : 'desc'; 
   orderArByProp(eventsAr, 'date_time', sortOrder);
+  let filteredEvents;
+  if (!filterHidePastEvents) {
+    filteredEvents = eventsAr;
+  } else {
+    filteredEvents = eventsAr.filter(ev => {
+      let eventDate = new Date(ev.date_time);
+      let curDate = new Date();
+      return eventDate >= curDate;
+    });  
+  }
+  
   let createUrl = `/events/new/${jobId}`;
 
   return (
@@ -87,9 +99,13 @@ function Events(props) {
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
+
+        <Input type="checkbox" checked={filterHidePastEvents} name="filterHidePastEvents" inputOnChangeHandler={inputOnChangeHandler} label="hide past events"/>
+
+
       </form>
       <div className="list_container">
-        { eventsAr.map(event => {
+        { filteredEvents.map(event => {
           let url = `/events/edit/${event.guid}`;
           return (
             <div key={event.guid} className="list_item_container">
