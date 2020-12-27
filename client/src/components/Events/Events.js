@@ -3,10 +3,18 @@ import {useState, useEffect} from 'react';
 import {useAppAuth} from '../../context/auth-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
+import SelectGroup from '../FormShared/SelectGroup';
+
+const EVENTS_SORT_OPTIONS = [
+  {label: 'oldest to newest', value: 'oldest to newest'},
+  {label: 'newest to oldest', value: 'newest to oldest'}
+]
 
 function Events(props) {
   const {jobId} = useParams();
   const [eventsDict, setEventsDict] = useState({});
+  const [eventsSortBy, setEventsSortBy] = useState('oldest to newest');
+  const [eventsFilterBy, setEventsFilterBy] = useState([]);
   const {userGuid, sessionToken} = useAppAuth();
 
   const buttonOnClickHandler = (ev) => {
@@ -32,6 +40,16 @@ function Events(props) {
 
   }
 
+  const inputOnChangeHandler = (ev) => {
+    const {name, value} = ev.target;
+    const nameToSetterDict = {
+      'eventsSortBy': function(v) {
+        setEventsSortBy(v)}
+    }
+    nameToSetterDict[name](value);
+  }
+
+
   useEffect(() => {
     let url;
     if (!jobId && userGuid) {
@@ -56,7 +74,8 @@ function Events(props) {
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
-  orderArByProp(eventsAr, 'date_time', 'desc');
+  let sortOrder = eventsSortBy === 'oldest to newest' ? 'asc' : 'desc'; 
+  orderArByProp(eventsAr, 'date_time', sortOrder);
   let createUrl = `/events/new/${jobId}`;
 
   return (
@@ -65,6 +84,10 @@ function Events(props) {
       <Link to={createUrl} className="link_icon">Add Event
         <div className="add_icon">+</div>    
       </Link>
+      <form>
+        <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
+          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
+      </form>
       <div className="list_container">
         { eventsAr.map(event => {
           let url = `/events/edit/${event.guid}`;
