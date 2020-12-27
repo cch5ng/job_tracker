@@ -223,7 +223,7 @@ function EventsForm(props) {
 
   return (
     <div>
-      <h1>EVENTS FORM</h1>
+      <h1 className="view_title">EVENTS FORM</h1>
       <form>
         <SelectGroup 
           label="name" name="eventName" value={eventName} 
