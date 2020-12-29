@@ -7,7 +7,7 @@ import styles from './NavBar.module.css';
 
 let cx = classNames.bind(styles);
 
-const NavBar = () => {
+const AuthenticatedNavBar = () => {
   const [showNavMenu, setShowNavMenu] = useState(false);
 
   let hamburgerClassName = cx({
@@ -25,7 +25,7 @@ const NavBar = () => {
   }
 
   return (
-    <header className="header">
+    <header className="header header_authenticated">
       <nav >
         <div className={hamburgerClassName} onClick={toggleNavMenuDisplay}>&#9776;</div>
         {showNavMenu && (
@@ -35,9 +35,9 @@ const NavBar = () => {
           </div>
         )}
       </nav>
-      <div className="logo_title">Jobs Tracker</div>
+      <div className="logo_title logo_title_authenticated">Jobs Tracker</div>
     </header>
   );
 };
 
-export default NavBar;
+export default AuthenticatedNavBar;

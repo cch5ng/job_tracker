@@ -14,7 +14,7 @@ const TextArea = ({label, value, name, inputOnChangeHandler, inline}) => {
 
   return (
     <div className={textAreaGroupClassName}>
-      <label for={name} className={styles.label}>{label}</label>
+      <label htmlFor={name} className={styles.label}>{label}</label>
       <textarea value={value} name={name} 
         className={styles.textArea} onChange={ev => inputOnChangeHandler(ev)}/>
     </div>

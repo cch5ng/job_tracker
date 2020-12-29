@@ -1,0 +1,28 @@
+.button_login {
+  width: 100px;
+  height: 30px;
+  margin: 15px auto;
+  border: none;
+  border-radius: 5px;
+  background-color: #222f5b;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.button_login:hover,
+.button_login:active {
+  background-color: #4e587b;
+}
+
+button {
+  align-items: center;
+  justify-content: center;
+  display: block;
+}
+
+@media (min-width: 768px) {
+
+  .button_login {
+    margin: 0 0 0 15px;
+  }
+}

@@ -67,32 +67,32 @@ function Jobs() {
   orderArByProp(jobsAr, 'created_at', 'desc')
 
   return (
-    <div className={styles.jobs_container_outter}>
-      <h1 className={styles.view_title}>JOBS LIST</h1>
-      <Link to="/jobs/new" className={styles.link_icon}>
-        <div className={styles.add_icon}>+</div>
+    <div>
+      <h1 className="view_title">JOBS LIST</h1>
+      <Link to="/jobs/new" className="link_icon">
+        <div className="add_icon">+</div>
       </Link>
 
-      <div className={styles.jobs_container} >
+      <div className="list_container">
         {jobsAr.map(job => {
           let url = `/jobs/${job.guid}`;
           let newEventUrl = `events/new/${job.guid}`;
           let eventsUrl = `jobs/${job.guid}/events`;
           return (
-            <div key={job.guid} className={styles.job_container}>
+            <div key={job.guid} className="list_item_container">
               <Link to={url}>
                 <h2>{job.name}</h2>
-                <div><span className={styles.label}>status</span> {job.status}</div>
-                <div><span className={styles.label}>company</span> {job.name}</div>
-                <div><span className={styles.label}>url</span> {job.url}</div>
-                <div><span className={styles.label}>description</span> {job.description}</div>
-                <div><span className={styles.label}>questions</span> {job.questions}</div>
-                <div><span className={styles.label}>source</span> {job.source}</div>
+                <div><span className="list_item_label">status</span> {job.status}</div>
+                <div><span className="list_item_label">company</span> {job.name}</div>
+                <div><span className="list_item_label">url</span> {job.url}</div>
+                <div><span className="list_item_label">description</span> {job.description}</div>
+                <div><span className="list_item_label">questions</span> {job.questions}</div>
+                <div><span className="list_item_label">source</span> {job.source}</div>
                 {job.created_at && (
-                  <div className={styles.small}>created {job.created_at}</div>
+                  <div className="list_item_small">created {job.created_at}</div>
                 )}
               </Link>
-              <div className={styles.button_container}>
+              <div className="button_container">
                 <Link to={newEventUrl}>
                   <Button name="button_save" label="Add event" clickHandler={() => {}} size="wide"/>
                   </Link>

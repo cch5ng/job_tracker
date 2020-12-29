@@ -206,7 +206,7 @@ function JobsForm(props) {
   if (formStatus === 'inProgress') {
     return (
       <div>
-        <h1 className={styles.view_title}>JOBS FORM</h1>
+        <h1 className="view_title">JOBS FORM</h1>
         <form>
           <Input type="text" value={jobName} name="jobName" inputOnChangeHandler={inputOnChangeHandler} label="name"/>
           <SelectGroup 
