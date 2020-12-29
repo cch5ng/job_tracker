@@ -1,0 +1,20 @@
+
+.splash_screen {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+
+  .splash_screen_container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
+
+  .splash_screen {
+    width: 45%;
+  }
+
+}
