@@ -35,14 +35,23 @@ h2 {
   height: 50px;
   padding: 12px;
   background-color: #666666;
+}
+
+.header_authenticated {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
 }
 
+.header_unauthenticated {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+
 nav {
-  width: 45%;
+  width: 33%;
 }
 
 .logo_title {
@@ -50,7 +59,15 @@ nav {
   font-weight: 600;
   font-family: 'Halant', serif;
   font-size: 1.3em;
+}
+
+.logo_title_authenticated {
   width: 33%;
+  text-align: center;
+}
+
+.logo_title_unauthenticated {
+  width: auto;
 }
 
 /* main */
