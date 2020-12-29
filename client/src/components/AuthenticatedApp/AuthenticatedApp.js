@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import NavBar from "../Header/NavBar"; //, Footer, Loading 
+import AuthenticatedNavBar from "../Header/AuthenticatedNavBar"; //, Footer, Loading 
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
@@ -19,7 +19,7 @@ import Events from '../Events/Events';
 const AuthenticatedApp = () => {
   return (
     <div>
-      <NavBar />
+      <AuthenticatedNavBar />
       <main className="main">
         <Switch>
           {/* <Route path="/" exact component={Home} /> */}
