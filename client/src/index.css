@@ -48,6 +48,7 @@ h2 {
   display: block;
   text-align: center;
   margin: 0 auto;
+  line-height: calc(94px / 2);
 }
 
 nav {
