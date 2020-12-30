@@ -1,5 +1,6 @@
 import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
@@ -16,7 +17,9 @@ function Events(props) {
   const [eventsDict, setEventsDict] = useState({});
   const [eventsSortBy, setEventsSortBy] = useState('oldest to newest');
   const [filterHidePastEvents, setFilterHidePastEvents] = useState(true);
-  const {userGuid, sessionToken} = useAppAuth();
+  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
+  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+  const { name, picture, email } = user;
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -50,17 +53,19 @@ function Events(props) {
     }
   }
 
+  const getTokenAndEvents = async (userGuid) => {
+    const token = await getAccessTokenSilently();
+    login({userEmail, sessionToken: token, userGuid})
 
-  useEffect(() => {
     let url;
     if (!jobId && userGuid) {
       url = `http://localhost:3000/api/events/user/${userGuid}`;
     } else if (jobId) {
       url = `http://localhost:3000/api/events/job/${jobId}`
     }
-    if (url) {
+    if (url && token) {
       fetch(url, {
-        headers: {Authorization: `Bearer ${sessionToken}`}
+        headers: {Authorization: `Bearer ${token}`}
       })
         .then(resp => resp.json())
         .then(json => {
@@ -69,9 +74,15 @@ function Events(props) {
             setEventsDict(evDict);
           } 
         })
-        .catch(err => console.error('error', err))
-  
+        .catch(err => console.error('error', err))      
     }
+  }
+
+  useEffect(() => {
+    getUserGuid({userEmail: email})
+      .then(userGuid => {
+        getTokenAndEvents(userGuid);
+      })
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
