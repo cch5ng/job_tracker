@@ -31,7 +31,7 @@ const AuthenticatedApp = () => {
           <ProtectedRoute path="/jobs" component={Jobs} />
           <ProtectedRoute exact path="/events/new/:jobId" component={EventsFormCreate} />
           <ProtectedRoute exact path="/events/edit/:eventId" component={EventsFormEdit} />
-          <ProtectedRoute exact path="/events/all" component={Events} />
+          <ProtectedRoute exact path="/events" component={Events} />
         </Switch>
       </main>
     </div>
