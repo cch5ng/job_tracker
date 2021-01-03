@@ -2,6 +2,8 @@ import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import AuthenticatedApp from './AuthenticatedApp/AuthenticatedApp';
 import UnauthenticatedApp from './UnauthenticatedApp/UnauthenticatedApp';
+// import {JobsProvider} from '../context/jobs-context';
+
 
 function Home() {
   const { isAuthenticated } = useAuth0();
