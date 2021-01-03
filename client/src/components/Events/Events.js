@@ -6,6 +6,7 @@ import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByPro
 import Button from '../FormShared/Button';
 import SelectGroup from '../FormShared/SelectGroup';
 import Input from '../FormShared/Input';
+//import {useJobs} from '../../context/jobs-context';
 
 const EVENTS_SORT_OPTIONS = [
   {label: 'oldest to newest', value: 'oldest to newest'},
@@ -20,6 +21,7 @@ function Events(props) {
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
+  console.log('email', email)
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -55,7 +57,7 @@ function Events(props) {
 
   const getTokenAndEvents = async (userGuid) => {
     const token = await getAccessTokenSilently();
-    login({userEmail, sessionToken: token, userGuid})
+    login({userEmail: email, sessionToken: token, userGuid})
 
     let url;
     if (!jobId && userGuid) {
@@ -79,10 +81,17 @@ function Events(props) {
   }
 
   useEffect(() => {
-    getUserGuid({userEmail: email})
+    if (email.length) {
+      getUserGuid({userEmail: email})
       .then(userGuid => {
+        console.log('userGuid', userGuid)
         getTokenAndEvents(userGuid);
       })
+      .catch(err => console.error('err', err))
+    }
+    // return (() => {
+    //   setEventsDict({})
+    // })
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
