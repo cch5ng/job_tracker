@@ -6,65 +6,75 @@ import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 import styles from './Jobs.module.css';
 import Button from '../FormShared/Button';
+//import {JobsProvider, useJobs} from '../../context/jobs-context';
 
 let cx = classNames.bind(styles);
 
 function Jobs() {
   const [jobsDict, setJobsDict] = useState({});
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  const { name, picture, email } = user;
-  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
+  const { email } = user;
+  const {login, getUserGuid, userGuid, sessionToken} = useAppAuth(); //userEmail, 
+  //const {jobsDict, status} = useJobs();
+  console.log('top userGuid', userGuid)
 
   const handleArchiveButtonClick = (ev) => {
     ev.preventDefault();
     const {name} = ev.target;
 
-    if (name && sessionToken) {
-      fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
-        method: 'PUT',
-        headers: {Authorization: `Bearer ${sessionToken}`}
-      })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.status === 'success') {
-            setJobsDict({...jobsDict, [name]: {...jobsDict[name], status: 'archived'}})
-          }
-        })
-        .catch(err => console.error('err', err))  
-    }
+     if (name && sessionToken) {
+       fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
+         method: 'PUT',
+         headers: {Authorization: `Bearer ${sessionToken}`}
+       })
+         .then(resp => resp.json())
+         .then(json => {
+           if (json.status === 'success') {
+             setJobsDict({...jobsDict, [name]: {...jobsDict[name], status: 'archived'}})
+           }
+         })
+         .catch(err => console.error('err', err))  
+     }
   }
 
-  const callSecureApi = async (uGuid) => {
-    try {
-      const token = await getAccessTokenSilently();
-      login({userEmail: email, sessionToken: token, userGuid: uGuid})
-
-      if (uGuid && token) {
-        fetch(`http://localhost:3000/api/jobs/all/${uGuid}`, {
-          headers: {Authorization: `Bearer ${token}`}
-        })
-          .then(resp => resp.json())
-          .then(json => {
-            let {jobs} = json;
-            let jobsObj = getDictFromAr(jobs);
-            setJobsDict(jobsObj);
-          })
-          .catch(err => console.error('err', err))  
-      }  
-    } catch (error) {
-      console.error('error', error)
-    }
-  };
+   const callSecureApi = async (uGuid) => {
+     try {
+       const token = await getAccessTokenSilently();
+       if (uGuid.length && token) {
+         fetch(`http://localhost:3000/api/jobs/all/${uGuid}`, {
+           headers: {Authorization: `Bearer ${token}`}
+         })
+           .then(resp => resp.json())
+           .then(json => {
+             let {jobs} = json;
+             let jobsObj = getDictFromAr(jobs);
+             setJobsDict(jobsObj);
+           })
+           .catch(err => console.error('err', err))  
+       }
+      //test 123120
+      login({userGuid: uGuid}) // userEmail: email, sessionToken: token, 
+     } catch (error) {
+       console.error('error', error)
+     }
+   };
 
   useEffect(() => {
-    getUserGuid({userEmail: email})
-      .then(uGuid => {
-        callSecureApi(uGuid);
-      })
+    if (email.length) {
+       getUserGuid({userEmail: email})
+        .then(resp => {
+          if (resp && resp.userGuid && resp.userGuid.length) {
+            callSecureApi(resp.userGuid);
+          }
+        })
+    }
   }, [])
 
-  let jobsAr = getArFromDict(jobsDict);
-  orderArByProp(jobsAr, 'created_at', 'desc')
+  let jobsAr = [];
+  if (Object.keys(jobsDict).length) {
+    jobsAr = getArFromDict(jobsDict);
+    orderArByProp(jobsAr, 'created_at', 'desc')
+  }
 
   return (
     <div>
