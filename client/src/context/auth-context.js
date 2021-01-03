@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 
 const AuthContext = React.createContext([{}, () => {}]);
 function AuthProvider({children}) {
-  const [state, setState] = React.useState({
+  const [authState, setAuthState] = React.useState({
     userEmail: null,
     userGuid: null,
     sessionToken: null
   });
 
   const login = ({userEmail, sessionToken, userGuid}) => {
-    setState({...state, userEmail, userGuid, sessionToken});
+    setAuthState({...authState, userEmail, userGuid, sessionToken});
   }
 
   const logout = () => {
-    setState({
+    setAuthState({
       userEmail: null,
       userGuid: null,
       sessionToken: null
@@ -23,6 +23,7 @@ function AuthProvider({children}) {
   const getUserGuid = ({userEmail}) => {
     //make api request
     //check if the user exists in the db
+    //return 
     return fetch('http://localhost:3000/api/auth/guid', {
       method: 'POST',
       headers: {
@@ -33,12 +34,15 @@ function AuthProvider({children}) {
       .then(resp => resp.json())
       .then(json => {
         if (json.user_guid) {
+          console.log('user exists; guid: ', json.user_guid)
           //yes
           let userGuid = json.user_guid;
-          setState({...state, userGuid});
-          return userGuid;  
+          console.log('userGuid', userGuid)
+          //setState({...state, userGuid});
+          return {userGuid};  
         } else {
           //no
+          console.log('user does not exist, posting new user')
           return fetch('http://localhost:3000/api/auth/user', {
             method: 'POST',
             headers: {
@@ -48,12 +52,13 @@ function AuthProvider({children}) {
           })
             .then(resp => resp.json())
             .then(json => {
-              console.log('json', json)
+              //console.log('json', json)
               if (json.user_guid) {
+                console.log('new user posted, guid: ', json.user_guid)
                 //yes
                 let userGuid = json.user_guid;
-                setState({...state, userGuid});
-                return userGuid;  
+                //setState({...state, userGuid});
+                return {userGuid};  
               }
             })
         }
@@ -61,17 +66,17 @@ function AuthProvider({children}) {
       .catch(err => console.error('err', err))        
   }
 
-  let authState = {...state, logout, getUserGuid, login};
+  let authProviderState = {...authState, logout, getUserGuid, login};
 
   /**
    * Provider component is the place where you'd pass a prop called value to, 
    * which you can subsequently consume within the Consumer component
    */
   return (
-    <AuthContext.Provider value={authState}>
-      {state.status === 'pending' ? (
+    <AuthContext.Provider value={authProviderState}>
+      {authState.status === 'pending' ? (
         'Loading...'
-      ) : state.status === 'logged out' ? (
+      ) : authState.status === 'logged out' ? (
         children
       ) : (
         children
