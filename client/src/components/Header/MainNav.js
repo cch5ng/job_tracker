@@ -16,7 +16,7 @@ const MainNav = () => (
     </div>
     <div className={styles.nav_row} >
       <NavLink
-        to="/events/all"
+        to="/events"
         exact
         className={styles.nav_link}
         activeClassName="router-link-exact-active"
