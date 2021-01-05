@@ -2,6 +2,7 @@ import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
+import {useJobs} from '../../context/jobs-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
 import SelectGroup from '../FormShared/SelectGroup';
@@ -20,6 +21,8 @@ function Events(props) {
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
+  const {jobsDict, getJobsForUser} = useJobs();
+  console.log('jobsDict', jobsDict)
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -58,14 +61,14 @@ function Events(props) {
       const token = await getAccessTokenSilently();
       login({userEmail: email, sessionToken: token, userGuid: uGuid})
 
-      let url;
+      let eventsUrl;
       if (!jobId && uGuid) {
-        url = `http://localhost:3000/api/events/user/${uGuid}`;
+        eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
       } else if (jobId) {
-        url = `http://localhost:3000/api/events/job/${jobId}`
+        eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
       }
-      if (url) {
-        fetch(url, {
+      if (eventsUrl) {
+        fetch(eventsUrl, {
           headers: {Authorization: `Bearer ${token}`}
         })
           .then(resp => resp.json())
@@ -77,6 +80,13 @@ function Events(props) {
           })
           .catch(err => console.error('error', err))
       }
+
+      let jobsUrl;
+      if (uGuid) {
+        jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
+        getJobsForUser({url: jobsUrl, token})
+      }
+
     } catch (error) {
       console.error('error', error)
     }
