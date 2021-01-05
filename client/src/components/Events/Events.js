@@ -22,6 +22,7 @@ function Events(props) {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const {jobsDict, getJobsForUser} = useJobs();
+  console.log('eventsDict', eventsDict)
   console.log('jobsDict', jobsDict)
 
   const buttonOnClickHandler = (ev) => {
@@ -129,11 +130,18 @@ function Events(props) {
       <div className="list_container">
         { filteredEvents.map(event => {
           let url = `/events/edit/${event.guid}`;
+          let job_guid = event.job_guid;
           return (
             <div key={event.guid} className="list_item_container">
               <Link to={url}>
                 <div><span className="list_item_label">name:</span> {event.name}</div>
                 <div><span className="list_item_label">format:</span> {event.format}</div>
+                {jobsDict && jobsDict[job_guid] && jobsDict[job_guid].name && (
+                  <div><span className="list_item_label">job name:</span> {jobsDict[job_guid].name}</div>
+                )}
+                {jobsDict && jobsDict[job_guid] && jobsDict[job_guid].company_name && (
+                  <div><span className="list_item_label">company name:</span> {jobsDict[job_guid].company_name}</div>
+                )}
                 <div><span className="list_item_label">contact:</span> {event.contact}</div>
                 <div><span className="list_item_label">notes:</span> {event.notes}</div>
                 <div><span className="list_item_label">description:</span> {event.description}</div>
