@@ -17,7 +17,7 @@ const Auth0ProviderWithHistory = ({ children }) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      redirectUri="https://localhost:3001/jobs"
+      redirectUri="https://localhost:3001/events"
       onRedirectCallback={onRedirectCallback}
       audience={audience}
     >
