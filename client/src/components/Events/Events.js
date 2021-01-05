@@ -1,5 +1,6 @@
 import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
 import {useAppAuth} from '../../context/auth-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
@@ -16,7 +17,9 @@ function Events(props) {
   const [eventsDict, setEventsDict] = useState({});
   const [eventsSortBy, setEventsSortBy] = useState('oldest to newest');
   const [filterHidePastEvents, setFilterHidePastEvents] = useState(true);
-  const {userGuid, sessionToken} = useAppAuth();
+  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+  const { name, picture, email } = user;
+  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -50,28 +53,40 @@ function Events(props) {
     }
   }
 
+  const callSecureApi = async (uGuid) => {
+    try {
+      const token = await getAccessTokenSilently();
+      login({userEmail: email, sessionToken: token, userGuid: uGuid})
+
+      let url;
+      if (!jobId && uGuid) {
+        url = `http://localhost:3000/api/events/user/${uGuid}`;
+      } else if (jobId) {
+        url = `http://localhost:3000/api/events/job/${jobId}`
+      }
+      if (url) {
+        fetch(url, {
+          headers: {Authorization: `Bearer ${token}`}
+        })
+          .then(resp => resp.json())
+          .then(json => {
+            if (json.events.length) {
+              let evDict = json.events ? getDictFromAr(json.events): {};
+              setEventsDict(evDict);
+            } 
+          })
+          .catch(err => console.error('error', err))
+      }
+    } catch (error) {
+      console.error('error', error)
+    }
+  };
 
   useEffect(() => {
-    let url;
-    if (!jobId && userGuid) {
-      url = `http://localhost:3000/api/events/user/${userGuid}`;
-    } else if (jobId) {
-      url = `http://localhost:3000/api/events/job/${jobId}`
-    }
-    if (url) {
-      fetch(url, {
-        headers: {Authorization: `Bearer ${sessionToken}`}
+    getUserGuid({userEmail: email})
+      .then(uGuid => {
+        callSecureApi(uGuid);
       })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.events.length) {
-            let evDict = json.events ? getDictFromAr(json.events): {};
-            setEventsDict(evDict);
-          } 
-        })
-        .catch(err => console.error('error', err))
-  
-    }
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
@@ -99,10 +114,7 @@ function Events(props) {
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
-
         <Input type="checkbox" checked={filterHidePastEvents} name="filterHidePastEvents" inputOnChangeHandler={inputOnChangeHandler} label="hide past events"/>
-
-
       </form>
       <div className="list_container">
         { filteredEvents.map(event => {
@@ -120,9 +132,7 @@ function Events(props) {
               </Link>
               <div className="button_container">
                 <Button id="buttonDelete" name={event.guid} label="Delete" clickHandler={buttonOnClickHandler} size="wide"/>
-                {/* <button id="buttonDelete" name={event.guid} onClick={buttonOnClickHandler}>Delete</button>               */}
               </div>
-
             </div>
           )
         })}        
