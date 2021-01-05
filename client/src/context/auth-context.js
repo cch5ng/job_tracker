@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const AuthContext = React.createContext([{}, () => {}]);
 function AuthProvider({children}) {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     userEmail: null,
     userGuid: null,
     sessionToken: null
