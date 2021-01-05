@@ -26,7 +26,12 @@ function JobsProvider({children}) {
       })      
   }
 
-  let jobsState = {...state, getJobsForUser}; //getJobsByUserGuid
+  const updateJobsDict = (jobObj) => {
+    let k = jobObj.name;
+    setState({...state, jobsDict: {...state.jobsDict, [k]: jobObj.job}})
+  }
+
+  let jobsState = {...state, getJobsForUser, updateJobsDict}; //getJobsByUserGuid
 
   /**
    * Provider component is the place where you'd pass a prop called value to, 
