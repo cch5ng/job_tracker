@@ -28,7 +28,7 @@ function Jobs() {
         .then(resp => resp.json())
         .then(json => {
           if (json.status === 'success') {
-            let updatedJob = {name, job: {...jobsDict[name], status: 'archived'}};
+            let updatedJob = {...jobsDict[name], status: 'archived'};
             updateJobsDict(updatedJob);
           }
         })
