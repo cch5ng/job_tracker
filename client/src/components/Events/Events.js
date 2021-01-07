@@ -117,9 +117,6 @@ function Events(props) {
   return (
     <div>
       <h1 className="view_title">EVENTS LIST</h1>
-      <Link to={createUrl} className="link_icon">Add Event
-        <div className="add_icon">+</div>    
-      </Link>
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
