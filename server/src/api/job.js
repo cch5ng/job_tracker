@@ -10,9 +10,9 @@ const router = Router();
 //should take into consideration creating a new company (vs an existing company)
 //for now just create a new company
 router.post('/', checkJwt, (req, res, next) => {
-  const {name, status, description, url, company_name, questions, source, user_guid} = req.body;
+  const {name, status, description, url, company_name, questions, source, user_guid, guid, created_at} = req.body;
     if (user_guid) {
-      JobTable.postJob({name, status, description, url, company_name, questions, source, user_guid})
+      JobTable.postJob({name, status, description, url, company_name, questions, source, user_guid, guid, created_at})
       .then(resp => {
         if (resp.status_code === 401) {
           res.status(401).json({error: 'Please log in and try again.'})
