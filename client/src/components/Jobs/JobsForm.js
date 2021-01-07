@@ -1,7 +1,9 @@
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import {useAppAuth} from '../../context/auth-context';
+import {useJobs} from '../../context/jobs-context';
 import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
@@ -28,6 +30,8 @@ const JOB_SOURCE_OPTIONS = [
 
 function JobsForm(props) {
   const {type} = props;
+  const {updateJobsDict, jobsDict} = useJobs();
+
   let jobId;
   if (type === 'edit') {
     jobId = props.jobId;
@@ -41,7 +45,7 @@ function JobsForm(props) {
   const [jobQuestions, setJobQuestions] = useState('');
   const [jobSource, setJobSource] = useState('none');
   const [jobGuid, setJobGuid] = useState(null);
-
+  const [jobCreatedAt, setJobCreatedAt] = useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
   //input change handlers
@@ -84,7 +88,6 @@ function JobsForm(props) {
       } else if (type === 'edit') {
 
       }
-
     }
 
     if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
@@ -102,6 +105,10 @@ function JobsForm(props) {
               user_guid: uGuid
             }
             if (type === 'create') {
+              let guid = uuidv4();
+              let curDate = new Date();
+              body.guid = guid;
+              body.created_at = curDate.toISOString();
               fetch(`http://localhost:3000/api/jobs/`, {
                 method: 'POST',
                 headers: {
@@ -110,15 +117,20 @@ function JobsForm(props) {
                 },
                 body: JSON.stringify(body)
               })
-              .then(resp => resp.json())
+              .then(resp => {
+                if (resp.status === 201) {
+                  updateJobsDict(body);
+                  return resp.json(); 
+                }
+              })
               .then(json => {
                 if (json.job_guid) {
                   setJobGuid(json.job_guid);
                 }
               })
               .catch(err => console.error('err', err))
-            } else if (type === 'edit') {
-              fetch(`http://localhost:3000/api/jobs/`, {
+            } else if (type === 'edit' && jobId.length) {
+              fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -126,8 +138,13 @@ function JobsForm(props) {
                 },
                 body: JSON.stringify(body)
               })
-              .then(resp => resp.json())
-              .then(json => console.log('json', json))
+              .then(resp => {
+                if (resp.status === 201) {
+                  body.guid = jobId;
+                  body.created_at = jobCreatedAt;
+                  updateJobsDict(body);
+                }
+              })
               .catch(err => console.error('err', err))
             }
         })
@@ -150,9 +167,9 @@ function JobsForm(props) {
         .then(resp => resp.json())
         .then(json => {
           console.log('json', json)
-          const {company_name, description, name, questions, source, status, url} = json.job;
+          const {company_name, description, name, questions, source, status, url, created_at} = json.job;
           if (company_name) {
-            setCompanyName(companyName);
+            setCompanyName(company_name);
           }
           if (name) {
             setJobName(name);
@@ -171,6 +188,9 @@ function JobsForm(props) {
           }
           if (source) {
             setJobSource(source);
+          }
+          if (created_at) {
+            setJobCreatedAt(created_at);
           }
         })
         .catch(err => console.error('err', err))
@@ -234,7 +254,6 @@ function JobsForm(props) {
       </div>
     );
   }
-
 };
 
 export default JobsForm;
