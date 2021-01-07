@@ -1,21 +1,20 @@
-const { v4: uuidv4 } = require('uuid');
 require('dotenv').config()
 const db = require('../databasePool');
 
 class JobTable {
-  static postJob({name, status, description, url, company_name, questions, source, user_guid}) {
-    let guid = uuidv4();
+  static postJob({name, status, description, url, company_name, questions, source, user_guid, guid, created_at}) {
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO job (name, status, description, url, company_name, questions, source, guid, user_guid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-        [name, status, description, url, company_name, questions, source, guid, user_guid],
+        `INSERT INTO job (name, status, description, url, company_name, questions, source, guid, user_guid, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+        [name, status, description, url, company_name, questions, source, guid, user_guid, created_at],
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
             const jobId = response.rows[0].id;
             if (jobId) {
               resolve({ message: `The job: ${guid} was created successfully`,
-                        job_guid: guid
+                        job_guid: guid,
+                        status: 'success'
               });
             }
           } else {
@@ -65,7 +64,7 @@ class JobTable {
   static getJobByGuid({ job_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, url, company_name, questions, source, guid FROM job WHERE guid=$1`,
+        `SELECT name, status, description, url, company_name, questions, source, guid, created_at FROM job WHERE guid=$1`,
         [job_guid],
         (error, response) => {
           if (error) return reject(error);

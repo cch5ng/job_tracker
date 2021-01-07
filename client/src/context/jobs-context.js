@@ -27,8 +27,18 @@ function JobsProvider({children}) {
   }
 
   const updateJobsDict = (jobObj) => {
-    let k = jobObj.name;
-    setState({...state, jobsDict: {...state.jobsDict, [k]: jobObj.job}})
+    console.log('jobObj', jobObj)
+    console.log('jobsDict', state.jobsDict)
+    let {guid} = jobObj;
+    if (!state.jobsDict[guid]) {
+      setState({...state, jobsDict: {...state.jobsDict, [guid]: jobObj}})
+    } else {
+      let updatedJobs = {...state.jobsDict}
+      delete updatedJobs[guid];
+      updatedJobs[guid] = jobObj;
+      console.log('updatedJobs', updatedJobs)
+      setState({...state, jobsDict: updatedJobs});      
+    }
   }
 
   let jobsState = {...state, getJobsForUser, updateJobsDict}; //getJobsByUserGuid
