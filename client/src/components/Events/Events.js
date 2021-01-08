@@ -5,6 +5,7 @@ import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
+import Checkbox from '../FormShared/Checkbox';
 import SelectGroup from '../FormShared/SelectGroup';
 import Input from '../FormShared/Input';
 
@@ -47,11 +48,11 @@ function Events(props) {
   }
 
   const inputOnChangeHandler = (ev) => {
-    const {name, value, checked} = ev.target;
+    const {name, value, checked, id} = ev.target;
     if (name === 'eventsSortBy') {
       setEventsSortBy(value);
-    } else if (name === 'filterHidePastEvents') {
-      setFilterHidePastEvents(checked)
+    } else if (id === 'filterHidePastEvents') {
+      setFilterHidePastEvents(!filterHidePastEvents)
     }
   }
 
@@ -120,7 +121,9 @@ function Events(props) {
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
-        <Input type="checkbox" checked={filterHidePastEvents} name="filterHidePastEvents" inputOnChangeHandler={inputOnChangeHandler} label="hide past events"/>
+        <Checkbox checkboxVal={filterHidePastEvents} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='hide past events' name='filterHidePastEvents' checkClassName=''
+          id='filterHidePastEvents' />
       </form>
       <div className="list_container">
         { filteredEvents.map(event => {
