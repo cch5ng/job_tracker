@@ -17,10 +17,20 @@ import EventsFormEdit from '../Events/EventsFormEdit';
 import Events from '../Events/Events';
 
 const AuthenticatedApp = () => {
+  const [showNavMenu, setShowNavMenu] = useState(false);
+
+  const toggleNavMenuDisplay = (ev) => {
+    if (ev.target.className === 'main' && showNavMenu) {
+      setShowNavMenu(!showNavMenu);
+    } else {
+      setShowNavMenu(!showNavMenu);
+    }
+  }
+
   return (
     <div>
-      <AuthenticatedNavBar />
-      <main className="main">
+      <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
+      <main className="main" onClick={toggleNavMenuDisplay}>
         <Switch>
           {/* <Route path="/" exact component={Home} /> */}
           <ProtectedRoute path="/profile" component={Profile} />

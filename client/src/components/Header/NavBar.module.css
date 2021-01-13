@@ -19,6 +19,12 @@
   text-align: center;
 }
 
+.close_icon {
+  color: #222f5b;
+  text-align: right;
+  padding: 8px 8px 0 0;
+}
+
 @media (min-width: 768px) {
 
   .nav_menu {
