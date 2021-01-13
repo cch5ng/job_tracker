@@ -19,6 +19,13 @@ function Events(props) {
   const [eventsDict, setEventsDict] = useState({});
   const [eventsSortBy, setEventsSortBy] = useState('oldest to newest');
   const [filterHidePastEvents, setFilterHidePastEvents] = useState(true);
+  const [filterEventPhoneMeeting, setFilterEventPhoneMeeting] = useState(true);
+  const [filterEventVideoMeeting, setFilterEventVideoMeeting] = useState(true);
+  const [filterEventOnlineTestInterview, setFilterEventOnlineTestInterview] = useState(true);
+  const [filterEventOnlineTestAutomated, setFilterEventOnlineTestAutomated] = useState(true);
+  const [filterEventTakeHomeTestScheduled, setFilterEventTakeHomeTestScheduled] = useState(true);
+  const [filterEventTakeHomeTestUnscheduled, setFilterEventTakeHomeTestUnscheduled] = useState(true);
+
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
@@ -44,7 +51,6 @@ function Events(props) {
       }
     })
     .catch(err => console.error('err', err))
-
   }
 
   const inputOnChangeHandler = (ev) => {
@@ -53,6 +59,18 @@ function Events(props) {
       setEventsSortBy(value);
     } else if (id === 'filterHidePastEvents') {
       setFilterHidePastEvents(!filterHidePastEvents)
+    } else if (id === 'filterEventPhoneMeeting') {
+      setFilterEventPhoneMeeting(!filterEventPhoneMeeting)
+    } else if (id === 'filterEventVideoMeeting') {
+      setFilterEventVideoMeeting(!filterEventVideoMeeting)
+    } else if (id === 'filterEventOnlineTestInterview') {
+      setFilterEventOnlineTestInterview(!filterEventOnlineTestInterview)
+    } else if (id === 'filterEventOnlineTestAutomated') {
+      setFilterEventOnlineTestAutomated(!filterEventOnlineTestAutomated)
+    } else if (id === 'filterEventTakeHomeTestScheduled') {
+      setFilterEventTakeHomeTestScheduled(!filterEventTakeHomeTestScheduled)
+    } else if (id === 'filterEventTakeHomeTestUnscheduled') {
+      setFilterEventTakeHomeTestUnscheduled(!filterEventTakeHomeTestUnscheduled)
     }
   }
 
@@ -92,6 +110,29 @@ function Events(props) {
     }
   };
 
+  const filterEventsByEventFormat = (eventsList) => {
+    let filteredList;
+    let includeList = [];
+    let excludeList = [];
+
+    const formatDict = {
+      'phone meeting': filterEventPhoneMeeting,
+      'video meeting': filterEventVideoMeeting,
+      'online test, interview': filterEventOnlineTestInterview,
+      'online test, automated': filterEventOnlineTestAutomated,
+      'take-home assessment, scheduled': filterEventTakeHomeTestScheduled,
+      'take-home assessment, unscheduled': filterEventTakeHomeTestUnscheduled
+    }
+
+    filteredList = eventsList.filter(ev => {
+      let format = ev.format;
+      if (formatDict[format]) {
+        return ev;
+      }
+    })
+    return filteredList;
+  }
+
   useEffect(() => {
     getUserGuid({userEmail: email})
       .then(uGuid => {
@@ -112,7 +153,8 @@ function Events(props) {
       return eventDate >= curDate;
     });  
   }
-  
+  //filter for the event type
+  filteredEvents = filterEventsByEventFormat(filteredEvents);
   let createUrl = `/events/new/${jobId}`;
 
   return (
@@ -124,6 +166,24 @@ function Events(props) {
         <Checkbox checkboxVal={filterHidePastEvents} onChangeHandler={inputOnChangeHandler}
           checkboxLabel='hide past events' name='filterHidePastEvents' checkClassName=''
           id='filterHidePastEvents' />
+        <Checkbox checkboxVal={filterEventPhoneMeeting} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show phone meetings' name='filterEventPhoneMeeting' checkClassName=''
+          id='filterEventPhoneMeeting' />
+        <Checkbox checkboxVal={filterEventVideoMeeting} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show video meetings' name='filterEventVideoMeeting' checkClassName=''
+          id='filterEventVideoMeeting' />
+        <Checkbox checkboxVal={filterEventOnlineTestInterview} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show online tests, interview' name='filterEventOnlineTestInterview' checkClassName=''
+          id='filterEventOnlineTestInterview' />
+        <Checkbox checkboxVal={filterEventOnlineTestAutomated} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show online tests, automated' name='filterEventOnlineTestAutomated' checkClassName=''
+          id='filterEventOnlineTestAutomated' />
+        <Checkbox checkboxVal={filterEventTakeHomeTestScheduled} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show take-home assessments, scheduled' name='filterEventTakeHomeTestScheduled' checkClassName=''
+          id='filterEventTakeHomeTestScheduled' />
+        <Checkbox checkboxVal={filterEventTakeHomeTestUnscheduled} onChangeHandler={inputOnChangeHandler}
+          checkboxLabel='show take-home assessments, unscheduled' name='filterEventTakeHomeTestUnscheduled' checkClassName=''
+          id='filterEventTakeHomeTestUnscheduled' />
       </form>
       <div className="list_container">
         { filteredEvents.map(event => {
@@ -133,7 +193,6 @@ function Events(props) {
           return (
             <div key={event.guid} className="list_item_container">
               <Link to={url}>
-                <div><span className="list_item_label">name:</span> {event.name}</div>
                 <div><span className="list_item_label">format:</span> {event.format}</div>
                 <div><span className="list_item_label">contact:</span> {event.contact}</div>
                 <div><span className="list_item_label">notes:</span> {event.notes}</div>
