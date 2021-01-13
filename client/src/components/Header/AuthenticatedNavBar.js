@@ -1,4 +1,3 @@
-// src/components/nav-bar.js
 import React, {useState} from "react";
 import classNames from 'classnames/bind';
 import MainNav from "./MainNav";
