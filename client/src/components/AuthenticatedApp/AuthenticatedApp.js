@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import AuthenticatedNavBar from "../Header/AuthenticatedNavBar"; //, Footer, Loading 
+import AuthenticatedNavBar from "../Header/AuthenticatedNavBar";
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
 import ExternalApi from '../../views/ExternalApi';
@@ -32,7 +32,6 @@ const AuthenticatedApp = () => {
       <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
       <main className="main" onClick={toggleNavMenuDisplay}>
         <Switch>
-          {/* <Route path="/" exact component={Home} /> */}
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/external-api" component={ExternalApi} />
           <ProtectedRoute exact path="/jobs/new" component={JobsFormCreate} />
