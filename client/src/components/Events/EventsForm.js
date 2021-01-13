@@ -14,25 +14,16 @@ const EVENT_NAME_OPTIONS = [
   {label: 'test', value: 'test'},
   {label: 'assessment', value: 'assessment'}
 ];
-const EVENT_FORMAT_OPTIONS_DICT = {
-  meeting: [
-    {label: 'Select a format', value: "none"},
-    {label: 'phone', value: 'phone'},
-    {label: 'video', value: 'video'},
-    {label: 'group', value: 'group'}
-  ],
-  test: [
-    {label: 'Select a format', value: "none"},
-    {label: 'online (with interviewer)', value: 'online (with interviewer)'},
-    {label: 'online (timed alone)', value: 'online (timed alone)'},
-    {label: 'online (unscheduled alone)', value: 'online (unscheduled alone)'}
-  ],
-  assessment: [
-    {label: 'Select a format', value: "none"},
-    {label: 'take-home scheduled timed', value: 'take-home scheduled timed'},
-    {label: 'take-home unscheduled', value: 'take-home unscheduled'}
-  ]
-};
+
+const EVENT_FORMAT_OPTIONS_LIST = [
+  {label: 'Select a format', value: "none"},
+  {label: 'phone meeting', value: 'phone meeting'},
+  {label: 'video meeting', value: 'video meeting'},
+  {label: 'online test, interview', value: 'online test, interview'},
+  {label: 'online test, automated', value: 'online test, automated'},
+  {label: 'take-home assessment, scheduled', value: 'take-home assessment, scheduled'},
+  {label: 'take-home assessment, unscheduled', value: 'take-home assessment, unscheduled'}
+];
 
 function EventsForm(props) {
   const {type} = props;
@@ -46,8 +37,7 @@ function EventsForm(props) {
   }
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [eventDateTime, setEventDateTime] = useState('');
-  const [eventName, setEventName] = useState('meeting');
-  const [eventFormat, setEventFormat] = useState('phone');
+  const [eventFormat, setEventFormat] = useState('phone meeting');
   const [eventContact, setEventContact] = useState('');
   const [eventNotes, setEventNotes] = useState('');
   const [eventDescription, setEventDescription] = useState('');
@@ -61,8 +51,6 @@ function EventsForm(props) {
   const inputOnChangeHandler = (ev) => {
     const {name, value} = ev.target;
     const nameToSetterDict = {
-      'eventName': function(v) {
-        setEventName(v)},
       'eventFormat': function(v) {
         setEventFormat(v)},
       'eventContact': function(v) {
@@ -87,7 +75,7 @@ function EventsForm(props) {
     if (id === 'buttonCancel') {
       //handle buttonCancel
       if (type === 'create') {
-        setEventName('');
+        //setEventName('');
         setEventFormat('');
         setEventContact('');
         setEventNotes('');
@@ -108,7 +96,6 @@ function EventsForm(props) {
         })
         .then(resp => resp.json())
         .then(json => {
-          console.log('json', json)
           setFormSubmitted(true);
         })
         .catch(err => console.error('err', err))
@@ -116,8 +103,7 @@ function EventsForm(props) {
 
     if (id === 'buttonSave') {
       let body = {
-        job_guid: type === 'create' ? createJobId : editJobGuid, 
-        name: eventName, 
+        job_guid: type === 'create' ? createJobId : editJobGuid,
         format: eventFormat, 
         contact: eventContact, 
         notes: eventNotes, 
@@ -169,10 +155,7 @@ function EventsForm(props) {
         .then(resp => resp.json())
         .then(json => {
           if (json.event) {
-            const {name, format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
-            if (name) {
-              setEventName(name);
-            }
+            const {format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
             if (format) {
               setEventFormat(format);
             }
@@ -226,11 +209,8 @@ function EventsForm(props) {
       <h1 className="view_title">EVENTS FORM</h1>
       <form>
         <SelectGroup 
-          label="name" name="eventName" value={eventName} 
-          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_NAME_OPTIONS} />  
-        <SelectGroup 
           label="format" name="eventFormat" value={eventFormat} 
-          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_DICT[eventName]} />  
+          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_LIST} />  
         <Input type="text" value={eventContact} name="eventContact" inputOnChangeHandler={inputOnChangeHandler} label="contact"/>
         <TextArea value={eventNotes} name="eventNotes" inputOnChangeHandler={inputOnChangeHandler}  
           label="notes"/>

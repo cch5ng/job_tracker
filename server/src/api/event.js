@@ -8,9 +8,9 @@ const router = Router();
 
 //create new event (should be tied to an existing job guid)
 router.post('/', checkJwt, (req, res, next) => {
-  const {job_guid, name, format, contact, notes, description, follow_up, date_time} = req.body;
+  const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
     if (job_guid) {
-    EventTable.postEvent({name, format, contact, notes, description, follow_up, job_guid, date_time})
+    EventTable.postEvent({format, contact, notes, description, follow_up, job_guid, date_time})
       .then(resp => {
         if (resp.status_code === 401) {
           res.status(401).json({error: 'Please log in and try again.'})
@@ -27,9 +27,9 @@ router.post('/', checkJwt, (req, res, next) => {
 //update event given event guid
 router.put('/:event_guid', checkJwt, (req, res, next) => {
   const guid = req.params.event_guid;
-  const {job_guid, name, format, contact, notes, description, follow_up, date_time} = req.body;
+  const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
   if (guid) {
-    EventTable.updateEvent({job_guid, name, format, contact, notes, description, follow_up, date_time, guid})
+    EventTable.updateEvent({job_guid, format, contact, notes, description, follow_up, date_time, guid})
     .then(resp => {
       if (resp.status_code === 401) {
         res.status(401).json({error: 'Please log in and try again.'})
