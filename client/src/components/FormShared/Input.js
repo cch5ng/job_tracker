@@ -3,7 +3,7 @@ import styles from './Input.module.css';
 
 let cx = classNames.bind(styles);
 
-const Input = ({type, value, name, inputOnChangeHandler, label, inline, checked}) => {
+const Input = ({type, value, name, inputOnChangeHandler, label, inline, checked, placeholder}) => {
 
   const inputGroupClassName = cx(
     {
@@ -11,6 +11,8 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline, checked}
       inputGroupInline: inline
     }
   );
+
+  console.log('value', value)
 
   return (
     <div className={inputGroupClassName}>
@@ -23,7 +25,8 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline, checked}
       )}
       {value !== undefined && (
         <input type={type} value={value} name={name} 
-          className={styles.input} onChange={ev => inputOnChangeHandler(ev)}/>
+          className={styles.input} onChange={ev => inputOnChangeHandler(ev)}
+          placeholder={placeholder} />
       )}
     </div>
   )
