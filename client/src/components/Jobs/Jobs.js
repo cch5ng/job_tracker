@@ -7,14 +7,23 @@ import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 import styles from './Jobs.module.css';
 import Button from '../FormShared/Button';
+import Input from '../FormShared/Input';
 
 let cx = classNames.bind(styles);
 
 function Jobs() {
+  const [jobFilterStr, setJobFilterStr] = useState('');
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
-  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
-  const {jobsDict, updateJobsDict} = useJobs();
+  const { login, getUserGuid, userGuid, userEmail, sessionToken } = useAppAuth();
+  const { jobsDict, updateJobsDict } = useJobs();
+
+  const inputOnChangeHandler = (ev) => {
+    const {name, value} = ev.target;
+    if (name === 'jobFilterStr') {
+      setJobFilterStr(value);
+    }
+  }
 
   const handleArchiveButtonClick = (ev) => {
     ev.preventDefault();
@@ -41,6 +50,19 @@ function Jobs() {
     jobsAr = getArFromDict(jobsDict);
     orderArByProp(jobsAr, 'created_at', 'desc')
   }
+  if (jobsAr.length && jobFilterStr && jobFilterStr.length) {
+    jobsAr = jobsAr.filter(job => {
+      if (job.name && job.company_name) {
+        return job.name.indexOf(jobFilterStr) > -1 || job.company_name.indexOf(jobFilterStr) > -1;
+      }
+      if (job.name) {
+        return job.name.indexOf(jobFilterStr) > -1
+      }
+      if (job.company_name) {
+        return job.company_name.indexOf(jobFilterStr) > -1
+      }
+    })
+  }
 
   return (
     <div>
@@ -48,6 +70,8 @@ function Jobs() {
       <Link to="/jobs/new" className="link_icon">
         <div className="add_icon">+</div>
       </Link>
+      <Input type="text" value={jobFilterStr} name="jobFilterStr" 
+        inputOnChangeHandler={inputOnChangeHandler} placeholder="Search by company or role" />
 
       <div className="list_container">
         {jobsAr.map(job => {
