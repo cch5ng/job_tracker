@@ -20,9 +20,10 @@ const AuthenticatedApp = () => {
   const [showNavMenu, setShowNavMenu] = useState(false);
 
   const toggleNavMenuDisplay = (ev) => {
-    if (ev.target.className === 'main' && showNavMenu) {
+    const {className} = ev.target;
+    if ((className.indexOf('close_icon') === -1 || className.indexOf('hamburger') === -1) && showNavMenu) {
       setShowNavMenu(!showNavMenu);
-    } else {
+    } else if (className.indexOf('close_icon') > -1 || className.indexOf('hamburger') > -1) {
       setShowNavMenu(!showNavMenu);
     }
   }
