@@ -1,4 +1,7 @@
-import {useState, useEffect} from 'react';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+//import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
@@ -35,15 +38,15 @@ function EventsForm(props) {
   if (type === 'edit') {
     eventId = props.eventId;
   }
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [eventDateTime, setEventDateTime] = useState('');
-  const [eventFormat, setEventFormat] = useState('phone meeting');
-  const [eventContact, setEventContact] = useState('');
-  const [eventNotes, setEventNotes] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
-  const [eventFollowUp, setEventFollowUp] = useState('');
-  const [eventGuid, setEventGuid] = useState('');
-  const [editJobGuid, setEditJobGuid] = useState('');
+  const [formSubmitted, setFormSubmitted] = React.useState(false);
+  const [eventDateTime, setEventDateTime] = React.useState('');
+  const [eventFormat, setEventFormat] = React.useState('phone meeting');
+  const [eventContact, setEventContact] = React.useState('');
+  const [eventNotes, setEventNotes] = React.useState('');
+  const [eventDescription, setEventDescription] = React.useState('');
+  const [eventFollowUp, setEventFollowUp] = React.useState('');
+  const [eventGuid, setEventGuid] = React.useState('');
+  const [editJobGuid, setEditJobGuid] = React.useState('');
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
@@ -144,7 +147,7 @@ function EventsForm(props) {
   }
 
   //if type=edit, get existing form fields
-  useEffect(() => {
+  React.useEffect(() => {
     if (type === 'edit' && eventId && sessionToken) {
       let url = `http://localhost:3000/api/events/${eventId}`
       fetch(url, {

@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import * as React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,16 +36,16 @@ function JobsForm(props) {
   if (type === 'edit') {
     jobId = props.jobId;
   }
-  const [formStatus, setFormStatus] = useState('inProgress'); //redirectJobs, redirectEventForm
-  const [jobName, setJobName] = useState('');
-  const [jobStatus, setJobStatus] = useState('none');
-  const [companyName, setCompanyName] = useState('');
-  const [jobUrl, setJobUrl] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
-  const [jobQuestions, setJobQuestions] = useState('');
-  const [jobSource, setJobSource] = useState('none');
-  const [jobGuid, setJobGuid] = useState(null);
-  const [jobCreatedAt, setJobCreatedAt] = useState('');
+  const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
+  const [jobName, setJobName] = React.useState('');
+  const [jobStatus, setJobStatus] = React.useState('none');
+  const [companyName, setCompanyName] = React.useState('');
+  const [jobUrl, setJobUrl] = React.useState('');
+  const [jobDescription, setJobDescription] = React.useState('');
+  const [jobQuestions, setJobQuestions] = React.useState('');
+  const [jobSource, setJobSource] = React.useState('none');
+  const [jobGuid, setJobGuid] = React.useState(null);
+  const [jobCreatedAt, setJobCreatedAt] = React.useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
 
   //input change handlers
@@ -156,7 +156,7 @@ function JobsForm(props) {
   }
 
   //if type=edit, get existing form fields
-  useEffect(() => {
+  React.useEffect(() => {
     if (type === 'edit' && jobId && sessionToken) {
       let url = `http://localhost:3000/api/jobs/${jobId}`
       fetch(url, {
@@ -197,7 +197,7 @@ function JobsForm(props) {
    }
   }, [])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (jobGuid) {
       setFormStatus('redirectEventForm');
     }
