@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
 import {BrowserRouter as Router} from "react-router-dom";
 import './index.css';
