@@ -28,14 +28,13 @@ const JOB_SOURCE_OPTIONS = [
   {label: 'teal community', value: 'teal community'}  
 ];
 
-function JobsForm(props) {
-  const {type} = props;
-  const {updateJobsDict, jobsDict} = useJobs();
+// type JobsFormProps = {
+//   type: string
+// }
 
-  let jobId;
-  if (type === 'edit') {
-    jobId = props.jobId;
-  }
+//: JobsFormProps
+function JobsForm({type, jobId}) {
+  const {updateJobsDict, jobsDict} = useJobs();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = React.useState('');
   const [jobStatus, setJobStatus] = React.useState('none');
