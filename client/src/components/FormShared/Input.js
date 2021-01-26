@@ -5,15 +5,12 @@ import styles from './Input.module.css';
 let cx = classNames.bind(styles);
 
 const Input = ({type, value, name, inputOnChangeHandler, label, inline, checked, placeholder}) => {
-
   const inputGroupClassName = cx(
     {
       inputGroupContainer: !inline,
       inputGroupInline: inline
     }
   );
-
-  console.log('value', value)
 
   return (
     <div className={inputGroupClassName}>
