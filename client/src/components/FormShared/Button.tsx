@@ -4,7 +4,15 @@ import styles from './Button.module.css';
 
 let cx = classNames.bind(styles);
 
-const Button = ({id, clickHandler, label, size, name}) => {
+type ButtonProps = {
+  id?: string;
+  label?: string;
+  size?: string;
+  name?: string;
+  clickHandler(event: React.MouseEvent<HTMLButtonElement>): void;
+}
+
+const Button = ({id, clickHandler, label, size, name}: ButtonProps) => {
 
   const buttonClassName = cx({
     button: true,
