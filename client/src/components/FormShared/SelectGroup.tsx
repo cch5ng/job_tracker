@@ -1,10 +1,21 @@
+import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './SelectGroup.module.css';
 
 let cx = classNames.bind(styles);
 
-const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, inline}) => {
-
+type SelectGroupProps = {
+  label: string;
+  name: string;
+  value: string;
+  optionsList: {
+    value: string;
+    label: string;
+  }[]; 
+  inline?: boolean;
+  inputOnChangeHandler(event: React.FormEvent<HTMLSelectElement>): void;
+}
+const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, inline}: SelectGroupProps) => {
   const selectGroupClassName = cx(
     {
       inputGroupContainer: !inline,

@@ -2,8 +2,17 @@ import React from 'react';
 import classNames from 'classnames/bind';
 import './Checkbox.css';
 
-const Checkbox = (props) => {
-  let { checkboxVal, onChangeHandler, checkboxLabel, id, name, checkClassName, size } = props;
+type CheckboxProps = {
+  checkboxVal: boolean;
+  onChangeHandler(ev: React.SyntheticEvent): void;
+  checkboxLabel?: string;
+  id?: string;
+  name?: string;
+  checkClassName?: string;
+  size?: string;
+}
+
+const Checkbox = ({ checkboxVal, onChangeHandler, checkboxLabel, id, name, checkClassName, size }: CheckboxProps) => {
   let checkClass;
   if (checkClassName && size && size === 'largeCheckbox') {
     checkClass = `form-group-large ${checkClassName}`
