@@ -15,6 +15,7 @@ const getArFromDict = (dict) => {
   return ar;
 }
 
+//the prop name may be date_time or created_at but always ISO date/time string
 const orderArByProp = (ar, prop, order) => {
   ar.sort(function(a, b) {
     var elA = new Date(a[prop]);
@@ -55,9 +56,9 @@ const prettyFormatDate = (dateNum) => {
   if (dateStr.length === 1) {
     return `0${dateStr}`;
   } else {
-    return dateNum;
+    return dateNum.toString();
   }
 }
 
-export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, convertISOStrToLocalDateTime, orderArByProp, prettyFormatDate};
-//getArFromDictBasic, 
+export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, 
+  convertISOStrToLocalDateTime, orderArByProp, prettyFormatDate};
