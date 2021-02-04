@@ -3,6 +3,9 @@ import * as ReactDOM from "react-dom";
 import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
@@ -15,6 +18,8 @@ const EVENTS_SORT_OPTIONS = [
   {label: 'oldest to newest', value: 'oldest to newest'},
   {label: 'newest to oldest', value: 'newest to oldest'}
 ]
+
+const localizer = momentLocalizer(moment);
 
 function Events(props) {
   const {jobId} = useParams();
@@ -158,10 +163,31 @@ function Events(props) {
   //filter for the event type
   filteredEvents = filterEventsByEventFormat(filteredEvents);
   let createUrl = `/events/new/${jobId}`;
+  console.log('filteredEvents', filteredEvents);
 
+  const myEventsList = [];
+  filteredEvents.forEach(event => {
+    let evObj = {};
+    let dt = moment(event.date_time)
+    evObj.start = dt;
+    evObj.end = moment(event.date_time).add(1, "hour");
+    evObj.title = event.format;
+    myEventsList.push(evObj);
+  });
+  
   return (
     <div>
       <h1 className="view_title">EVENTS LIST</h1>
+
+      <Calendar
+        localizer={localizer}
+        events={myEventsList}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 500 }}
+        views={['month', 'day', 'agenda']}
+      />
+
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
