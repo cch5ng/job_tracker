@@ -1,0 +1,88 @@
+.alert_container {
+  justify-content: space-between;
+}
+
+.alert {
+  position: absolute;
+  width: 90%;
+  top: 74px + 50px;
+  left: 5%;
+  border-radius: 5px;
+  z-index: 100;
+  padding: 8px 12px;
+}
+
+.alert_error {
+  background-color: #fdebea;
+}
+
+.alert_success {
+  background-color: #e4f2d9;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.alert_title_error {
+  color: #77201a;
+}
+
+.alert_title_success {
+  color: #497328;
+}
+
+.alert_message_error {
+  color: #d6392f;
+}
+
+.alert_message_success {
+  color: #629935;
+}
+
+p {
+  margin-block-start: 0;
+}
+
+.icon_left {
+  margin-right: 12px;
+}
+
+.icon_error {
+  color: #f37971;
+  font-size: 1.1rem;
+}
+
+.icon_success {
+  color: #7bc043;
+  font-size: 1.1rem;
+}
+
+@media (min-width: 580px) {
+  .icon_left {
+    flex-grow: 1;
+  }
+  
+  .icon_right {
+    flex-grow: 1;
+  }
+  
+  .alert_content {
+    flex-grow: 1;
+  }
+  
+}
+
+@media (min-width: 768px) {
+
+  .alert {
+    width: calc(60vw);
+    top: 74px + 20px;
+    left: calc(100vw / 2 - 60vw / 2);  
+  }
+
+  .alert_content {
+    flex-grow: 10;
+  }  
+
+}
