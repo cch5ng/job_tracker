@@ -8,11 +8,13 @@ import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
+import {useAlert} from '../../context/alert-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
 import Checkbox from '../FormShared/Checkbox';
 import SelectGroup from '../FormShared/SelectGroup';
 import Input from '../FormShared/Input';
+import Alert from '../FormShared/Alert';
 
 const EVENTS_SORT_OPTIONS = [
   {label: 'oldest to newest', value: 'oldest to newest'},
@@ -37,6 +39,7 @@ function Events(props) {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const {jobsDict, getJobsForUser} = useJobs();
+  const { addToAlertDict } = useAlert();
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -87,6 +90,7 @@ function Events(props) {
       login({userEmail: email, sessionToken: token, userGuid: uGuid})
 
       let eventsUrl;
+      let badUrl = `http://localhost:3000/api/events`;
       if (!jobId && uGuid) {
         eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
       } else if (jobId) {
@@ -96,12 +100,20 @@ function Events(props) {
         fetch(eventsUrl, {
           headers: {Authorization: `Bearer ${token}`}
         })
-          .then(resp => resp.json())
+          .then(resp => {
+            if (resp.ok) {
+              return resp.json()
+            } else {
+              addToAlertDict({type: 'error', message: `HTTP Status Code: ${resp.status}`})
+            }
+          })
           .then(json => {
             if (json.events.length) {
               let evDict = json.events ? getDictFromAr(json.events): {};
               setEventsDict(evDict);
-            } 
+            } else if (json.type === 'error') {
+              addToAlertDict({type: 'error', message: json.message});
+            }
           })
           .catch(err => console.error('error', err))
       }
@@ -163,7 +175,6 @@ function Events(props) {
   //filter for the event type
   filteredEvents = filterEventsByEventFormat(filteredEvents);
   let createUrl = `/events/new/${jobId}`;
-  console.log('filteredEvents', filteredEvents);
 
   const myEventsList = [];
   filteredEvents.forEach(event => {
@@ -178,15 +189,6 @@ function Events(props) {
   return (
     <div>
       <h1 className="view_title">EVENTS LIST</h1>
-
-      <Calendar
-        localizer={localizer}
-        events={myEventsList}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        views={['month', 'day', 'agenda']}
-      />
 
       <form>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
@@ -213,6 +215,16 @@ function Events(props) {
           checkboxLabel='show take-home assessments, unscheduled' name='filterEventTakeHomeTestUnscheduled' checkClassName=''
           id='filterEventTakeHomeTestUnscheduled' />
       </form>
+
+      <Calendar
+        localizer={localizer}
+        events={myEventsList}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 500 }}
+        views={['month', 'day', 'agenda']}
+      />
+
       <div className="list_container">
         { filteredEvents.map(event => {
           let url = `/events/edit/${event.guid}`;
