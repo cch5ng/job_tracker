@@ -1,68 +1,99 @@
-import React, { useState } from 'react';
+import React, { createContext, useReducer, useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { v4 as uuidv4 } from 'uuid';
 import {getDictFromAr} from '../utils';
+import Alert from '../components/FormShared/Alert';
 
 const AlertContext = React.createContext([{}, () => {}]);
-function AlertProvider({children}) {
-  const [state, setState] = React.useState({
-    alertDict: {},
-    status: 'pending'
-  });
 
-  const getAlertList = () => {
-    const alertDict = state.alertDict;
-    let alertList = Object.keys(alertDict).map(alertId => alertDict[alertId]);
-    if (alertList.length > 1) {
-      alertList.sort((a, b) => {
-        let createdDateA = new Date(a.createdDateISO);
-        let createdDateB = new Date(b.createdDateISO);
-        if (createdDateB > createdDateA) {
-          return -1;
-        } else if (createdDateA > createdDateB) {
-          return 1;
-        } else {
-          return 0;
+const initialState = []; //array of alert objects {id, createdDateISO, type, message}
+
+//action types
+export const ADD = 'ADD';
+export const REMOVE = 'REMOVE';
+export const REMOVE_ALL = 'REMOVE_ALL';
+
+export const alertReducer = (state, action) => {
+  switch (action.type) {
+    case ADD:
+      console.log('gets to alertReducer')
+      return [
+        ...state,
+        {
+          id: uuidv4(),
+          message: action.payload.message,
+          type: action.payload.type
         }
-      })
-    }
-    return alertList;  
+      ];
+    case REMOVE:
+      return state.filter(t => t.id !== action.payload.id);
+    case REMOVE_ALL:
+      return initialState;
+    default:
+      return state;
   }
+};
 
-  const getAlertDict = () => {
-    return state.alertDict;
-  }
+function AlertProvider({children}) {
+  //alert is [{alert obj}, {}]
+  const [alert, alertDispatch] = useReducer(alertReducer, initialState);
+  const alertData = { alert, alertDispatch };
 
-  const addToAlertDict = (alertObj) => {
-    let {message} = alertObj;
-    let isMessageNew = true;
+  // const getAlertList = () => {
+  //   const alertDict = state.alertDict;
+  //   let alertList = Object.keys(alertDict).map(alertId => alertDict[alertId]);
+  //   if (alertList.length > 1) {
+  //     alertList.sort((a, b) => {
+  //       let createdDateA = new Date(a.createdDateISO);
+  //       let createdDateB = new Date(b.createdDateISO);
+  //       if (createdDateB > createdDateA) {
+  //         return -1;
+  //       } else if (createdDateA > createdDateB) {
+  //         return 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     })
+  //   }
+  //   return alertList;  
+  // }
 
-    let alertList = getAlertList();
-    alertList.forEach(alert => {
-      if (alert.message === message) {
-        isMessageNew = false;
-      }
-    })
+  // const getAlertDict = () => {
+  //   return state.alertDict;
+  // }
 
-    if (isMessageNew) {
-      const id = uuidv4();
-      alertObj.id = id;
-      const curDate = new Date();
-      alertObj.createdDateISO = curDate.toISOString();
-      setState({...state, alertDict: {...state.alertDict, [id]: alertObj}});  
-    }
-  }
+  // const addToAlertDict = (alertObj) => {
+  //   let {message} = alertObj;
+  //   let isMessageNew = true;
 
-  const removeFromAlertDict = (alertId) => {
-    const copyAlertDict = {...state.alertDict};
-    delete copyAlertDict[alertId];
-    setState({ ...state, alertDict: copyAlertDict });
-  }
+  //   let alertList = getAlertList();
+  //   alertList.forEach(alert => {
+  //     if (alert.message === message) {
+  //       isMessageNew = false;
+  //     }
+  //   })
 
-  let alertState = {...state, getAlertList, addToAlertDict, removeFromAlertDict, getAlertDict}; //getJobsByUserGuid
+  //   if (isMessageNew) {
+  //     const id = uuidv4();
+  //     alertObj.id = id;
+  //     const curDate = new Date();
+  //     alertObj.createdDateISO = curDate.toISOString();
+  //     setState({...state, alertDict: {...state.alertDict, [id]: alertObj}});  
+  //   }
+  // }
+
+  // const removeFromAlertDict = (alertId) => {
+  //   const copyAlertDict = {...state.alertDict};
+  //   delete copyAlertDict[alertId];
+  //   setState({ ...state, alertDict: copyAlertDict });
+  // }
+
+  //let alertState = {...state, getAlertList, addToAlertDict, removeFromAlertDict, getAlertDict}; //getJobsByUserGuid
 
    return (
-    <AlertContext.Provider value={alertState}>
+    <AlertContext.Provider value={alertData}>
         {children}
+        {createPortal(<Alert alert={alert} />, document.body)}
     </AlertContext.Provider>
   )
 }
