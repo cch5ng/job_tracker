@@ -90,7 +90,6 @@ function Events(props) {
       login({userEmail: email, sessionToken: token, userGuid: uGuid})
 
       let eventsUrl;
-      let badUrl = `http://localhost:3000/api/events`;
       if (!jobId && uGuid) {
         eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
       } else if (jobId) {
