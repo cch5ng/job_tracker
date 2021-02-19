@@ -8,7 +8,7 @@ import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
-import {useAlert} from '../../context/alert-context';
+import { useAlert, ADD } from '../../context/alert-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
 import Checkbox from '../FormShared/Checkbox';
@@ -39,7 +39,8 @@ function Events(props) {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const {jobsDict, getJobsForUser} = useJobs();
-  const { addToAlertDict } = useAlert();
+  //const { addToAlertDict } = useAlert();
+  const { alertDispatch } = useAlert();
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
@@ -101,9 +102,13 @@ function Events(props) {
         })
           .then(resp => {
             if (resp.ok) {
-              return resp.json()
+              let json = resp.json();
+              alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} })
+              return json;
             } else {
-              addToAlertDict({type: 'error', message: `HTTP Status Code: ${resp.status}`})
+              //addToAlertDict({type: 'error', message: `HTTP Status Code: ${resp.status}`})
+
+              alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
             }
           })
           .then(json => {
@@ -111,7 +116,8 @@ function Events(props) {
               let evDict = json.events ? getDictFromAr(json.events): {};
               setEventsDict(evDict);
             } else if (json.type === 'error') {
-              addToAlertDict({type: 'error', message: json.message});
+              //addToAlertDict({type: 'error', message: json.message});
+              alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
             }
           })
           .catch(err => console.error('error', err))
