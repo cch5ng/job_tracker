@@ -16,14 +16,9 @@ import EventsFormCreate from '../Events/EventsFormCreate';
 import EventsFormEdit from '../Events/EventsFormEdit';
 import Events from '../Events/Events';
 import Alert from '../FormShared/Alert';
-import {useAlert} from '../../context/alert-context';
 
 const AuthenticatedApp = () => {
   const [showNavMenu, setShowNavMenu] = useState(false);
-  const {getAlertDict, getAlertList, removeFromAlertDict} = useAlert();
-
-  //TEST
-  const alertList = getAlertList();
 
   const toggleNavMenuDisplay = (ev) => {
     const {className} = ev.target;
@@ -46,12 +41,6 @@ const AuthenticatedApp = () => {
   return (
     <div>
       <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
-      <div id="alertParent">
-        {alertList.map(alert => (
-          <Alert message={alert.message} onClickHandler={alertCloseHandler} id={alert.id} 
-            type={alert.type ? alert.type : `success`}/>
-        ))}
-      </div>
       <main className="main" onClick={toggleNavMenuDisplay}>
         <Switch>
           <ProtectedRoute path="/profile" component={Profile} />
