@@ -12,7 +12,7 @@ class JobTable {
           if (response.rows.length) {
             const jobId = response.rows[0].id;
             if (jobId) {
-              resolve({ message: `The job: ${guid} was created successfully`,
+              resolve({ message: `The job, ${name}, was created successfully`,
                         job_guid: guid,
                         status: 'success'
               });
@@ -35,10 +35,10 @@ class JobTable {
           if (response.rows.length) {
             const jobId = response.rows[0].id;
             if (jobId) {
-              resolve({ message: `The job: ${guid} was updated successfully`});
+              resolve({ job_guid: guid, type: 'success', message: `The job, ${name}, was updated successfully`});
             }
           } else {
-            resolve({ message: 'The job could not be saved'})
+            resolve({ type: 'error', message: 'The job could not be saved'})
           }
         }
       )
