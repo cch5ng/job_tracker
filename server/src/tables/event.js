@@ -14,10 +14,7 @@ class EventTable {
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
-            //const eventId = response.rows[0].id;
-            //if (eventId) {
-              resolve({ event_guid: guid, type: 'success', message: `The event, ${format}, was created successfully`});
-            //}
+            resolve({ event_guid: guid, type: 'success', message: `The event, ${format}, was created successfully`});
           } else {
             resolve({ type: 'error', message: 'The event could not be saved'})
           }
@@ -34,10 +31,7 @@ class EventTable {
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
-            //const jobId = response.rows[0].id;
-            //if (jobId) {
-              resolve({ event_guid: guid, type: 'success', message: `The event: ${guid} was updated successfully`});
-            //}
+            resolve({ event_guid: guid, type: 'success', message: `The event, ${format}, was updated successfully`});
           } else {
             resolve({ type: 'error', message: 'The event could not be saved'})
           }
