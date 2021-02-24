@@ -6,14 +6,11 @@ import { useAlert, REMOVE } from '../../context/alert-context';
 
 let cx = classNames.bind(styles);
 
-//type, message, onClickHandler, id
 const Alert = ({alert}) => {
   const { alertDispatch } = useAlert();
 
-  //TODO put the parent div in here
-  //also need to put a mapping function in here because the prop will be a list of alert objects
   return (
-    <div id="alert_parent">
+    <div className={styles.alert_parent}>
       {alert.map(al => {
         const {type, id, message} = al;
         const isAlertError = type === 'error';
@@ -55,7 +52,7 @@ const Alert = ({alert}) => {
                 <p className={titleClassName}>Error</p>
               )}
               {type !== 'error' && (
-                <p className={titleClassName}>Sucess</p>
+                <p className={titleClassName}>Success</p>
               )}
               <p className={messageClassName}>{message}</p>
             </div>
