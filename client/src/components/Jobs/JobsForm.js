@@ -4,6 +4,7 @@ import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
+import { useAlert, ADD } from '../../context/alert-context';
 import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
@@ -28,12 +29,6 @@ const JOB_SOURCE_OPTIONS = [
   {label: 'teal community', value: 'teal community'}  
 ];
 
-// type JobsFormProps = {
-//   type: string
-//   jobId?: string
-// }
-
-//: JobsFormProps
 function JobsForm({type, jobId}) {
   const {updateJobsDict, jobsDict} = useJobs();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
@@ -47,6 +42,7 @@ function JobsForm({type, jobId}) {
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
+  const { alertDispatch } = useAlert();
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -120,12 +116,15 @@ function JobsForm({type, jobId}) {
               .then(resp => {
                 if (resp.status === 201) {
                   updateJobsDict(body);
-                  return resp.json(); 
                 }
+                return resp.json(); 
               })
               .then(json => {
                 if (json.job_guid) {
+                  alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
                   setJobGuid(json.job_guid);
+                } else {
+                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
                 }
               })
               .catch(err => console.error('err', err))
@@ -144,6 +143,15 @@ function JobsForm({type, jobId}) {
                   body.created_at = jobCreatedAt;
                   updateJobsDict(body);
                 }
+                return resp.json();
+              })
+              .then(json => {
+                if (json.job_guid) {
+                  alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                } else {
+                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
+                }
+
               })
               .catch(err => console.error('err', err))
             }
