@@ -1,14 +1,20 @@
+.alert_parent {
+  position: fixed;
+  width: 90%;
+  top: calc(74px + 50px);
+  left: 5%;
+  min-height: 100px;
+  max-height: 90vh;
+}
+
 .alert_container {
+  display: flex;
+  flex-flow: row nowrap;
   justify-content: space-between;
 }
 
 .alert {
-  position: absolute;
-  width: 90%;
-  top: 74px + 50px;
-  left: 5%;
   border-radius: 5px;
-  z-index: 100;
   padding: 8px 12px;
 }
 
@@ -69,20 +75,16 @@ p {
   
   .alert_content {
     flex-grow: 1;
-  }
-  
+  }  
 }
 
 @media (min-width: 768px) {
-
-  .alert {
+  .alert_parent {
     width: calc(60vw);
-    top: 74px + 20px;
     left: calc(100vw / 2 - 60vw / 2);  
   }
 
   .alert_content {
     flex-grow: 10;
   }  
-
 }
