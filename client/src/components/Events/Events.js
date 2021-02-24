@@ -39,7 +39,6 @@ function Events(props) {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const {jobsDict, getJobsForUser} = useJobs();
-  //const { addToAlertDict } = useAlert();
   const { alertDispatch } = useAlert();
 
   const buttonOnClickHandler = (ev) => {
