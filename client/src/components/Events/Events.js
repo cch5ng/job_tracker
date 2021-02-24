@@ -101,20 +101,17 @@ function Events(props) {
           headers: {Authorization: `Bearer ${token}`}
         })
           .then(resp => {
-            if (resp.ok) {
-              let json = resp.json();
-              alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} })
-              return json;
-            } else {
-              //addToAlertDict({type: 'error', message: `HTTP Status Code: ${resp.status}`})
-
+            if (!resp.ok) {
               alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
-            }
+            } 
+            return resp.json();
           })
           .then(json => {
             if (json.events.length) {
               let evDict = json.events ? getDictFromAr(json.events): {};
               setEventsDict(evDict);
+              alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} })
+
             } else if (json.type === 'error') {
               //addToAlertDict({type: 'error', message: json.message});
               alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
