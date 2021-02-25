@@ -16,15 +16,25 @@ export const REMOVE_ALL = 'REMOVE_ALL';
 export const alertReducer = (state, action) => {
   switch (action.type) {
     case ADD:
-      console.log('gets to alertReducer')
-      return [
-        ...state,
-        {
-          id: uuidv4(),
-          message: action.payload.message,
-          type: action.payload.type
+      let isPayloadUnique = true;
+      for (let i = 0; i < state.length; i++) {
+        if (state[i].message === action.payload.message) {
+          isPayloadUnique = false;
+          break;
         }
-      ];
+      }
+      if (isPayloadUnique) {
+        return [
+          ...state,
+          {
+            id: uuidv4(),
+            message: action.payload.message,
+            type: action.payload.type
+          }
+        ];  
+      } else {
+        return state;
+      }
     case REMOVE:
       return state.filter(t => t.id !== action.payload.id);
     case REMOVE_ALL:
@@ -39,58 +49,7 @@ function AlertProvider({children}) {
   const [alert, alertDispatch] = useReducer(alertReducer, initialState);
   const alertData = { alert, alertDispatch };
 
-  // const getAlertList = () => {
-  //   const alertDict = state.alertDict;
-  //   let alertList = Object.keys(alertDict).map(alertId => alertDict[alertId]);
-  //   if (alertList.length > 1) {
-  //     alertList.sort((a, b) => {
-  //       let createdDateA = new Date(a.createdDateISO);
-  //       let createdDateB = new Date(b.createdDateISO);
-  //       if (createdDateB > createdDateA) {
-  //         return -1;
-  //       } else if (createdDateA > createdDateB) {
-  //         return 1;
-  //       } else {
-  //         return 0;
-  //       }
-  //     })
-  //   }
-  //   return alertList;  
-  // }
-
-  // const getAlertDict = () => {
-  //   return state.alertDict;
-  // }
-
-  // const addToAlertDict = (alertObj) => {
-  //   let {message} = alertObj;
-  //   let isMessageNew = true;
-
-  //   let alertList = getAlertList();
-  //   alertList.forEach(alert => {
-  //     if (alert.message === message) {
-  //       isMessageNew = false;
-  //     }
-  //   })
-
-  //   if (isMessageNew) {
-  //     const id = uuidv4();
-  //     alertObj.id = id;
-  //     const curDate = new Date();
-  //     alertObj.createdDateISO = curDate.toISOString();
-  //     setState({...state, alertDict: {...state.alertDict, [id]: alertObj}});  
-  //   }
-  // }
-
-  // const removeFromAlertDict = (alertId) => {
-  //   const copyAlertDict = {...state.alertDict};
-  //   delete copyAlertDict[alertId];
-  //   setState({ ...state, alertDict: copyAlertDict });
-  // }
-
-  //let alertState = {...state, getAlertList, addToAlertDict, removeFromAlertDict, getAlertDict}; //getJobsByUserGuid
-
-   return (
+  return (
     <AlertContext.Provider value={alertData}>
         {children}
         {createPortal(<Alert alert={alert} />, document.body)}
@@ -98,7 +57,6 @@ function AlertProvider({children}) {
   )
 }
 
-//this seems simpler method to pass functions from context to consumers
 function useAlert() {
   const context = React.useContext(AlertContext)
   if (context === undefined) {
