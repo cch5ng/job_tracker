@@ -31,17 +31,10 @@ const AuthenticatedApp = () => {
     }
   }
 
-  const alertCloseHandler = (ev) => {
-    const parentDiv = ev.target.closest('#alertParent');
-    const alertDiv = parentDiv.firstElementChild;
-    const alertId = alertDiv.id;
-    removeFromAlertDict(alertId);
-  }
-
   return (
     <div>
       <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
-      <main className="main" onClick={toggleNavMenuDisplay}>
+      <main className="main" >
         <Switch>
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/external-api" component={ExternalApi} />
