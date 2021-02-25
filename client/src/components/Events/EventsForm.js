@@ -11,6 +11,7 @@ import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
 import Button from '../FormShared/Button';
+import ButtonGroup from '../FormShared/ButtonGroup';
 
 const EVENT_NAME_OPTIONS = [
   {label: 'Select a format', value: "none"},
@@ -237,7 +238,7 @@ function EventsForm(props) {
           inputOnChangeHandler={inputOnChangeHandler} label="follow up"/>
         <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
           inputOnChangeHandler={inputOnChangeHandler} label="date time"/>
-        <div>
+        <ButtonGroup>
           <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
             label="Save" />
           <Button id="buttonCancel" clickHandler={buttonOnClickHandler} 
@@ -246,7 +247,7 @@ function EventsForm(props) {
             <Button id="buttonDelete" clickHandler={buttonOnClickHandler} 
               label="Delete" />
           )}
-        </div>
+        </ButtonGroup>
       </form>
     </div>
   );
