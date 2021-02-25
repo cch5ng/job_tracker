@@ -1,0 +1,90 @@
+.alert_parent {
+  position: fixed;
+  width: 90%;
+  top: calc(74px + 50px);
+  left: 5%;
+  min-height: 100px;
+  max-height: 90vh;
+}
+
+.alert_container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.alert {
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+
+.alert_error {
+  background-color: #fdebea;
+}
+
+.alert_success {
+  background-color: #e4f2d9;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.alert_title_error {
+  color: #77201a;
+}
+
+.alert_title_success {
+  color: #497328;
+}
+
+.alert_message_error {
+  color: #d6392f;
+}
+
+.alert_message_success {
+  color: #629935;
+}
+
+p {
+  margin-block-start: 0;
+}
+
+.icon_left {
+  margin-right: 12px;
+}
+
+.icon_error {
+  color: #f37971;
+  font-size: 1.1rem;
+}
+
+.icon_success {
+  color: #7bc043;
+  font-size: 1.1rem;
+}
+
+@media (min-width: 580px) {
+  .icon_left {
+    flex-grow: 1;
+  }
+  
+  .icon_right {
+    flex-grow: 1;
+  }
+  
+  .alert_content {
+    flex-grow: 1;
+  }  
+}
+
+@media (min-width: 768px) {
+  .alert_parent {
+    width: calc(60vw);
+    left: calc(100vw / 2 - 60vw / 2);  
+  }
+
+  .alert_content {
+    flex-grow: 10;
+  }  
+}

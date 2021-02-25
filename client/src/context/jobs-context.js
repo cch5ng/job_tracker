@@ -5,7 +5,8 @@ const JobsContext = React.createContext([{}, () => {}]);
 function JobsProvider({children}) {
   const [state, setState] = React.useState({
     jobsDict: {},
-    status: 'pending'
+    jobsRequestStatus: 'pending',
+    jobsRequestAlert: ''
   });
 
   const getJobsForUser = ({url, token}) => {
@@ -17,18 +18,16 @@ function JobsProvider({children}) {
         if (json.jobs.length) {
           let {jobs} = json;
           let jobsObj = getDictFromAr(jobs);
-          setState({...state, jobsDict: jobsObj, status: 'success'})
+          setState({...state, jobsDict: jobsObj, jobsRequestStatus: 'success'})
         } 
       })
       .catch(err => {
         console.error('error', err);
-        setState({...state, status: 'error'})
+        setState({...state, jobsRequestStatus: 'error', jobsRequestAlert: err})
       })      
   }
 
   const updateJobsDict = (jobObj) => {
-    console.log('jobObj', jobObj)
-    console.log('jobsDict', state.jobsDict)
     let {guid} = jobObj;
     if (!state.jobsDict[guid]) {
       setState({...state, jobsDict: {...state.jobsDict, [guid]: jobObj}})

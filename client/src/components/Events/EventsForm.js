@@ -5,6 +5,7 @@ import * as ReactDOM from "react-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect} from 'react-router-dom';
 import {useAppAuth} from '../../context/auth-context';
+import { useAlert, ADD } from '../../context/alert-context';
 import {convertLocalDateTimeToISOStr, prettyFormatDate} from '../../utils';
 import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
@@ -49,6 +50,7 @@ function EventsForm(props) {
   const [editJobGuid, setEditJobGuid] = React.useState('');
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
+  const { alertDispatch } = useAlert();
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -124,7 +126,13 @@ function EventsForm(props) {
           body: JSON.stringify(body)
         })
         .then(resp => resp.json())
-        .then(json => console.log('json', json))
+        .then(json => {
+          if (json.event_guid) {
+            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+          } else {
+            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+          }
+        })
         .catch(err => console.error('err', err))
       } else if (type === 'edit') {
         fetch(`http://localhost:3000/api/events/${eventId}`, {
@@ -136,7 +144,13 @@ function EventsForm(props) {
           body: JSON.stringify(body)
         })
         .then(resp => resp.json())
-        .then(json => console.log('json', json))
+        .then(json => {
+          if (json.event_guid) {
+            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+          } else {
+            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+          }
+        })
         .catch(err => console.error('err', err))
       }
     } 
