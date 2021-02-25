@@ -10,6 +10,7 @@ import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
 import Button from '../FormShared/Button';
 import styles from './Jobs.module.css';
+import ButtonGroup from '../FormShared/ButtonGroup';
 
 const JOB_STATUS_OPTIONS = [
   {label: 'select a status', value: 'none'},
@@ -258,14 +259,14 @@ function JobsForm({type, jobId}) {
           <SelectGroup 
             label="source" name="jobSource" value={jobSource} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_SOURCE_OPTIONS} />
-          <div>
+          <ButtonGroup>
             <Button id="buttonSaveJobEvent" clickHandler={buttonOnClickHandler} 
               label="Save and Create Event" size="wide"/>
             <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
               label="Save"/>
             <Button id="buttonCancel" clickHandler={buttonOnClickHandler} 
               label="Cancel"/>
-          </div>
+          </ButtonGroup>
         </form>
       </div>
     );
