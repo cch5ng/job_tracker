@@ -43,7 +43,7 @@ function JobsForm({type, jobId}) {
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
-  let nameInputRef = React.useRef(null);
+  let inputRef = React.useRef(null);
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -207,10 +207,10 @@ function JobsForm({type, jobId}) {
   }, [])
 
   React.useEffect(() => {
-    if (nameInputRef) {
-      nameInputRef.current.focus();
+    if (inputRef) {
+      inputRef.current.focus();
     }
-  }, [nameInputRef]);
+  }, [inputRef]);
 
   React.useEffect(() => {
     if (jobGuid) {
@@ -243,7 +243,7 @@ function JobsForm({type, jobId}) {
       <div>
         <h1 className="view_title">JOBS FORM</h1>
         <form>
-          <Input type="text" value={jobName} name="jobName" nameInputRef={nameInputRef}
+          <Input type="text" value={jobName} name="jobName" inputRef={inputRef}
             inputOnChangeHandler={inputOnChangeHandler} label="name"/>
           <SelectGroup 
             label="status" name="jobStatus" value={jobStatus} 
