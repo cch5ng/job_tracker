@@ -45,7 +45,7 @@ const Alert = ({alert}) => {
         return (
           <div className={alertClassName} onClick={() =>
             alertDispatch({ type: REMOVE, payload: { id } })
-          } id={id}>
+          } id={id} key={id}>
             <div className={iconLeftClassName}><AiFillCloseCircle /></div>
             <div className={styles.alert_content}>
               {type === 'error' && (
