@@ -1,0 +1,13 @@
+.button_group_container {
+  margin-top: 18px;
+
+}
+
+@media (min-width: 520px) {
+
+  .button_group_container {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+}
