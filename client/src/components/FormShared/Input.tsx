@@ -12,10 +12,11 @@ type InputProps = {
   label: string;
   inline?: boolean;
   placeholder?: string;
+  nameInputRef?: string;
   inputOnChangeHandler(ev: React.FormEvent<HTMLInputElement>): void;
 }
 
-const Input = ({type, value, name, inputOnChangeHandler, label, inline, placeholder}: InputProps) => {
+const Input = ({type, value, name, inputOnChangeHandler, label, inline, placeholder, nameInputRef}: InputProps) => {
   const inputGroupClassName = cx(
     {
       inputGroupContainer: !inline,
@@ -31,7 +32,7 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline, placehol
       {value !== undefined && (
         <input type={type} value={value} name={name} 
           className={styles.input} onChange={ev => inputOnChangeHandler(ev)}
-          placeholder={placeholder} />
+          placeholder={placeholder} ref={nameInputRef} />
       )}
     </div>
   )
