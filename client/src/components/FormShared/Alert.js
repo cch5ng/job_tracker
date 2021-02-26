@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import { AiFillCloseCircle, AiOutlineClose } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineClose, AiFillExclamationCircle, AiFillCheckCircle } from "react-icons/ai";
 import styles from './Alert.module.css';
 import { useAlert, REMOVE } from '../../context/alert-context';
 
@@ -8,9 +8,11 @@ let cx = classNames.bind(styles);
 
 const Alert = ({alert}) => {
   const { alertDispatch } = useAlert();
+  console.log('alert', alert)
 
-  return (
-    <div className={styles.alert_parent}>
+  if (alert.length) {
+    return (
+      <div className={styles.alert_parent}>
       {alert.map(al => {
         const {type, id, message} = al;
         const isAlertError = type === 'error';
@@ -46,22 +48,31 @@ const Alert = ({alert}) => {
           <div className={alertClassName} onClick={() =>
             alertDispatch({ type: REMOVE, payload: { id } })
           } id={id} key={id}>
-            <div className={iconLeftClassName}><AiFillCloseCircle /></div>
-            <div className={styles.alert_content}>
-              {type === 'error' && (
-                <p className={titleClassName}>Error</p>
-              )}
-              {type !== 'error' && (
-                <p className={titleClassName}>Success</p>
-              )}
-              <p className={messageClassName}>{message}</p>
-            </div>
-            <div className={iconRightClassName}><AiOutlineClose /></div>
+            {type === 'error' && (
+              <>
+              <div className={iconLeftClassName}><AiFillExclamationCircle /></div>
+              <div className={styles.alert_content}>
+                <div className={titleClassName}>{message}</div>
+              </div>
+              </>
+            )}
+            {type !== 'error' && (
+              <>
+              <div className={iconLeftClassName}><AiFillCheckCircle /></div>
+              <div className={styles.alert_content}>
+                <div className={titleClassName}>{message}</div>
+              </div>
+              </>
+            )}
+            <div className={iconRightClassName}><AiFillCloseCircle /></div>
           </div>
         )
       })}
     </div>
-  )
+    )
+  } else {
+    return null;
+  }
 }
 
 export default Alert;
