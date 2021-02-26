@@ -3,7 +3,7 @@
   width: 90%;
   top: calc(74px + 50px);
   left: 5%;
-  min-height: 100px;
+  min-height: 200px;
   max-height: 90vh;
 }
 
@@ -11,6 +11,8 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  align-items: center;
+  min-height: 150px;
 }
 
 .alert {
@@ -55,13 +57,15 @@ p {
 }
 
 .icon_error {
+  margin-top: 3px;
   color: #f37971;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
 }
 
 .icon_success {
+  margin-top: 3px;
   color: #7bc043;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
 }
 
 @media (min-width: 580px) {
