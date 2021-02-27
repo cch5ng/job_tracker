@@ -6,9 +6,10 @@ import { useAlert, REMOVE } from '../../context/alert-context';
 
 let cx = classNames.bind(styles);
 
+//  <div className={iconRightClassName}><AiFillCloseCircle /></div>
+
 const Alert = ({alert}) => {
   const { alertDispatch } = useAlert();
-  console.log('alert', alert)
 
   if (alert.length) {
     return (
@@ -27,7 +28,7 @@ const Alert = ({alert}) => {
         let titleClassName = cx({
           alert_title_error: isAlertError,
           alert_title_success: !isAlertError,
-          title: true
+          title: true,
         });
         let messageClassName = cx({
           alert_message_error: isAlertError,
@@ -43,28 +44,34 @@ const Alert = ({alert}) => {
           icon_success: !isAlertError,
           icon_right: true
         });
+        let alertHeaderClassName = cx({
+          alert_title_error: isAlertError,
+          alert_title_success: !isAlertError,
+          alert_header: true
+        })
 
         return (
           <div className={alertClassName} onClick={() =>
             alertDispatch({ type: REMOVE, payload: { id } })
           } id={id} key={id}>
+            <div className={alertHeaderClassName}><AiOutlineClose /></div>
             {type === 'error' && (
-              <>
-              <div className={iconLeftClassName}><AiFillExclamationCircle /></div>
-              <div className={styles.alert_content}>
-                <div className={titleClassName}>{message}</div>
+              <div className={styles.alert_message_container}>
+                <div className={iconLeftClassName}><AiFillExclamationCircle /></div>
+                <div className={styles.alert_content}>
+                  <div className={titleClassName}>{message}</div>
+                </div>
               </div>
-              </>
             )}
             {type !== 'error' && (
-              <>
-              <div className={iconLeftClassName}><AiFillCheckCircle /></div>
-              <div className={styles.alert_content}>
-                <div className={titleClassName}>{message}</div>
+              <div className={styles.alert_message_container}>
+                <div className={iconLeftClassName}><AiFillCheckCircle /></div>
+                <div className={styles.alert_content}>
+                  <div className={titleClassName}>{message}</div>
+                </div>
               </div>
-              </>
             )}
-            <div className={iconRightClassName}><AiFillCloseCircle /></div>
+            <div />
           </div>
         )
       })}
