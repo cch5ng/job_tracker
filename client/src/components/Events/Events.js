@@ -109,10 +109,7 @@ function Events(props) {
             if (json.events.length) {
               let evDict = json.events ? getDictFromAr(json.events): {};
               setEventsDict(evDict);
-              alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} })
-
             } else if (json.type === 'error') {
-              //addToAlertDict({type: 'error', message: json.message});
               alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
             }
           })

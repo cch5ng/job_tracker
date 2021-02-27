@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import { AiFillCloseCircle, AiOutlineClose } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineClose, AiFillExclamationCircle, AiFillCheckCircle } from "react-icons/ai";
 import styles from './Alert.module.css';
 import { useAlert, REMOVE } from '../../context/alert-context';
 
@@ -9,8 +9,9 @@ let cx = classNames.bind(styles);
 const Alert = ({alert}) => {
   const { alertDispatch } = useAlert();
 
-  return (
-    <div className={styles.alert_parent}>
+  if (alert.length) {
+    return (
+      <div className={styles.alert_parent}>
       {alert.map(al => {
         const {type, id, message} = al;
         const isAlertError = type === 'error';
@@ -25,7 +26,7 @@ const Alert = ({alert}) => {
         let titleClassName = cx({
           alert_title_error: isAlertError,
           alert_title_success: !isAlertError,
-          title: true
+          title: true,
         });
         let messageClassName = cx({
           alert_message_error: isAlertError,
@@ -41,27 +42,42 @@ const Alert = ({alert}) => {
           icon_success: !isAlertError,
           icon_right: true
         });
+        let alertHeaderClassName = cx({
+          alert_title_error: isAlertError,
+          alert_title_success: !isAlertError,
+          alert_header: true
+        })
 
         return (
           <div className={alertClassName} onClick={() =>
             alertDispatch({ type: REMOVE, payload: { id } })
-          } id={id}>
-            <div className={iconLeftClassName}><AiFillCloseCircle /></div>
-            <div className={styles.alert_content}>
-              {type === 'error' && (
-                <p className={titleClassName}>Error</p>
-              )}
-              {type !== 'error' && (
-                <p className={titleClassName}>Success</p>
-              )}
-              <p className={messageClassName}>{message}</p>
-            </div>
-            <div className={iconRightClassName}><AiOutlineClose /></div>
+          } id={id} key={id}>
+            <div className={alertHeaderClassName}><AiOutlineClose /></div>
+            {type === 'error' && (
+              <div className={styles.alert_message_container}>
+                <div className={iconLeftClassName}><AiFillExclamationCircle /></div>
+                <div className={styles.alert_content}>
+                  <div className={titleClassName}>{message}</div>
+                </div>
+              </div>
+            )}
+            {type !== 'error' && (
+              <div className={styles.alert_message_container}>
+                <div className={iconLeftClassName}><AiFillCheckCircle /></div>
+                <div className={styles.alert_content}>
+                  <div className={titleClassName}>{message}</div>
+                </div>
+              </div>
+            )}
+            <div />
           </div>
         )
       })}
     </div>
-  )
+    )
+  } else {
+    return null;
+  }
 }
 
 export default Alert;

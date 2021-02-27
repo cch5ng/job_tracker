@@ -10,6 +10,7 @@ import TextArea from '../FormShared/TextArea';
 import SelectGroup from '../FormShared/SelectGroup';
 import Button from '../FormShared/Button';
 import styles from './Jobs.module.css';
+import ButtonGroup from '../FormShared/ButtonGroup';
 
 const JOB_STATUS_OPTIONS = [
   {label: 'select a status', value: 'none'},
@@ -43,6 +44,7 @@ function JobsForm({type, jobId}) {
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
+  let inputRef = React.useRef(null);
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -206,6 +208,12 @@ function JobsForm({type, jobId}) {
   }, [])
 
   React.useEffect(() => {
+    if (inputRef) {
+      inputRef.current.focus();
+    }
+  }, [inputRef]);
+
+  React.useEffect(() => {
     if (jobGuid) {
       setFormStatus('redirectEventForm');
     }
@@ -236,7 +244,8 @@ function JobsForm({type, jobId}) {
       <div>
         <h1 className="view_title">JOBS FORM</h1>
         <form>
-          <Input type="text" value={jobName} name="jobName" inputOnChangeHandler={inputOnChangeHandler} label="name"/>
+          <Input type="text" value={jobName} name="jobName" inputRef={inputRef}
+            inputOnChangeHandler={inputOnChangeHandler} label="name"/>
           <SelectGroup 
             label="status" name="jobStatus" value={jobStatus} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} />
@@ -250,14 +259,14 @@ function JobsForm({type, jobId}) {
           <SelectGroup 
             label="source" name="jobSource" value={jobSource} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_SOURCE_OPTIONS} />
-          <div>
+          <ButtonGroup>
             <Button id="buttonSaveJobEvent" clickHandler={buttonOnClickHandler} 
               label="Save and Create Event" size="wide"/>
             <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
               label="Save"/>
             <Button id="buttonCancel" clickHandler={buttonOnClickHandler} 
               label="Cancel"/>
-          </div>
+          </ButtonGroup>
         </form>
       </div>
     );
