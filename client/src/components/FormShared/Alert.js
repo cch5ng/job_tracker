@@ -6,8 +6,6 @@ import { useAlert, REMOVE } from '../../context/alert-context';
 
 let cx = classNames.bind(styles);
 
-//  <div className={iconRightClassName}><AiFillCloseCircle /></div>
-
 const Alert = ({alert}) => {
   const { alertDispatch } = useAlert();
 

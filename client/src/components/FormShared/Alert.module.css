@@ -8,11 +8,22 @@
 }
 
 .alert_container {
+  display: grid;
+  grid-auto-rows: minmax(30px, auto);
+}
+
+.alert_header {
+  grid-row: 1;
+  font-weight: bold;
+  justify-self: end;
+}
+
+.alert_message_container {
+  grid-row: 2 / 3;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  min-height: 150px;
 }
 
 .alert {
