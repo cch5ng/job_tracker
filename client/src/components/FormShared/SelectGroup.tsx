@@ -14,15 +14,18 @@ type SelectGroupProps = {
   }[]; 
   inline?: boolean;
   required?: boolean;
+  error?: boolean;
   inputOnChangeHandler(event: React.FormEvent<HTMLSelectElement>): void;
 }
-const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, inline, required}: SelectGroupProps) => {
-  const selectGroupClassName = cx(
-    {
-      inputGroupContainer: !inline,
-      inputGroupInline: inline
-    }
-  );
+const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, inline, required, error}: SelectGroupProps) => {
+  const selectGroupClassName = cx({
+    inputGroupContainer: !inline,
+    inputGroupInline: inline 
+  });
+  const selectClassName = cx({
+    select: true,
+    error
+  });
   const labelRequired = `${label} *`;
 
   return (
@@ -31,7 +34,7 @@ const SelectGroup = ({ label, name, value, inputOnChangeHandler, optionsList, in
         <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
       )}
       <select name={name} value={value} 
-        className={styles.select} onChange={ev => inputOnChangeHandler(ev)}>
+        className={selectClassName} onChange={ev => inputOnChangeHandler(ev)}>
         {optionsList.map(option => (
           <option value={option.value} key={option.value}>{option.label}</option>
         ))}
