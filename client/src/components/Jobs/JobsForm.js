@@ -34,17 +34,61 @@ function JobsForm({type, jobId}) {
   const {updateJobsDict, jobsDict} = useJobs();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = React.useState('');
+  const [jobNameError, setJobNameError] = React.useState(false);
   const [jobStatus, setJobStatus] = React.useState('none');
+  const [jobStatusError, setJobStatusError] = React.useState(false);
   const [companyName, setCompanyName] = React.useState('');
+  const [companyNameError, setCompanyNameError] = React.useState(false);
   const [jobUrl, setJobUrl] = React.useState('');
   const [jobDescription, setJobDescription] = React.useState('');
+  const [jobDescriptionError, setJobDescriptionError] = React.useState(false);
   const [jobQuestions, setJobQuestions] = React.useState('');
   const [jobSource, setJobSource] = React.useState('none');
+  const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
+
+  const isFormValid = () => {
+    let formIsValid = true;
+    if (!jobName.length) {
+      setJobNameError(true);
+      formIsValid = false;
+    } else {
+      setJobNameError(false);
+    }
+    if (!companyName.length) {
+      setCompanyNameError(true);
+      formIsValid = false;
+    } else {
+      setCompanyNameError(false);
+    }
+    if (!jobDescription.length) {
+      setJobDescriptionError(true);
+      formIsValid = false;
+    } else {
+      setJobDescriptionError(false);
+    }
+    if (jobStatus === 'none') {
+      setJobStatusError(true);
+      formIsValid = false;
+    } else {
+      setJobStatusError(false);
+    }
+    if (jobSource === 'none') {
+      setJobSourceError(true);
+      formIsValid = false;
+    } else {
+      setJobSourceError(false);
+    }
+    if (!formIsValid) {
+      alertDispatch({ type: ADD, 
+        payload: {type: 'error', message: `Name, status, company, description, and source are required.`} });
+    }
+    return formIsValid;
+  }
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -88,80 +132,84 @@ function JobsForm({type, jobId}) {
       }
     }
 
-    if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
-      getUserGuid({userEmail})
-        .then(uGuid => {
-            //handle buttonSave
-            let body = {
-              name: jobName, 
-              status: jobStatus, 
-              description: jobDescription, 
-              url: jobUrl, 
-              company_name: companyName, 
-              questions: jobQuestions, 
-              source: jobSource, 
-              user_guid: uGuid
-            }
-            if (type === 'create') {
-              let guid = uuidv4();
-              let curDate = new Date();
-              body.guid = guid;
-              body.created_at = curDate.toISOString();
-              fetch(`http://localhost:3000/api/jobs/`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${sessionToken}`
-                },
-                body: JSON.stringify(body)
-              })
-              .then(resp => {
-                if (resp.status === 201) {
-                  updateJobsDict(body);
-                }
-                return resp.json(); 
-              })
-              .then(json => {
-                if (json.job_guid) {
-                  alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                  setJobGuid(json.job_guid);
-                } else {
-                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
-                }
-              })
-              .catch(err => console.error('err', err))
-            } else if (type === 'edit' && jobId.length) {
-              fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${sessionToken}`
-                },
-                body: JSON.stringify(body)
-              })
-              .then(resp => {
-                if (resp.status === 201) {
-                  body.guid = jobId;
-                  body.created_at = jobCreatedAt;
-                  updateJobsDict(body);
-                }
-                return resp.json();
-              })
-              .then(json => {
-                if (json.job_guid) {
-                  alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                } else {
-                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
-                }
+    //error validation
+    let formValid = isFormValid();
 
-              })
-              .catch(err => console.error('err', err))
-            }
-        })
-    } 
-
-    if (id === 'buttonSave') {
-      setFormStatus('redirectJobs')
+    if (formValid) {
+      if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
+        getUserGuid({userEmail})
+          .then(uGuid => {
+              //handle buttonSave
+              let body = {
+                name: jobName, 
+                status: jobStatus, 
+                description: jobDescription, 
+                url: jobUrl, 
+                company_name: companyName, 
+                questions: jobQuestions, 
+                source: jobSource, 
+                user_guid: uGuid
+              }
+              if (type === 'create') {
+                let guid = uuidv4();
+                let curDate = new Date();
+                body.guid = guid;
+                body.created_at = curDate.toISOString();
+                fetch(`http://localhost:3000/api/jobs/`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                  },
+                  body: JSON.stringify(body)
+                })
+                .then(resp => {
+                  if (resp.status === 201) {
+                    updateJobsDict(body);
+                  }
+                  return resp.json(); 
+                })
+                .then(json => {
+                  if (json.job_guid) {
+                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                    setJobGuid(json.job_guid);
+                  } else {
+                    alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
+                  }
+                })
+                .catch(err => console.error('err', err))
+              } else if (type === 'edit' && jobId.length) {
+                fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                  },
+                  body: JSON.stringify(body)
+                })
+                .then(resp => {
+                  if (resp.status === 201) {
+                    body.guid = jobId;
+                    body.created_at = jobCreatedAt;
+                    updateJobsDict(body);
+                  }
+                  return resp.json();
+                })
+                .then(json => {
+                  if (json.job_guid) {
+                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                  } else {
+                    alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
+                  }
+  
+                })
+                .catch(err => console.error('err', err))
+              }
+          })
+      } 
+      if (id === 'buttonSave') {
+        setFormStatus('redirectJobs')
+      }
     }
   }
 
@@ -245,22 +293,26 @@ function JobsForm({type, jobId}) {
         <h1 className="view_title">JOBS FORM</h1>
         <form>
           <Input type="text" value={jobName} name="jobName" inputRef={inputRef}
-            inputOnChangeHandler={inputOnChangeHandler} label="name" required={true} />
+            inputOnChangeHandler={inputOnChangeHandler} label="name" required={true} 
+            error={jobNameError} />
           <SelectGroup 
             label="status" name="jobStatus" value={jobStatus} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} 
-            required={true} />
+            required={true} error={jobStatusError} />
           <Input type="text" value={companyName} name="companyName" 
-            inputOnChangeHandler={inputOnChangeHandler} label="company" required={true} />
-          <Input type="url" value={jobUrl} name="jobUrl"
-            inputOnChangeHandler={inputOnChangeHandler} label="url"/>
-          <TextArea value={jobDescription} name="jobDescription" inputOnChangeHandler={inputOnChangeHandler}  
-            label="description" required={true}/>
-          <TextArea value={jobQuestions} name="jobQuestions" inputOnChangeHandler={inputOnChangeHandler}  
-            label="questions"/>
+            inputOnChangeHandler={inputOnChangeHandler} label="company" 
+            required={true} error={companyNameError} />
+          <TextArea value={jobDescription} name="jobDescription" 
+            inputOnChangeHandler={inputOnChangeHandler}  label="description" 
+            required={true} error={jobDescriptionError} />
           <SelectGroup 
             label="source" name="jobSource" value={jobSource} required={true}
-            inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_SOURCE_OPTIONS} />
+            inputOnChangeHandler={inputOnChangeHandler} 
+            optionsList={JOB_SOURCE_OPTIONS} error={jobSourceError} />
+          <Input type="url" value={jobUrl} name="jobUrl"
+            inputOnChangeHandler={inputOnChangeHandler} label="url"/>
+          <TextArea value={jobQuestions} name="jobQuestions" inputOnChangeHandler={inputOnChangeHandler}  
+            label="questions"/>
           <ButtonGroup>
             <Button id="buttonSaveJobEvent" clickHandler={buttonOnClickHandler} 
               label="Save and Create Event" size="wide"/>
