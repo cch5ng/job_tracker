@@ -227,17 +227,20 @@ function EventsForm(props) {
       <h1 className="view_title">EVENTS FORM</h1>
       <form>
         <SelectGroup 
-          label="format" name="eventFormat" value={eventFormat} 
+          label="format" name="eventFormat" value={eventFormat} required={true}
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_LIST} />  
-        <Input type="text" value={eventContact} name="eventContact" inputOnChangeHandler={inputOnChangeHandler} label="contact"/>
+        <Input type="text" value={eventContact} name="eventContact" 
+          inputOnChangeHandler={inputOnChangeHandler} label="contact"
+          required={true} />
+        <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
+          inputOnChangeHandler={inputOnChangeHandler} label="date time"
+          required={true} />
         <TextArea value={eventNotes} name="eventNotes" inputOnChangeHandler={inputOnChangeHandler}  
           label="notes"/>
         <TextArea value={eventDescription} name="eventDescription" inputOnChangeHandler={inputOnChangeHandler}  
           label="description"/>
         <Input type="text" value={eventFollowUp} name="eventFollowUp" 
           inputOnChangeHandler={inputOnChangeHandler} label="follow up"/>
-        <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
-          inputOnChangeHandler={inputOnChangeHandler} label="date time"/>
         <ButtonGroup>
           <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
             label="Save" />

@@ -245,19 +245,21 @@ function JobsForm({type, jobId}) {
         <h1 className="view_title">JOBS FORM</h1>
         <form>
           <Input type="text" value={jobName} name="jobName" inputRef={inputRef}
-            inputOnChangeHandler={inputOnChangeHandler} label="name"/>
+            inputOnChangeHandler={inputOnChangeHandler} label="name" required={true} />
           <SelectGroup 
             label="status" name="jobStatus" value={jobStatus} 
-            inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} />
-          <Input type="text" value={companyName} name="companyName" inputOnChangeHandler={inputOnChangeHandler} label="company"/>
+            inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} 
+            required={true} />
+          <Input type="text" value={companyName} name="companyName" 
+            inputOnChangeHandler={inputOnChangeHandler} label="company" required={true} />
           <Input type="url" value={jobUrl} name="jobUrl"
             inputOnChangeHandler={inputOnChangeHandler} label="url"/>
           <TextArea value={jobDescription} name="jobDescription" inputOnChangeHandler={inputOnChangeHandler}  
-            label="description"/>
+            label="description" required={true}/>
           <TextArea value={jobQuestions} name="jobQuestions" inputOnChangeHandler={inputOnChangeHandler}  
             label="questions"/>
           <SelectGroup 
-            label="source" name="jobSource" value={jobSource} 
+            label="source" name="jobSource" value={jobSource} required={true}
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_SOURCE_OPTIONS} />
           <ButtonGroup>
             <Button id="buttonSaveJobEvent" clickHandler={buttonOnClickHandler} 
