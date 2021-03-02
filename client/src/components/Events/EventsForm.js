@@ -160,11 +160,11 @@ function EventsForm(props) {
           })
           .then(resp => resp.json())
           .then(json => {
-            if (json.event_guid) {
+            if (json.type === 'error') {
               alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            } else {
+            } else if (json.event_guid) {
               alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            }
+            } 
           })
           .catch(err => console.error('err', err))
         } else if (type === 'edit') {
@@ -178,9 +178,9 @@ function EventsForm(props) {
           })
           .then(resp => resp.json())
           .then(json => {
-            if (json.event_guid) {
+            if (json.type === 'error') {
               alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            } else {
+            } else if (json.event_guid) {
               alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
             }
           })
