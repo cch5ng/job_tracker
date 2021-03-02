@@ -170,11 +170,11 @@ function JobsForm({type, jobId}) {
                   return resp.json(); 
                 })
                 .then(json => {
-                  if (json.job_guid) {
+                  if (json.type === 'error') {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } else if (json.job_guid) {
                     alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
                     setJobGuid(json.job_guid);
-                  } else {
-                    alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
                   }
                 })
                 .catch(err => console.error('err', err))
@@ -196,12 +196,11 @@ function JobsForm({type, jobId}) {
                   return resp.json();
                 })
                 .then(json => {
-                  if (json.job_guid) {
+                  if (json.type === 'error') {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } else if (json.job_guid) {
                     alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                  } else {
-                    alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} });
                   }
-  
                 })
                 .catch(err => console.error('err', err))
               }
