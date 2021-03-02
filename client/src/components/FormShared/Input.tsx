@@ -12,26 +12,35 @@ type InputProps = {
   label: string;
   inline?: boolean;
   placeholder?: string;
+  required?: boolean;
   inputRef?: string;
+  error?: boolean;
   inputOnChangeHandler(ev: React.FormEvent<HTMLInputElement>): void;
 }
 
-const Input = ({type, value, name, inputOnChangeHandler, label, inline, placeholder, inputRef}: InputProps) => {
+const Input = ({type, value, name, inputOnChangeHandler, label, inline, 
+  placeholder, inputRef, required, error}: InputProps) => {
   const inputGroupClassName = cx(
     {
       inputGroupContainer: !inline,
-      inputGroupInline: inline
+      inputGroupInline: inline,
     }
   );
+  const inputClassName = cx({
+    input: true,
+    error,
+  });
+  const labelRequired = `${label} *`;
+
 
   return (
     <div className={inputGroupClassName}>
       {label && (
-        <label htmlFor={name} className={styles.label}>{label}</label>
+        <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
       )}
       {value !== undefined && (
         <input type={type} value={value} name={name} 
-          className={styles.input} onChange={ev => inputOnChangeHandler(ev)}
+          className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
           placeholder={placeholder} ref={inputRef} />
       )}
     </div>

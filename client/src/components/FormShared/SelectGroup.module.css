@@ -30,6 +30,13 @@
   background-color: #e8eaee;
 }
 
+.error,
+.error:visited,
+.error:hover,
+.error:focus {
+  border-color: #e68882;
+}
+
 @media (min-width: 768px) {
 
   .select {

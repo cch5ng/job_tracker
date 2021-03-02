@@ -10,22 +10,29 @@ type TextAreaProps = {
   name: string;
   inputOnChangeHandler(event: React.FormEvent<HTMLTextAreaElement>): void;
   inline?: boolean;
+  required?: boolean;
+  error?: boolean;
 }
 
-const TextArea = ({label, value, name, inputOnChangeHandler, inline}: TextAreaProps) => {
+const TextArea = ({label, value, name, inputOnChangeHandler, inline, required, error}: TextAreaProps) => {
 
-  const textAreaGroupClassName = cx(
-    {
-      inputGroupContainer: !inline,
-      inputGroupInline: inline
-    }
-  )
+  const textAreaGroupClassName = cx({
+    inputGroupContainer: !inline,
+    inputGroupInline: inline
+    
+  });
+  const textAreaClassName = cx({
+    textArea: true,
+    error,
+  })
+
+  const labelRequired = `${label} *`;
 
   return (
     <div className={textAreaGroupClassName}>
-      <label htmlFor={name} className={styles.label}>{label}</label>
+      <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
       <textarea value={value} name={name} 
-        className={styles.textArea} onChange={ev => inputOnChangeHandler(ev)}/>
+        className={textAreaClassName} onChange={ev => inputOnChangeHandler(ev)}/>
     </div>
 
   )

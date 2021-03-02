@@ -9,7 +9,18 @@ const router = Router();
 //create new event (should be tied to an existing job guid)
 router.post('/', checkJwt, (req, res, next) => {
   const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
-    if (job_guid) {
+  const error_fields = [];
+  const required_fields = ['format', 'contact', 'date_time'];
+
+  required_fields.forEach(field => {
+    if (!req.body[field] || req.body[field] === 'none') {
+      error_fields.push(field);
+    }
+  });
+  if (error_fields.length) {
+    const error_message = `These fields are required: ${error_fields.join(', ')}`;
+    res.status(400).json({message: error_message, type: 'error'})
+  } else if (job_guid) {
     EventTable.postEvent({format, contact, notes, description, follow_up, job_guid, date_time})
       .then(resp => {
         if (resp.status_code === 401) {
@@ -21,18 +32,29 @@ router.post('/', checkJwt, (req, res, next) => {
       .catch(error => next(error))    
     } else {
       res.status(200).json({message: 'Could not save event because there is an issue with the current user email authorization'})
-    }
+  }
 });
 
 //update event given event guid
 router.put('/:event_guid', checkJwt, (req, res, next) => {
   const guid = req.params.event_guid;
   const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
-  if (guid) {
+  const error_fields = [];
+  const required_fields = ['format', 'contact', 'date_time'];
+
+  required_fields.forEach(field => {
+    if (!req.body[field] || req.body[field] === 'none') {
+      error_fields.push(field);
+    }
+  });
+  if (error_fields.length) {
+    const error_message = `These fields are required: ${error_fields.join(', ')}`;
+    res.status(400).json({message: error_message, type: 'error'})
+  } else if (guid) {
     EventTable.updateEvent({job_guid, format, contact, notes, description, follow_up, date_time, guid})
     .then(resp => {
       if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
+        res.status(401).json({type: 'error', message: 'Please log in and try again.'})
       } else {
         res.status(201).json(resp)
       }

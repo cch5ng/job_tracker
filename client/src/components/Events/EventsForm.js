@@ -42,8 +42,11 @@ function EventsForm(props) {
   }
   const [formSubmitted, setFormSubmitted] = React.useState(false);
   const [eventDateTime, setEventDateTime] = React.useState('');
+  const [eventDateTimeError, setEventDateTimeError] = React.useState(false);
   const [eventFormat, setEventFormat] = React.useState('phone meeting');
+  const [eventFormatError, setEventFormatError] = React.useState(false);
   const [eventContact, setEventContact] = React.useState('');
+  const [eventContactError, setEventContactError] = React.useState(false);
   const [eventNotes, setEventNotes] = React.useState('');
   const [eventDescription, setEventDescription] = React.useState('');
   const [eventFollowUp, setEventFollowUp] = React.useState('');
@@ -52,6 +55,33 @@ function EventsForm(props) {
 
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
+
+  const isFormValid = () => {
+    let formIsValid = true;
+    if (!eventContact.length) {
+      setEventContactError(true);
+      formIsValid = false;
+    } else {
+      setEventContactError(false);
+    }
+    if (!eventDateTime.length) {
+      setEventDateTimeError(true);
+      formIsValid = false;
+    } else {
+      setEventDateTimeError(false);
+    }
+    if (eventFormat === 'none') {
+      setEventFormatError(true);
+      formIsValid = false;
+    } else {
+      setEventFormatError(false);
+    }
+    if (!formIsValid) {
+      alertDispatch({ type: ADD, 
+        payload: {type: 'error', message: `Format, contact, and date/time are required.`} });
+    }
+    return formIsValid;
+  }
 
   //input change handlers
   const inputOnChangeHandler = (ev) => {
@@ -107,57 +137,60 @@ function EventsForm(props) {
         .catch(err => console.error('err', err))
     }
 
-    if (id === 'buttonSave') {
-      let body = {
-        job_guid: type === 'create' ? createJobId : editJobGuid,
-        format: eventFormat, 
-        contact: eventContact, 
-        notes: eventNotes, 
-        description: eventDescription, 
-        follow_up: eventFollowUp, 
-        date_time: convertLocalDateTimeToISOStr(eventDateTime)
+    let formValid = isFormValid();
+    if (formValid) {
+      if (id === 'buttonSave') {
+        let body = {
+          job_guid: type === 'create' ? createJobId : editJobGuid,
+          format: eventFormat, 
+          contact: eventContact, 
+          notes: eventNotes, 
+          description: eventDescription, 
+          follow_up: eventFollowUp, 
+          date_time: convertLocalDateTimeToISOStr(eventDateTime)
+        }
+        if (type === 'create') {
+          fetch(`http://localhost:3000/api/events/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify(body)
+          })
+          .then(resp => resp.json())
+          .then(json => {
+            if (json.type === 'error') {
+              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+            } else if (json.event_guid) {
+              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+            } 
+          })
+          .catch(err => console.error('err', err))
+        } else if (type === 'edit') {
+          fetch(`http://localhost:3000/api/events/${eventId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify(body)
+          })
+          .then(resp => resp.json())
+          .then(json => {
+            if (json.type === 'error') {
+              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+            } else if (json.event_guid) {
+              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+            }
+          })
+          .catch(err => console.error('err', err))
+        }
+      } 
+  
+      if (id === 'buttonSave') {
+        setFormSubmitted(true);
       }
-      if (type === 'create') {
-        fetch(`http://localhost:3000/api/events/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionToken}`
-          },
-          body: JSON.stringify(body)
-        })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.event_guid) {
-            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-          } else {
-            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-          }
-        })
-        .catch(err => console.error('err', err))
-      } else if (type === 'edit') {
-        fetch(`http://localhost:3000/api/events/${eventId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionToken}`
-          },
-          body: JSON.stringify(body)
-        })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.event_guid) {
-            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-          } else {
-            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-          }
-        })
-        .catch(err => console.error('err', err))
-      }
-    } 
-
-    if (id === 'buttonSave') {
-      setFormSubmitted(true);
     }
   }
 
@@ -227,17 +260,21 @@ function EventsForm(props) {
       <h1 className="view_title">EVENTS FORM</h1>
       <form>
         <SelectGroup 
-          label="format" name="eventFormat" value={eventFormat} 
-          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_LIST} />  
-        <Input type="text" value={eventContact} name="eventContact" inputOnChangeHandler={inputOnChangeHandler} label="contact"/>
+          label="format" name="eventFormat" value={eventFormat} required={true}
+          inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENT_FORMAT_OPTIONS_LIST} 
+          error={eventFormatError} />  
+        <Input type="text" value={eventContact} name="eventContact" 
+          inputOnChangeHandler={inputOnChangeHandler} label="contact"
+          required={true} error={eventContactError} />
+        <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
+          inputOnChangeHandler={inputOnChangeHandler} label="date time"
+          required={true} error={eventDateTimeError} />
         <TextArea value={eventNotes} name="eventNotes" inputOnChangeHandler={inputOnChangeHandler}  
           label="notes"/>
         <TextArea value={eventDescription} name="eventDescription" inputOnChangeHandler={inputOnChangeHandler}  
           label="description"/>
         <Input type="text" value={eventFollowUp} name="eventFollowUp" 
           inputOnChangeHandler={inputOnChangeHandler} label="follow up"/>
-        <Input type="datetime-local" value={eventDateTime} name="eventDateTime" 
-          inputOnChangeHandler={inputOnChangeHandler} label="date time"/>
         <ButtonGroup>
           <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
             label="Save" />
