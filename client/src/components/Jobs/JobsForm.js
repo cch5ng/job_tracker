@@ -268,11 +268,7 @@ function JobsForm({type, jobId}) {
 
   if (formStatus === 'redirectJobs') {
     return (
-      <Redirect
-        to={{
-          pathname: "/jobs"
-        }}
-      />
+      <Redirect to={{ pathname: "/jobs" }}/>
     )
   }
 
