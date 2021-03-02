@@ -42,8 +42,11 @@ const orderArByProp = (ar, prop, order) => {
 }
 
 const convertLocalDateTimeToISOStr = (dateStr) => {
-  let newDate = new Date(dateStr);
-  return newDate.toISOString();
+  if (dateStr.length) {
+    let newDate = new Date(dateStr);
+    return newDate.toISOString();  
+  }
+  return dateStr;
 }
 
 const convertISOStrToLocalDateTime = (dateStr) => {
