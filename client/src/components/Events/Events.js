@@ -15,6 +15,7 @@ import Checkbox from '../FormShared/Checkbox';
 import SelectGroup from '../FormShared/SelectGroup';
 import Input from '../FormShared/Input';
 import Alert from '../FormShared/Alert';
+import styles from './Events.module.css';
 
 const EVENTS_SORT_OPTIONS = [
   {label: 'oldest to newest', value: 'oldest to newest'},
@@ -188,7 +189,7 @@ function Events(props) {
     <div>
       <h1 className="view_title">EVENTS LIST</h1>
 
-      <form>
+      <form className={styles.events_filter_container}>
         <SelectGroup name="eventsSortBy" value={eventsSortBy} label="sort by"
           inputOnChangeHandler={inputOnChangeHandler} optionsList={EVENTS_SORT_OPTIONS} />
         <Checkbox checkboxVal={filterHidePastEvents} onChangeHandler={inputOnChangeHandler}
@@ -219,7 +220,7 @@ function Events(props) {
         events={myEventsList}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
+        style={{ height: 500 , marginBottom: 32}}
         views={['month', 'day', 'agenda']}
       />
 
