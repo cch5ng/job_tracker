@@ -6,7 +6,24 @@ These are instructions for running the app locally. Due to restrictions with db 
 
 ### Authentiation
 
+For UX reasons, this app was designed to mainly use Google account authentication with an email/password authentication option as fallback.
+
+Auth0 was used to handle the authentication. Please see the following docs:
+
+#### Client integration
+
+* https://auth0.com/docs/quickstart/spa/react
+
+* https://auth0.com/docs/quickstart/spa/react/02-calling-an-api
+
+* https://auth0.com/docs/connections/social/google
+
+#### Server integration
+
+* https://auth0.com/docs/quickstart/backend/nodejs
+
 ### Environment variables
+
 
 ## Running the app
 
