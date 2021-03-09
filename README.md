@@ -104,3 +104,5 @@ npm run dev
 cd ../client
 npm run start_https
 ```
+
+A browser should open with the url: https://localhost:3001
