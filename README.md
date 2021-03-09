@@ -58,6 +58,19 @@ cd client
 cp .env.example .env
 ```
 
+**Notes on environment variables**
+
+```
+REACT_APP_GOOGLE_CLIENT_ID - This value will be the same as the server env var, GOOGLE_CLIENT_ID
+AuthorizeURL - This value will come from Google project configuration, see Authentication > Client Integration docs
+TokenURL - This value will come from Google project configuration, see Authentication > Client Integration docs
+PORT - Update this if you change from the default client port, 3001
+REACT_APP_AUTH0_DOMAIN - This value comes from Auth0 client configuration, see Authentication > Client Integration docs
+REACT_APP_AUTH0_CLIENT_ID - This value comes from Auth0 client configuration, see Authentication > Client Integration docs
+REACT_APP_AUTH0_AUDIENCE - This value comes from Auth0 configuration and references the server url
+REACT_APP_SERVER_URL - This value comes from Auth0 configuration and references the server url
+```
+
 ## Running the app
 
 ### To install the app (server)
