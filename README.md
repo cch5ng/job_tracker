@@ -75,13 +75,32 @@ REACT_APP_SERVER_URL - This value comes from Auth0 configuration and references 
 
 ### To install the app (server)
 
+From /server, install required libraries.
+
+```
+cd server
+npm install
+```
+
 ### To install the app (client)
 
+From /client, install required libraries.
+
+```
+cd ../client
+npm install
+```
+
 ### To run the app (development server)
+
+```
+cd ../server
+npm run dev
+```
 
 ### To run the app (development client)
 
 ```
-cd client
+cd ../client
 npm run start_https
 ```
