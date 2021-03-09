@@ -24,6 +24,23 @@ Auth0 was used to handle the authentication. Please see the following docs:
 
 ### Environment variables
 
+## Server environment variables
+
+From /server make a copy of .env.example and name the new file => .env
+
+```
+cd server
+cp .env.example .env
+```
+
+## Client environment variables
+
+From /client make a copy of .env.example and name the new file => .env
+
+```
+cd client
+cp .env.example .env
+```
 
 ## Running the app
 
