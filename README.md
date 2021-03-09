@@ -33,6 +33,22 @@ cd server
 cp .env.example .env
 ```
 
+**Notes on environment variables**
+
+```
+API_ROOT - you may need to update the url if hosting the server other than local machine; base url for the API server
+PGUSER - PostgreSQL database user name
+PGHOST - PostgreSQL database host url
+PGPASSWORD - PostgreSQL database password
+PGDATABASE - PostgreSQL database name
+PGPORT - PostgreSQL database port
+PGMAXCONNECTIONS - This value is set to the max connections supported at free tier for elephantsql.com but it might be increased for local database instance or other hosts
+GOOGLE_CLIENT_ID - This value comes from Google project configuration (see Auth doc link for google social)
+AUTH0_DOMAIN - This value comes from Auth0 configuration
+AUTH0_AUDIENCE - This value comes from Auth0 configuration and references the server url
+CLIENT_ORIGIN_URL - This value comes from Auth0 configuration and refernces the client url
+```
+
 ## Client environment variables
 
 From /client make a copy of .env.example and name the new file => .env
