@@ -1,12 +1,24 @@
 ## Job Tracker README
 
-### Prerequisites
+These are instructions for running the app locally. Due to restrictions with db hosting and budget, this app will not be hosted for public long-term use but for short-term demo purposes only.
 
-### To install the app
+## Prerequisites
 
-### To run the app (development)
+### Authentiation
 
+### Environment variables
 
+## Running the app
 
-run the app:
-     $ DEBUG=server:* npm start
+### To install the app (server)
+
+### To install the app (client)
+
+### To run the app (development server)
+
+### To run the app (development client)
+
+```
+cd client
+npm run start_https
+```
