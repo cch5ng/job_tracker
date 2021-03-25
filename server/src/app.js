@@ -11,6 +11,7 @@ var app = express();
 const jobRouter = require('./api/job');
 const authRouter = require('./api/auth');
 const eventRouter = require('./api/event');
+const companyRouter = require('./api/company');
 
 app.use(logger('dev'));
 app.use(cors({ origin: process.env.CLIENT_ORIGIN_URL }));
@@ -42,6 +43,7 @@ const checkJwt = jwt({
 app.use('/api/jobs', jobRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/events', eventRouter);
+app.use('/api/company', companyRouter);
 
 app.use('/v1', indexRouter);
 
