@@ -108,6 +108,4 @@ router.put('/archive/:job_guid', checkJwt, (req, res, next) => {
     .catch(err => next(err));
 })
 
-
-
 module.exports = router;
