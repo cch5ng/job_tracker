@@ -8,8 +8,7 @@ const router = Router();
 //retrieve all jobs (later search/filter)
 router.get('/all/:user_guid', checkJwt, (req, res, next) => {
   const {user_guid} = req.params;
-  /*
-  JobTable.getJobs({user_guid})
+  CompanyTable.getCompanies({user_guid})
     .then(resp => {
       if (resp.status_code === 401) {
         res.status(401).json({error: 'Please log in and try again.'})
@@ -18,14 +17,12 @@ router.get('/all/:user_guid', checkJwt, (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  */
 })
 
 router.post('/', checkJwt, (req, res, next) => {
-  /*
-  const {name, status, description, url, company_name, questions, source, user_guid, guid, created_at} = req.body;
+  const {name, user_guid} = req.body;
   const error_fields = [];
-  const required_fields = ['name', 'status', 'company_name', 'description', 'source'];
+  const required_fields = ['name'];
 
   required_fields.forEach(field => {
     if (!req.body[field] || req.body[field] === 'none') {
@@ -36,7 +33,7 @@ router.post('/', checkJwt, (req, res, next) => {
     const error_message = `These fields are required: ${error_fields.join(', ')}`;
     res.status(400).json({message: error_message, type: 'error'})
   } else if (user_guid) {
-    JobTable.postJob({name, status, description, url, company_name, questions, source, user_guid, guid, created_at})
+    CompanyTable.postCompany({name, user_guid})
     .then(resp => {
       if (resp.status_code === 401) {
         res.status(401).json({error: 'Please log in and try again.'})
@@ -48,11 +45,10 @@ router.post('/', checkJwt, (req, res, next) => {
   } else {
     res.status(200).json({message: 'Could not save job because there is an issue with the current user email authorization'})
   }
-  */
 });
 
-router.put('/update/:id', checkJwt, (req, res, next) => {
-  const id = req.params.id;
+//router.put('/update/:id', checkJwt, (req, res, next) => {
+  //const id = req.params.id;
   /*
   const {name, status, description, url, company_name, questions, source, user_guid} = req.body;
   const error_fields = [];
@@ -80,10 +76,6 @@ router.put('/update/:id', checkJwt, (req, res, next) => {
     res.status(200).json({message: 'Could not save job because there is an issue with the current user email authorization'})
   }
   */
-});
-
-
-
-
+//});
 
 module.exports = router;
