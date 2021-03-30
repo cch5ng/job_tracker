@@ -5,7 +5,7 @@ const db = require('../databasePool');
 class CompanyTable {
 
 //get all companies for given user
-  static getJobs({ user_guid }) {
+  static getCompanies({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT name, id FROM company WHERE user_guid=$1`,
@@ -15,7 +15,7 @@ class CompanyTable {
           if (response.rows.length) {
             resolve({companies: response.rows, message: `${response.rows.length} companies were retrieved`})
           } else {
-            resolve({companies: [], message: 'No jobs were found'})
+            resolve({companies: [], message: 'No companies were found'})
           }
         })
     })
@@ -33,6 +33,7 @@ class CompanyTable {
             const companyId = response.rows[0].id;
             if (companyId) {
               resolve({ message: `The company, ${name}, was created successfully`,
+                        companyId,
                         status: 'success'
               });
             }
