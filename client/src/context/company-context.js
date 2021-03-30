@@ -4,9 +4,9 @@ import {getDictFromAr} from '../utils';
 const CompanyContext = React.createContext([{}, () => {}]);
 function CompanyProvider({children}) {
   const [state, setState] = React.useState({
-    jobsDict: {},
-    jobsRequestStatus: 'pending',
-    jobsRequestAlert: ''
+    companyDict: {},
+    companyRequestStatus: 'pending',
+    companyRequestAlert: ''
   });
 
   const getCompanies = ({url, token}) => {
@@ -15,47 +15,33 @@ function CompanyProvider({children}) {
     })
       .then(resp => resp.json())
       .then(json => {
-        if (json.jobs.length) {
-          let {jobs} = json;
-          let jobsObj = getDictFromAr(jobs);
-          setState({...state, jobsDict: jobsObj, jobsRequestStatus: 'success'})
+        if (json.companies.length) {
+          let {comopanies} = json;
+          let companyObj = getDictFromAr(companies);
+          setState({...state, companyDict: companyObj, companyRequestStatus: 'success'})
         } 
       })
       .catch(err => {
         console.error('error', err);
-        setState({...state, jobsRequestStatus: 'error', jobsRequestAlert: err})
+        setState({...state, companyRequestStatus: 'error', companyRequestAlert: err})
       })      
   }
 
-  const updateCompanyDict = (jobObj) => {
-    let {guid} = jobObj;
-    if (!state.jobsDict[guid]) {
-      setState({...state, jobsDict: {...state.jobsDict, [guid]: jobObj}})
+  const updateCompanyDict = (companyObj) => {
+    let {id} = companyObj;
+    if (!state.jobsDict[id]) {
+      setState({...state, companyDict: {...state.companyDict, [id]: companyObj}})
     } else {
-      let updatedJobs = {...state.jobsDict}
-      delete updatedJobs[guid];
-      updatedJobs[guid] = jobObj;
-      console.log('updatedJobs', updatedJobs)
-      setState({...state, jobsDict: updatedJobs});      
+      let updatedCompany = {...state.companyDict};
+      delete updatedCompany[id];
+      updatedCompany[id] = companyObj;
+      setState({...state, companyDict: updatedCompany});      
     }
   }
 
-  let companyState = {...state, getJobsForUser, updateJobsDict}; //getJobsByUserGuid
+  let companyState = {...state, getCompanies, updateCompanyDict};
 
-  /**
-   * Provider component is the place where you'd pass a prop called value to, 
-   * which you can subsequently consume within the Consumer component
-   */
-/*
-      {state.status === 'pending' ? (
-        'Loading...'
-      ) : state.status === 'error' ? (
-        'There was an error retrieving jobs. Please retry.'
-      ) : (
-      )}
-*/
-
-   return (
+  return (
     <CompanyContext.Provider value={companyState}>
         {children}
     </CompanyContext.Provider>
@@ -64,9 +50,9 @@ function CompanyProvider({children}) {
 
 //this seems simpler method to pass functions from context to consumers
 function useCompany() {
-  const context = React.useContext(JobsContext)
+  const context = React.useContext(CompanyContext)
   if (context === undefined) {
-    throw new Error(`useJobs must be used within a JobsProvider`)
+    throw new Error(`useCompany must be used within a CompanyProvider`)
   }
   return context;
 }
