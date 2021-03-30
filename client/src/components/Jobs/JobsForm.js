@@ -4,6 +4,7 @@ import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
+import {useCompany} from '../../context/company-context';
 import { useAlert, ADD } from '../../context/alert-context';
 import Input from '../FormShared/Input';
 import TextArea from '../FormShared/TextArea';
@@ -32,6 +33,7 @@ const JOB_SOURCE_OPTIONS = [
 
 function JobsForm({type, jobId}) {
   const {updateJobsDict, jobsDict} = useJobs();
+  const {updateCompaniesDict, companyDict} = useCompany();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = React.useState('');
   const [jobNameError, setJobNameError] = React.useState(false);
