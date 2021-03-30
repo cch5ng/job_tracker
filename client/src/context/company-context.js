@@ -16,7 +16,7 @@ function CompanyProvider({children}) {
       .then(resp => resp.json())
       .then(json => {
         if (json.companies.length) {
-          let {comopanies} = json;
+          let {companies} = json;
           let companyObj = getDictFromAr(companies);
           setState({...state, companyDict: companyObj, companyRequestStatus: 'success'})
         } 
@@ -29,7 +29,7 @@ function CompanyProvider({children}) {
 
   const updateCompanyDict = (companyObj) => {
     let {id} = companyObj;
-    if (!state.jobsDict[id]) {
+    if (!state.companyDict[id]) {
       setState({...state, companyDict: {...state.companyDict, [id]: companyObj}})
     } else {
       let updatedCompany = {...state.companyDict};
