@@ -2,6 +2,7 @@ import * as React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import CreatableSelect from 'react-select/creatable';
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
@@ -12,6 +13,7 @@ import SelectGroup from '../FormShared/SelectGroup';
 import Button from '../FormShared/Button';
 import styles from './Jobs.module.css';
 import ButtonGroup from '../FormShared/ButtonGroup';
+import {getCreateableDataFromDict} from '../../utils';
 
 const JOB_STATUS_OPTIONS = [
   {label: 'select a status', value: 'none'},
@@ -52,6 +54,10 @@ function JobsForm({type, jobId}) {
   const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
+
+  //TEST
+  let creatableData = getCreateableDataFromDict(companyDict);
+  console.log('creatableData', creatableData);
 
   const isFormValid = () => {
     let formIsValid = true;
@@ -113,6 +119,20 @@ function JobsForm({type, jobId}) {
     }
     nameToSetterDict[name](value);
   }
+
+  const handleSelectChange = (newValue: any, actionMeta: any) => {
+    console.group('Value Changed (new)');
+    console.log(newValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+  };
+
+  const handleSelectInputChange = (inputValue: any, actionMeta: any) => {
+    console.group('Input Changed (existing)');
+    console.log(inputValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+  };
 
   //button click handlers
   const buttonOnClickHandler = (ev) => {
@@ -296,9 +316,18 @@ function JobsForm({type, jobId}) {
             label="status" name="jobStatus" value={jobStatus} 
             inputOnChangeHandler={inputOnChangeHandler} optionsList={JOB_STATUS_OPTIONS} 
             required={true} error={jobStatusError} />
-          <Input type="text" value={companyName} name="companyName" 
+
+          <label>company</label>
+          <CreatableSelect
+            isClearable
+            onChange={handleSelectChange}
+            onInputChange={handleSelectInputChange}
+            options={creatableData}
+          />
+
+          {/* <Input type="text" value={companyName} name="companyName" 
             inputOnChangeHandler={inputOnChangeHandler} label="company" 
-            required={true} error={companyNameError} />
+            required={true} error={companyNameError} /> */}
           <TextArea value={jobDescription} name="jobDescription" 
             inputOnChangeHandler={inputOnChangeHandler}  label="description" 
             required={true} error={jobDescriptionError} />
