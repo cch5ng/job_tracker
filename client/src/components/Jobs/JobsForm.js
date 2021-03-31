@@ -35,14 +35,16 @@ const JOB_SOURCE_OPTIONS = [
 
 function JobsForm({type, jobId}) {
   const {updateJobsDict, jobsDict} = useJobs();
-  const {updateCompaniesDict, companyDict} = useCompany();
+  const {updateCompanyDict, companyDict} = useCompany();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = React.useState('');
   const [jobNameError, setJobNameError] = React.useState(false);
   const [jobStatus, setJobStatus] = React.useState('none');
   const [jobStatusError, setJobStatusError] = React.useState(false);
-  const [companyName, setCompanyName] = React.useState('');
-  const [companyNameError, setCompanyNameError] = React.useState(false);
+
+  const [createableDefault, setCreateableDefault] = React.useState({value: '', label: ''})
+  // const [companyName, setCompanyName] = React.useState('');
+  // const [companyNameError, setCompanyNameError] = React.useState(false);
   const [jobUrl, setJobUrl] = React.useState('');
   const [jobDescription, setJobDescription] = React.useState('');
   const [jobDescriptionError, setJobDescriptionError] = React.useState(false);
@@ -67,12 +69,12 @@ function JobsForm({type, jobId}) {
     } else {
       setJobNameError(false);
     }
-    if (!companyName.length) {
-      setCompanyNameError(true);
-      formIsValid = false;
-    } else {
-      setCompanyNameError(false);
-    }
+    // if (!companyName.length) {
+    //   setCompanyNameError(true);
+    //   formIsValid = false;
+    // } else {
+    //   setCompanyNameError(false);
+    // }
     if (!jobDescription.length) {
       setJobDescriptionError(true);
       formIsValid = false;
@@ -106,8 +108,8 @@ function JobsForm({type, jobId}) {
         setJobName(v)},
       'jobStatus': function(v) {
         setJobStatus(v)},
-      'companyName': function(v) {
-        setCompanyName(v)},
+      // 'companyName': function(v) {
+      //   setCompanyName(v)},
       'jobUrl': function(v) {
         setJobUrl(v)},
       'jobDescription': function(v) {
@@ -125,6 +127,50 @@ function JobsForm({type, jobId}) {
     console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
+    if (actionMeta.action === 'create-option') {
+      //post new company
+      let name = newValue.value;
+      if (name.length) {
+        getUserGuid({userEmail})
+          .then(uGuid => {
+            let body = {
+              name,
+              user_guid: uGuid
+            }
+            let curDate = new Date();
+            body.created_at = curDate.toISOString();
+            fetch(`http://localhost:3000/api/company/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+              },
+              body: JSON.stringify(body)
+            })
+            .then(resp => {
+              if (resp.status === 201) {
+                updateJobsDict(body);
+              }
+              return resp.json(); 
+            })
+            .then(json => {
+              if (json.type === 'error') {
+                alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+              } else if (json.companyId) {
+                alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                setCreateableDefault({value: json.companyId, label: name});
+                updateCompanyDict({id: json.companyId, name})
+              }
+            })
+            .catch(err => console.error('err', err))
+          })
+      }
+    } else if (actionMeta.action === 'select-option') {
+      //update state
+      console.log('option', newValue);
+      setCreateableDefault(newValue);
+    }
+
   };
 
   const handleSelectInputChange = (inputValue: any, actionMeta: any) => {
@@ -144,7 +190,7 @@ function JobsForm({type, jobId}) {
       if (type === 'create') {
         setJobName('');
         setJobStatus('');
-        setCompanyName('');
+        // setCompanyName('');
         setJobUrl('');
         setJobDescription('');
         setJobQuestions('');
@@ -167,7 +213,7 @@ function JobsForm({type, jobId}) {
                 status: jobStatus, 
                 description: jobDescription, 
                 url: jobUrl, 
-                company_name: companyName, 
+                // company_name: companyName, 
                 questions: jobQuestions, 
                 source: jobSource, 
                 user_guid: uGuid
@@ -246,10 +292,10 @@ function JobsForm({type, jobId}) {
         .then(resp => resp.json())
         .then(json => {
           console.log('json', json)
-          const {company_name, description, name, questions, source, status, url, created_at} = json.job;
-          if (company_name) {
-            setCompanyName(company_name);
-          }
+          const {company_id, description, name, questions, source, status, url, created_at} = json.job;
+          // if (company_name) {
+          //   setCompanyName(company_name);
+          // }
           if (name) {
             setJobName(name);
           }
@@ -323,6 +369,7 @@ function JobsForm({type, jobId}) {
             onChange={handleSelectChange}
             onInputChange={handleSelectInputChange}
             options={creatableData}
+            value={createableDefault}
           />
 
           {/* <Input type="text" value={companyName} name="companyName" 
