@@ -17,7 +17,11 @@ function CompanyProvider({children}) {
       .then(json => {
         if (json.companies.length) {
           let {companies} = json;
-          let companyObj = getDictFromAr(companies);
+          let companyObj = {};
+          companies.forEach(company => {
+            let key = company.id;
+            companyObj[key] = company;
+          })
           setState({...state, companyDict: companyObj, companyRequestStatus: 'success'})
         } 
       })
