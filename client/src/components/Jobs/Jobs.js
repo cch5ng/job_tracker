@@ -3,6 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import classNames from 'classnames/bind';
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
+import {useCompany} from '../../context/company-context';
 import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 import styles from './Jobs.module.css';
@@ -17,6 +18,7 @@ function Jobs() {
   const { name, picture, email } = user;
   const { login, getUserGuid, userGuid, userEmail, sessionToken } = useAppAuth();
   const { jobsDict, updateJobsDict } = useJobs();
+  const { companyDict } = useCompany();
 
   const inputOnChangeHandler = (ev) => {
     const {name, value} = ev.target;
@@ -50,17 +52,18 @@ function Jobs() {
     jobsAr = getArFromDict(jobsDict);
     orderArByProp(jobsAr, 'created_at', 'desc')
   }
+  //TODO fix filter by company name
   if (jobsAr.length && jobFilterStr && jobFilterStr.length) {
     jobsAr = jobsAr.filter(job => {
-      if (job.name && job.company_name) {
-        return job.name.indexOf(jobFilterStr) > -1 || job.company_name.indexOf(jobFilterStr) > -1;
+      if (job.name ) { //&& job.company_name
+        return job.name.indexOf(jobFilterStr) > -1 ; //|| job.company_name.indexOf(jobFilterStr) > -1
       }
       if (job.name) {
         return job.name.indexOf(jobFilterStr) > -1
       }
-      if (job.company_name) {
-        return job.company_name.indexOf(jobFilterStr) > -1
-      }
+      // if (job.company_name) {
+      //   return job.company_name.indexOf(jobFilterStr) > -1
+      // }
     })
   }
 
@@ -78,12 +81,14 @@ function Jobs() {
           let url = `/jobs/${job.guid}`;
           let newEventUrl = `events/new/${job.guid}`;
           let eventsUrl = `jobs/${job.guid}/events`;
+          let companyId = job.company_id;
+          let companyName = companyDict[companyId];
           return (
             <div key={job.guid} className="list_item_container">
               <Link to={url}>
                 <h2>{job.name}</h2>
                 <div><span className="list_item_label">status</span> {job.status}</div>
-                <div><span className="list_item_label">company</span> {job.company_name}</div>
+                <div><span className="list_item_label">company</span> {companyName.name}</div>
                 <div><span className="list_item_label">url</span> {job.url}</div>
                 <div><span className="list_item_label">description</span> {job.description}</div>
                 <div><span className="list_item_label">questions</span> {job.questions}</div>
