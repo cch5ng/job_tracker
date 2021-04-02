@@ -166,8 +166,6 @@ function JobsForm({type, jobId}) {
           })
       }
     } else if (actionMeta.action === 'select-option') {
-      //update state
-      console.log('option', newValue);
       setCreateableDefault(newValue);
     }
 
@@ -190,7 +188,7 @@ function JobsForm({type, jobId}) {
       if (type === 'create') {
         setJobName('');
         setJobStatus('');
-        // setCompanyName('');
+        setCreateableDefault({value: '', label: ''});
         setJobUrl('');
         setJobDescription('');
         setJobQuestions('');
@@ -212,8 +210,8 @@ function JobsForm({type, jobId}) {
                 name: jobName, 
                 status: jobStatus, 
                 description: jobDescription, 
-                url: jobUrl, 
-                // company_name: companyName, 
+                url: jobUrl,
+                company_id: createableDefault.value,
                 questions: jobQuestions, 
                 source: jobSource, 
                 user_guid: uGuid
@@ -291,11 +289,14 @@ function JobsForm({type, jobId}) {
       })
         .then(resp => resp.json())
         .then(json => {
-          console.log('json', json)
           const {company_id, description, name, questions, source, status, url, created_at} = json.job;
-          // if (company_name) {
-          //   setCompanyName(company_name);
-          // }
+          if (company_id) {
+            let selectOption = {};
+            let company = companyDict[company_id];
+            selectOption.value = company.id;
+            selectOption.label = company.name;
+            setCreateableDefault(selectOption);
+          }
           if (name) {
             setJobName(name);
           }
