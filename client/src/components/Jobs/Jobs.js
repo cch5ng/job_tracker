@@ -52,18 +52,28 @@ function Jobs() {
     jobsAr = getArFromDict(jobsDict);
     orderArByProp(jobsAr, 'created_at', 'desc')
   }
-  //TODO fix filter by company name
   if (jobsAr.length && jobFilterStr && jobFilterStr.length) {
     jobsAr = jobsAr.filter(job => {
-      if (job.name ) { //&& job.company_name
-        return job.name.indexOf(jobFilterStr) > -1 ; //|| job.company_name.indexOf(jobFilterStr) > -1
-      }
-      if (job.name) {
+      if (job.name && job.company_id) {
+        let includeJob = false;
+        if (job.name.indexOf(jobFilterStr) > -1) {
+          includeJob = true;
+        }
+        if (job.company_id) {
+          let companyId = job.company_id;
+          let company = companyDict[companyId];
+          if (company.name.indexOf(jobFilterStr) > -1) {
+            includeJob = true;
+          }
+        }
+        return includeJob;
+      } else if (job.name) {
         return job.name.indexOf(jobFilterStr) > -1
+      } else if (job.company_id) {
+        let companyId = job.company_id;
+        let company = companyDict[companyId];
+        return company.name.indexOf(jobFilterStr) > -1
       }
-      // if (job.company_name) {
-      //   return job.company_name.indexOf(jobFilterStr) > -1
-      // }
     })
   }
 
