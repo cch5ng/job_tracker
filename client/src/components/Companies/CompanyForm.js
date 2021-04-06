@@ -10,14 +10,14 @@ import Button from '../FormShared/Button';
 
 function CompanyForm() {
   const {companyId} = useParams();
-  console.log('companyId', companyId);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [purpose, setPurpose] = useState('');
   const [financial, setFinancial] = useState('');
   const [company, setCompany] = useState({});
+  const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectCompanies
   const {userGuid, sessionToken} = useAppAuth();
-  const {updateCompanyDict} = useCompany();
+  const {updateCompanyDict, companyDict} = useCompany();
   const { alertDispatch } = useAlert();
 
   const inputOnChangeHandler = (ev) => {
@@ -41,7 +41,6 @@ function CompanyForm() {
           return;
       }  
     }
-
   }
 
   const buttonOnClickHandler = (ev) => {
@@ -77,45 +76,54 @@ function CompanyForm() {
       } else if (json.job_guid) {
         alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
       }
+      setFormStatus('redirectCompanies');
     })
     .catch(err => console.error('err', err))
-
-
   }
 
-  //useEffect(() => {
-  // }, []);
-
-  /*
-  error={jobNameError}
-  error={jobDescriptionError} 
-  */
+  useEffect(() => {
+    if (companyId && companyDict) {
+      let company = companyDict[companyId];
+      if (company.name) {
+        setName(company.name);
+      }
+      if (company.description) {
+        setDescription(company.description);
+      }
+      if (company.financial) {
+        setFinancial(company.financial)
+      }
+      if (company.purpose) {
+        setPurpose(company.purpose);
+      }
+    }
+  }, []);
 
   return (
     <div>
-      <h1 className="view_title">Company Edit Form</h1>
-      <form>
-        <Input type="text" value={name} name="name"
-          inputOnChangeHandler={inputOnChangeHandler} label="name" required={true} />
-        <Input type="text" value={financial} name="financial"
-          inputOnChangeHandler={inputOnChangeHandler} label="financial" />
-        <TextArea value={description} name="description" 
-          inputOnChangeHandler={inputOnChangeHandler}  label="description" />
-        <TextArea value={purpose} name="purpose" 
-          inputOnChangeHandler={inputOnChangeHandler}  label="purpose" />
-        <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
-          label="Save"/>
+      {formStatus === 'redirectCompanies' && (
+        <Redirect to="/companies" />
+      )}
 
-      </form>
+      {formStatus === 'inProgress' && (
+        <>
+          <h1 className="view_title">Company Edit Form</h1>
+          <form>
+            <Input type="text" value={name} name="name"
+              inputOnChangeHandler={inputOnChangeHandler} label="name" required={true} />
+            <Input type="text" value={financial} name="financial"
+              inputOnChangeHandler={inputOnChangeHandler} label="financial" />
+            <TextArea value={description} name="description" 
+              inputOnChangeHandler={inputOnChangeHandler}  label="description" />
+            <TextArea value={purpose} name="purpose" 
+              inputOnChangeHandler={inputOnChangeHandler}  label="purpose" />
+            <Button id="buttonSave" clickHandler={buttonOnClickHandler} 
+              label="Save"/>
+          </form>
+        </>
+      )}
     </div>
   )
 }
-
-/*
-name (required)
-description (size, background, values); text area
-purpose (what they do); input
-financial (funding status); input
-*/
 
 export default CompanyForm;
