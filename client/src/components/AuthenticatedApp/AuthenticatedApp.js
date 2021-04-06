@@ -16,6 +16,8 @@ import EventsFormCreate from '../Events/EventsFormCreate';
 import EventsFormEdit from '../Events/EventsFormEdit';
 import Events from '../Events/Events';
 import Alert from '../FormShared/Alert';
+import Companies from '../Companies/Companies';
+import CompanyForm from '../Companies/CompanyForm';
 
 const AuthenticatedApp = () => {
   const [showNavMenu, setShowNavMenu] = useState(false);
@@ -45,6 +47,8 @@ const AuthenticatedApp = () => {
           <ProtectedRoute exact path="/events/new/:jobId" component={EventsFormCreate} />
           <ProtectedRoute exact path="/events/edit/:eventId" component={EventsFormEdit} />
           <ProtectedRoute exact path="/events" component={Events} />
+          <ProtectedRoute exact path="/companies" component={Companies} />
+          <ProtectedRoute exact path="/companies/form/:companyId" component={CompanyForm} />
         </Switch>
       </main>
     </div>

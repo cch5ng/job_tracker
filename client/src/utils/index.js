@@ -15,6 +15,29 @@ const getArFromDict = (dict) => {
   return ar;
 }
 
+const getCreateableDataFromDict = (dict) => {
+  let objAr = [];
+  Object.keys(dict).forEach(k => {
+    let curObj = dict[k];
+    let newObj = {};
+    newObj.value = curObj.id;
+    newObj.label = curObj.name;
+    objAr.push(newObj);
+  });
+  objAr.sort((a, b) => {
+    let compA = a.label;
+    let compB = b.label;
+    if (compA < compB) {
+      return -1;
+    } else if (compB < compA) {
+      return 1;
+    } else {
+      return 0;
+    }
+  })
+  return objAr;
+}
+
 //the prop name may be date_time or created_at but always ISO date/time string
 const orderArByProp = (ar, prop, order) => {
   ar.sort(function(a, b) {
@@ -64,4 +87,5 @@ const prettyFormatDate = (dateNum) => {
 }
 
 export {getDictFromAr, getArFromDict, convertLocalDateTimeToISOStr, 
-  convertISOStrToLocalDateTime, orderArByProp, prettyFormatDate};
+  convertISOStrToLocalDateTime, orderArByProp, prettyFormatDate,
+  getCreateableDataFromDict};

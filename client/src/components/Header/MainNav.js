@@ -24,6 +24,16 @@ const MainNav = () => (
         Events
       </NavLink>
     </div>
+    <div className={styles.nav_row} >
+      <NavLink
+        to="/companies"
+        exact
+        className={styles.nav_link}
+        activeClassName="router-link-exact-active"
+      >
+        Companies
+      </NavLink>
+    </div>
   </div>
 );
 

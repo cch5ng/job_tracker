@@ -8,7 +8,6 @@ CREATE TABLE job(
   questions VARCHAR(1000),
   status VARCHAR(64),
   company_id INT,
-  company_name VARCHAR(255),
   user_guid VARCHAR(64),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   FOREIGN KEY (company_id) REFERENCES company(id),

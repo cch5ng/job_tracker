@@ -2,11 +2,11 @@ require('dotenv').config()
 const db = require('../databasePool');
 
 class JobTable {
-  static postJob({name, status, description, url, company_name, questions, source, user_guid, guid, created_at}) {
+  static postJob({name, status, description, url, company_id, questions, source, user_guid, guid, created_at}) {
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO job (name, status, description, url, company_name, questions, source, guid, user_guid, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
-        [name, status, description, url, company_name, questions, source, guid, user_guid, created_at],
+        `INSERT INTO job (name, status, description, url, company_id, questions, source, guid, user_guid, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+        [name, status, description, url, company_id, questions, source, guid, user_guid, created_at],
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
@@ -25,11 +25,11 @@ class JobTable {
     })
   }
 
-  static updateJob({name, status, description, url, company_name, questions, source, user_guid, guid}) {
+  static updateJob({name, status, description, url, company_id, questions, source, user_guid, guid}) {
     return new Promise((resolve, reject) => {
       db.query(
-        `UPDATE job SET name=$3, status=$4, description=$5, url=$6, company_name=$7, questions=$8, source=$9 WHERE guid=$1 AND user_guid=$2 RETURNING id`,
-        [guid, user_guid, name, status, description, url, company_name, questions, source],
+        `UPDATE job SET name=$3, status=$4, description=$5, url=$6, company_id=$7, questions=$8, source=$9 WHERE guid=$1 AND user_guid=$2 RETURNING id`,
+        [guid, user_guid, name, status, description, url, company_id, questions, source],
         (error, response) => {
           if (error) return reject(error);
           if (response.rows.length) {
@@ -48,7 +48,7 @@ class JobTable {
   static getJobs({ user_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, url, company_name, questions, source, guid, created_at FROM job WHERE user_guid=$1`,
+        `SELECT name, status, description, url, company_id, questions, source, guid, created_at FROM job WHERE user_guid=$1`,
         [user_guid],
         (error, response) => {
           if (error) return reject(error);
@@ -64,7 +64,7 @@ class JobTable {
   static getJobByGuid({ job_guid }) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT name, status, description, url, company_name, questions, source, guid, created_at FROM job WHERE guid=$1`,
+        `SELECT name, status, description, url, company_id, questions, source, guid, created_at FROM job WHERE guid=$1`,
         [job_guid],
         (error, response) => {
           if (error) return reject(error);

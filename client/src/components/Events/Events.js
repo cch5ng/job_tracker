@@ -8,6 +8,7 @@ import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useAppAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
+import {useCompany} from '../../context/company-context';
 import { useAlert, ADD } from '../../context/alert-context';
 import {getDictFromAr, getArFromDict, convertISOStrToLocalDateTime, orderArByProp} from '../../utils';
 import Button from '../FormShared/Button';
@@ -40,6 +41,7 @@ function Events(props) {
   const { name, picture, email } = user;
   const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
   const {jobsDict, getJobsForUser} = useJobs();
+  const {companyDict, getCompanies} = useCompany();
   const { alertDispatch } = useAlert();
 
   const buttonOnClickHandler = (ev) => {
@@ -117,10 +119,12 @@ function Events(props) {
           .catch(err => console.error('error', err))
       }
 
-      let jobsUrl;
       if (uGuid) {
-        jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
-        getJobsForUser({url: jobsUrl, token})
+        let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
+        getJobsForUser({url: jobsUrl, token});
+
+        let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
+        getCompanies({url: companiesUrl, token});
       }
 
     } catch (error) {
