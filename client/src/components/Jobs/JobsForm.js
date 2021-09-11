@@ -122,7 +122,7 @@ function JobsForm({type, jobId}) {
     nameToSetterDict[name](value);
   }
 
-  const handleSelectChange = (newValue: any, actionMeta: any) => {
+  const handleSelectChange = (newValue, actionMeta) => {
     console.group('Value Changed (new)');
     console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
@@ -171,7 +171,7 @@ function JobsForm({type, jobId}) {
 
   };
 
-  const handleSelectInputChange = (inputValue: any, actionMeta: any) => {
+  const handleSelectInputChange = (inputValue, actionMeta) => {
     console.group('Input Changed (existing)');
     console.log(inputValue);
     console.log(`action: ${actionMeta.action}`);

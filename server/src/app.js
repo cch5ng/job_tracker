@@ -2,12 +2,22 @@ require('dotenv').config();
 var logger = require('morgan');
 var express = require('express');
 const cors = require("cors");
+const path = require("path");
 var cookieParser = require('cookie-parser');
 const jwt = require('express-jwt');
 const jwtAuthz = require('express-jwt-authz');
 const jwksRsa = require('jwks-rsa');
 var indexRouter = require('./api/index');
 var app = express();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../client/build")));
+}
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(express.static(path.join(__dirname, "../../client/public")));
+}
+
 const jobRouter = require('./api/job');
 const authRouter = require('./api/auth');
 const eventRouter = require('./api/event');
