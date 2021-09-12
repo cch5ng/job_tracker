@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "heroku-postbuild": "cd ./server && npm install && cd ../client && npm install && npm run build && cd ../server ",
+    "heroku-postbuild": "cd ./server && npm install && cd ../client && npm install && npm run build_ts && npm run build && cd ../server ",
     "start": "node --inspect=9229 ./server/src/bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
