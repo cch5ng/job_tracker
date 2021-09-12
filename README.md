@@ -2,6 +2,8 @@
 
 These are instructions for running the app locally. Due to restrictions with db hosting and budget, this app will not be hosted for public long-term use but for short-term demo purposes only.
 
+Test change.
+
 ## Prerequisites
 
 ### Authentiation
