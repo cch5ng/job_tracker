@@ -1,13 +1,12 @@
 const { Router, json } = require('express');
 const EventTable = require('../tables/event');
 const JobTable = require('../tables/job');
-
-const {checkJwt} = require('../utils');
+const {jwtCheck} = require('../utils'); //checkJwt, 
 
 const router = Router();
 
 //create new event (should be tied to an existing job guid)
-router.post('/', checkJwt, (req, res, next) => {
+router.post('/', jwtCheck, (req, res, next) => {
   const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
   const error_fields = [];
   const required_fields = ['format', 'contact', 'date_time'];
@@ -36,7 +35,7 @@ router.post('/', checkJwt, (req, res, next) => {
 });
 
 //update event given event guid
-router.put('/:event_guid', checkJwt, (req, res, next) => {
+router.put('/:event_guid', jwtCheck, (req, res, next) => {
   const guid = req.params.event_guid;
   const {job_guid, format, contact, notes, description, follow_up, date_time} = req.body;
   const error_fields = [];
@@ -66,7 +65,7 @@ router.put('/:event_guid', checkJwt, (req, res, next) => {
 });
 
 //get events for given user guid (later search/filter)
-router.get('/:event_guid', checkJwt, (req, res, next) => {
+router.get('/:event_guid', jwtCheck, (req, res, next) => {
   const {event_guid} = req.params;
   EventTable.getEventByGuid({event_guid})
     .then(resp => {
@@ -80,7 +79,7 @@ router.get('/:event_guid', checkJwt, (req, res, next) => {
 })
 
 //get events for given user guid (later search/filter)
-router.get('/user/:user_guid', checkJwt, (req, res, next) => {
+router.get('/user/:user_guid', jwtCheck, (req, res, next) => {
   const {user_guid} = req.params;
   EventTable.getEventsByUserGuid({user_guid})
     .then(resp => {
@@ -94,7 +93,7 @@ router.get('/user/:user_guid', checkJwt, (req, res, next) => {
 })
 
 //get events for given job guid
-router.get('/job/:job_guid', checkJwt, (req, res, next) => {
+router.get('/job/:job_guid', jwtCheck, (req, res, next) => {
   const {job_guid} = req.params;
   EventTable.getEventsByJobGuid({job_guid})
     .then(resp => {
@@ -107,7 +106,7 @@ router.get('/job/:job_guid', checkJwt, (req, res, next) => {
     .catch(err => next(err));
 })
 
-router.delete('/:event_guid', checkJwt, (req, res, next) => {
+router.delete('/:event_guid', jwtCheck, (req, res, next) => {
   const {event_guid} = req.params;
   EventTable.deleteEvent({event_guid})
     .then(resp => {

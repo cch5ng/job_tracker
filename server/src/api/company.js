@@ -1,12 +1,12 @@
 const { Router } = require('express');
 const CompanyTable = require('../tables/company');
 const AuthTable = require('../tables/auth');
-const {checkJwt} = require('../utils');
+const {jwtCheck} = require('../utils'); //checkJwt, 
 
 const router = Router();
 
 //retrieve all jobs (later search/filter)
-router.get('/all/:user_guid', checkJwt, (req, res, next) => {
+router.get('/all/:user_guid', jwtCheck, (req, res, next) => {
   const {user_guid} = req.params;
   CompanyTable.getCompanies({user_guid})
     .then(resp => {
@@ -19,7 +19,7 @@ router.get('/all/:user_guid', checkJwt, (req, res, next) => {
     .catch(err => next(err));
 })
 
-router.post('/', checkJwt, (req, res, next) => {
+router.post('/', jwtCheck, (req, res, next) => {
   const {name, user_guid} = req.body;
   const error_fields = [];
   const required_fields = ['name'];
@@ -47,7 +47,7 @@ router.post('/', checkJwt, (req, res, next) => {
   }
 });
 
-router.put('/update/:id', checkJwt, (req, res, next) => {
+router.put('/update/:id', jwtCheck, (req, res, next) => {
   const id = req.params.id;
   const {name, description, financial, purpose, user_guid} = req.body;
   const error_fields = [];

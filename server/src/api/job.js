@@ -2,14 +2,14 @@ const { Router } = require('express');
 const JobTable = require('../tables/job');
 const CompanyTable = require('../tables/company');
 const AuthTable = require('../tables/auth');
-const {checkJwt} = require('../utils');
+const {jwtCheck} = require('../utils'); //checkJwt, 
 
 const router = Router();
 
 //create new job
 //should take into consideration creating a new company (vs an existing company)
 //for now just create a new company
-router.post('/', checkJwt, (req, res, next) => {
+router.post('/', jwtCheck, (req, res, next) => {
   const {name, status, description, url, company_id, questions, source, user_guid, guid, created_at} = req.body;
   const error_fields = [];
   const required_fields = ['name', 'status', 'company_id', 'description', 'source'];
@@ -37,7 +37,7 @@ router.post('/', checkJwt, (req, res, next) => {
   }
 });
 
-router.put('/update/:job_guid', checkJwt, (req, res, next) => {
+router.put('/update/:job_guid', jwtCheck, (req, res, next) => {
   const guid = req.params.job_guid;
   const {name, status, description, url, company_id, questions, source, user_guid} = req.body;
   const error_fields = [];
@@ -67,7 +67,7 @@ router.put('/update/:job_guid', checkJwt, (req, res, next) => {
 });
 
 //retrieve all jobs (later search/filter)
-router.get('/all/:user_guid', checkJwt, (req, res, next) => {
+router.get('/all/:user_guid', jwtCheck, (req, res, next) => {
   const {user_guid} = req.params;
   JobTable.getJobs({user_guid})
     .then(resp => {
@@ -81,7 +81,7 @@ router.get('/all/:user_guid', checkJwt, (req, res, next) => {
 })
 
 //retrieve all jobs (later search/filter)
-router.get('/:job_guid', checkJwt, (req, res, next) => {
+router.get('/:job_guid', jwtCheck, (req, res, next) => {
   const {job_guid} = req.params;
   JobTable.getJobByGuid({job_guid})
     .then(resp => {
@@ -95,7 +95,7 @@ router.get('/:job_guid', checkJwt, (req, res, next) => {
 })
 
 //update job given jobId to set to status archived (maybe reuse the generic put route?)
-router.put('/archive/:job_guid', checkJwt, (req, res, next) => {
+router.put('/archive/:job_guid', jwtCheck, (req, res, next) => {
   const {job_guid} = req.params;
   JobTable.archiveJob({job_guid})
     .then(resp => {
