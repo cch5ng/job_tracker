@@ -11,13 +11,14 @@ const audience = 'http://localhost:3000';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+const redirectUri = `${process.env.REACT_APP_AUTH0_AUDIENCE}/events`
 
 ReactDOM.render(
   <Router>
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      redirectUri={window.location.origin}
+      redirectUri={redirectUri}
     >
       <React.StrictMode>
         <App />
