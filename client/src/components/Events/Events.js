@@ -5,8 +5,10 @@ import {useState, useEffect} from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
+import { getAuth } from "firebase/auth";
+
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {useAppAuth} from '../../context/auth-context';
+import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
 import { useAlert, ADD } from '../../context/alert-context';
@@ -39,31 +41,38 @@ function Events(props) {
 
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const { name, picture, email } = user;
-  const {login, getUserGuid, userGuid, userEmail, sessionToken} = useAppAuth();
+  const {login, getUserGuid} = useAuth();
   const {jobsDict, getJobsForUser} = useJobs();
   const {companyDict, getCompanies} = useCompany();
   const { alertDispatch } = useAlert();
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
-    let {id, name} = ev.target;
-    let eventGuid = name;
-    fetch(`http://localhost:3000/api/events/${eventGuid}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionToken}`
-      }
-    })
-    .then(resp => resp.json())
-    .then(json => {
-      if (json.status === 'success') {
-        let copyEventDict = {...eventsDict};
-        delete copyEventDict[eventGuid];
-        setEventsDict(copyEventDict);
-      }
-    })
-    .catch(err => console.error('err', err))
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      let sessionToken = user.getIdToken();
+
+      let {id, name} = ev.target;
+      let eventGuid = name;
+      fetch(`http://localhost:3000/api/events/${eventGuid}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`
+        }
+      })
+        .then(resp => resp.json())
+        .then(json => {
+          if (json.status === 'success') {
+            let copyEventDict = {...eventsDict};
+            delete copyEventDict[eventGuid];
+            setEventsDict(copyEventDict);
+          }
+        })
+        .catch(err => console.error('err', err))
+    }
   }
 
   const inputOnChangeHandler = (ev) => {
