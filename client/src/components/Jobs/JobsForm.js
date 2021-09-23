@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CreatableSelect from 'react-select/creatable';
-import {useAppAuth} from '../../context/auth-context';
+import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
 import { useAlert, ADD } from '../../context/alert-context';
@@ -53,7 +53,7 @@ function JobsForm({type, jobId}) {
   const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
-  const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
+  //const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
 
