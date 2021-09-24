@@ -1,8 +1,10 @@
 import * as React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CreatableSelect from 'react-select/creatable';
+import { getAuth } from "firebase/auth";
+//import { useAuth0 } from "@auth0/auth0-react";
+
 import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
@@ -53,9 +55,18 @@ function JobsForm({type, jobId}) {
   const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
-  //const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
+  const {getUserGuid} = useAuth(); //userGuid, 
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  let sessionToken;
+  let userEmail;
+  if (user) {
+    sessionToken = user.getIdToken();
+    userEmail = user.email;
+  }
 
   //TEST
   let creatableData = getCreateableDataFromDict(companyDict);
@@ -123,14 +134,14 @@ function JobsForm({type, jobId}) {
   }
 
   const handleSelectChange = (newValue, actionMeta) => {
-    console.group('Value Changed (new)');
-    console.log(newValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
+    // console.group('Value Changed (new)');
+    // console.log(newValue);
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
     if (actionMeta.action === 'create-option') {
       //post new company
       let name = newValue.value;
-      if (name.length) {
+      if (name.length && sessionToken && userEmail) {
         getUserGuid({userEmail})
           .then(uGuid => {
             let body = {
@@ -202,7 +213,7 @@ function JobsForm({type, jobId}) {
     let formValid = isFormValid();
 
     if (formValid) {
-      if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
+      if (sessionToken && userEmail && id === 'buttonSave' || id === 'buttonSaveJobEvent') {
         getUserGuid({userEmail})
           .then(uGuid => {
               //handle buttonSave

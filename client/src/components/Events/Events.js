@@ -39,17 +39,24 @@ function Events(props) {
   const [filterEventTakeHomeTestScheduled, setFilterEventTakeHomeTestScheduled] = useState(true);
   const [filterEventTakeHomeTestUnscheduled, setFilterEventTakeHomeTestUnscheduled] = useState(true);
 
-  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  const { name, picture, email } = user;
+  //const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+  //const { name, picture, email } = user;
   const {login, getUserGuid} = useAuth();
   const {jobsDict, getJobsForUser} = useJobs();
   const {companyDict, getCompanies} = useCompany();
   const { alertDispatch } = useAlert();
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+  let userEmail;
+  let sessionToken;
+  if (user) {
+    userEmail = user.email;
+    sessionToken = user.getIdToken();
+  }
+
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
-    const auth = getAuth();
-    const user = auth.currentUser;
 
     if (user) {
       let sessionToken = user.getIdToken();
@@ -98,8 +105,10 @@ function Events(props) {
 
   const callSecureApi = async (uGuid) => {
     try {
-      const token = await getAccessTokenSilently();
-      login({userEmail: email, sessionToken: token, userGuid: uGuid})
+      //const token = await getAccessTokenSilently();
+      if (userEmail) {
+        login({userEmail, sessionToken, userGuid: uGuid})
+      }
 
       let eventsUrl;
       if (!jobId && uGuid) {
@@ -107,9 +116,9 @@ function Events(props) {
       } else if (jobId) {
         eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
       }
-      if (eventsUrl) {
+      if (eventsUrl && sessionToken) {
         fetch(eventsUrl, {
-          headers: {Authorization: `Bearer ${token}`}
+          headers: {Authorization: `Bearer ${sessionToken}`}
         })
           .then(resp => {
             if (!resp.ok) {
@@ -130,10 +139,10 @@ function Events(props) {
 
       if (uGuid) {
         let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
-        getJobsForUser({url: jobsUrl, token});
+        getJobsForUser({url: jobsUrl, sessionToken});
 
         let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
-        getCompanies({url: companiesUrl, token});
+        getCompanies({url: companiesUrl, sessionToken});
       }
 
     } catch (error) {
@@ -165,10 +174,12 @@ function Events(props) {
   }
 
   useEffect(() => {
-    getUserGuid({userEmail: email})
+    if (userEmail) {
+      getUserGuid({userEmail})
       .then(uGuid => {
         callSecureApi(uGuid);
       })
+    }
   }, [])
 
   let eventsAr = Object.keys(eventsDict).length ? getArFromDict(eventsDict) : [];
