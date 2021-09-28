@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
+//import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
 import {BrowserRouter as Router} from "react-router-dom";
 import './index.css';
 import App from './App';
@@ -11,11 +11,9 @@ const audience = 'http://localhost:3000';
 
 ReactDOM.render(
   <Router>
-    <Auth0ProviderWithHistory>
       <React.StrictMode>
         <App />
       </React.StrictMode>
-    </Auth0ProviderWithHistory>
   </Router>,
   document.getElementById("root")
 );
