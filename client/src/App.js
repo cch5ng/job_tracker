@@ -4,8 +4,6 @@ import {useState} from 'react';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
-import { useAuth0 } from "@auth0/auth0-react";
-
 import {AuthProvider} from './context/auth-context';
 import {JobsProvider} from './context/jobs-context';
 import {CompanyProvider} from './context/company-context';
