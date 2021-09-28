@@ -1,11 +1,11 @@
 import React from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
 import AuthenticatedApp from './AuthenticatedApp/AuthenticatedApp';
 import UnauthenticatedApp from './UnauthenticatedApp/UnauthenticatedApp';
+import {useAuth} from '../context/auth-context';
 
 function Home() {
-  const { isAuthenticated } = useAuth0();
-  return isAuthenticated ? <AuthenticatedApp /> : <UnauthenticatedApp />
+  const {status} = useAuth();
+  return status === 'logged in' ? <AuthenticatedApp /> : <UnauthenticatedApp />
 }
 
 export default Home;
