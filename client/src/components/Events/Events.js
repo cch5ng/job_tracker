@@ -2,7 +2,6 @@ import React from "react";
 import * as ReactDOM from "react-dom";
 import {useParams, Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { getAuth } from "firebase/auth";
