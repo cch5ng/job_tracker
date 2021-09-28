@@ -23,7 +23,7 @@ const UnauthenticatedApp = () => {
           <Route exact path="/">
             <div className={styles.splash_screen_container} >
               <img src={splashScreen} className={styles.splash_screen} />
-              <LoginButton />
+              {/* <LoginButton /> */}
             </div>
           </Route>
         </Switch>
