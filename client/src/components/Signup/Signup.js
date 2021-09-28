@@ -10,7 +10,7 @@ import { useAuth } from '../../context/auth-context'
     const [password, setPassword] = useState('');
     const auth = getAuth();
   
-    const {login, status} = useAuth();
+    const {status, setUserGuidReq} = useAuth();
   
     const inputChangeHandler = (ev) => {
       const {name, value} = ev.target;
@@ -31,33 +31,13 @@ import { useAuth } from '../../context/auth-context'
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          login();
-          // ...
+          setUserGuidReq({userEmail: email})
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          // ..
         });
-    
-      // firebase.auth().createUserWithEmailAndPassword(email, password)
-      // .then((userCredential) => {
-      //   // Signed in 
-      //   var user = userCredential.user;
-      //   user.getIdToken()
-      //     .then(token => {
-      //       window.localStorage.setItem('blackjackAuthToken', token);
-      //       login();
-      //     })
-      //     .catch(err => console.error('error retrieving token'))
-      // })
-      // .catch((error) => {
-      //   var errorCode = error.code;
-      //   var errorMessage = error.message;
-      //   // ..
-      // });
-    
-    }
+        }
   
     if (status && status === 'logged in') {
       return (
