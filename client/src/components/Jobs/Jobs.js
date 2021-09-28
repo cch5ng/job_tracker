@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import classNames from 'classnames/bind';
 import { getAuth } from "firebase/auth";
 import {Link, useHistory} from 'react-router-dom';
@@ -16,8 +15,6 @@ let cx = classNames.bind(styles);
 
 function Jobs() {
   const [jobFilterStr, setJobFilterStr] = React.useState('');
-  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  const { name, picture, email } = user;
   const { jobsDict, updateJobsDict } = useJobs();
   const { companyDict } = useCompany();
 
