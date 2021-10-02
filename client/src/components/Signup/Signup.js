@@ -5,9 +5,10 @@ import LoginButton from "../Header/LoginButton";
 
 import { useAuth } from '../../context/auth-context'
 
-  const Signup = ({ firebase }) => {
+  const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [signupError, setSignupError] = useState('');
     const auth = getAuth();
   
     const {status, setUserGuidReq} = useAuth();
@@ -20,11 +21,15 @@ import { useAuth } from '../../context/auth-context'
       if (name === 'password') {
         setPassword(value);
       }
+      if (!value) {
+        setSignupError('');
+      }
     }
   
     //field validation
   
     const formSubmitHandler = (ev) => {
+      setSignupError('');
       ev.preventDefault();
 
       createUserWithEmailAndPassword(auth, email, password)
@@ -34,10 +39,10 @@ import { useAuth } from '../../context/auth-context'
           setUserGuidReq({userEmail: email})
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          console.log('error', error);
+          setSignupError(error.message);
         });
-        }
+    }
   
     if (status && status === 'logged in') {
       return (
@@ -48,6 +53,9 @@ import { useAuth } from '../../context/auth-context'
     return (
       <div>
         <h1>Signup</h1>
+        {signupError.length > 0 && (
+          <div>{signupError}</div>
+        )}
         <form>
           <div>
             <label htmlFor="email">Email</label>
