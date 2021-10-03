@@ -50,7 +50,7 @@ function AuthProvider({children}) {
       })
   }
 
-  const getUserGuid = ({userEmail}) => {
+  const getUserGuidReq = ({userEmail}) => {
     //make api request
     //check if the user exists in the db
     return fetch('http://localhost:3000/api/auth/guid', {
@@ -74,7 +74,7 @@ function AuthProvider({children}) {
       .catch(err => console.error('err', err))        
   }
 
-  let authState = {status: curAuthState.status, logout, login, user, getUserGuid, setUserGuidReq}
+  let authState = {status: curAuthState.status, userGuid, logout, login, user, getUserGuidReq, setUserGuidReq}
 
   /**
    * Provider component is the place where you'd pass a prop called value to, 
