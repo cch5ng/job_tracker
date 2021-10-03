@@ -10,6 +10,7 @@ import UnauthenticatedNavBar from '../Header/UnauthenticatedNavBar';
 import styles from './UnauthenticatedApp.module.css';
 import splashScreen from '../..//daoud-abismail-unsplash.jpg';
 import Signup from '../Signup/Signup';
+import Login from '../Login/Login';
 
 const UnauthenticatedApp = () => {
   return (
@@ -19,6 +20,9 @@ const UnauthenticatedApp = () => {
         <Switch>
           <Route exact path="/signup">
             <Signup />
+          </Route>
+          <Route exact path="/login">
+            <Login />
           </Route>
           <Route exact path="/">
             <div className={styles.splash_screen_container} >
