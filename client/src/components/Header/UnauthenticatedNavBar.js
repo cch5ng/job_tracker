@@ -9,6 +9,7 @@ const UnauthenticatedNavBar = () => {
     <header className="header header_unauthenticated">
       <div className="logo_title logo_title_unauthenticated">Jobs Tracker</div>
       <Link to="/signup">Signup</Link>
+      <Link to="/login">Log In</Link>
     </header>
   );
 };
