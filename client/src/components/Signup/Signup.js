@@ -36,7 +36,11 @@ import { useAuth } from '../../context/auth-context'
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          setUserGuidReq({userEmail: email})
+          user.getIdToken()
+            .then(idToken => {
+              setUserGuidReq({userEmail: email, fbIdToken: idToken});
+            })
+            .catch(error => console.error('err', error))
         })
         .catch((error) => {
           console.log('error', error);
