@@ -35,9 +35,12 @@ const Login = () => {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        //TODO call getUserGuidReq
-        getUserGuidReq({userEmail: email});
-        login();
+        user.getIdToken()
+          .then(idToken => {
+            getUserGuidReq({userEmail: email, fbIdToken: idToken});
+            login();    
+          })
+          .catch(error => console.error('err', error))
       })
       .catch((error) => {
         const errorCode = error.code;
