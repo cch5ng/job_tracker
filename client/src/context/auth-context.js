@@ -13,7 +13,7 @@ function AuthProvider({children}) {
   let history = createBrowserHistory();
 
   const logout = () => {
-    localStorage.removeItem('blackjackAuthToken');
+    //localStorage.removeItem('blackjackAuthToken');
     setUser(null);
     setCurAuthState({
       status: 'logged out',
