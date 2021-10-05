@@ -29,14 +29,14 @@ function AuthProvider({children}) {
     })
   }
 
-  const setUserGuidReq = ({userEmail}) => {
+  const setUserGuidReq = ({userEmail, fbIdToken}) => {
     //no
     return fetch('http://localhost:3000/api/auth/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({email: userEmail})
+      body: JSON.stringify({email: userEmail, fbIdToken})
     })
       .then(resp => resp.json())
       .then(json => {
@@ -50,7 +50,7 @@ function AuthProvider({children}) {
       })
   }
 
-  const getUserGuidReq = ({userEmail}) => {
+  const getUserGuidReq = ({userEmail, fbIdToken}) => {
     //make api request
     //check if the user exists in the db
     return fetch('http://localhost:3000/api/auth/guid', {
@@ -58,7 +58,7 @@ function AuthProvider({children}) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({email: userEmail})
+      body: JSON.stringify({email: userEmail, fbIdToken})
     })
       .then(resp => resp.json())
       .then(json => {
