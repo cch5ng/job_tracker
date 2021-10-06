@@ -30,22 +30,27 @@ function Jobs() {
     const {name} = ev.target;
     const auth = getAuth();
     const user = auth.currentUser;
-    let sessionToken = user.getIdToken();
 
-    if (user && name && sessionToken) {
-      fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
-        method: 'PUT',
-        headers: {Authorization: `Bearer ${sessionToken}`}
+    user.getIdToken()
+      .then(fbIdToken => {
+        if (user && name) {
+          let body = {fbIdToken}
+          fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
+            method: 'PUT',
+            body: JSON.stringify(body)
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              if (json.status === 'success') {
+                let updatedJob = {...jobsDict[name], status: 'archived'};
+                updateJobsDict(updatedJob);
+              }
+            })
+            .catch(err => console.error('err', err))  
+        }
+    
       })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.status === 'success') {
-            let updatedJob = {...jobsDict[name], status: 'archived'};
-            updateJobsDict(updatedJob);
-          }
-        })
-        .catch(err => console.error('err', err))  
-    }
+      .catch(error => console.error('err', error))
   }
 
   let jobsAr = [];
