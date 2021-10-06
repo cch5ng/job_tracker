@@ -51,42 +51,49 @@ function CompanyForm() {
 
     if (user) {
     //call update api endpoint
-      let sessionToken = user.getToken();
-      let body = {};
-      body.name = name;
-      body.financial = financial;
-      body.description = description;
-      body.purpose = purpose;
-      body.userGuid = userGuid;
-      let updateUrl = `http://localhost:3000/api/company/update/${companyId}`;
+      user.getIdToken()
+        .then(fbIdToken => {
 
-      fetch(updateUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionToken}`
-        },
-        body: JSON.stringify(body)
-      })
-        .then(resp => {
-          if (resp.status === 201) {
-            let newCompany = {...body, id: companyId};
-            delete newCompany['userGuid'];
-            updateCompanyDict(newCompany);
-          }
-          return resp.json();
+          //let sessionToken = user.getToken();
+          let body = {};
+          body.name = name;
+          body.financial = financial;
+          body.description = description;
+          body.purpose = purpose;
+          body.userGuid = userGuid;
+          body.fbIdToken = fbIdToken;
+          let updateUrl = `http://localhost:3000/api/company/update/${companyId}`;
+    
+          fetch(updateUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+              //'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify(body)
+          })
+            .then(resp => {
+              if (resp.status === 201) {
+                let newCompany = {...body, id: companyId};
+                delete newCompany['userGuid'];
+                updateCompanyDict(newCompany);
+              }
+              return resp.json();
+            })
+            .then(json => {
+              if (json.type === 'error') {
+                alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+              } else if (json.job_guid) {
+                alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+              }
+              setFormStatus('redirectCompanies');
+            })
+            .catch(err => console.error('err', err))
+
         })
-        .then(json => {
-          if (json.type === 'error') {
-            alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-          } else if (json.job_guid) {
-            alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-          }
-          setFormStatus('redirectCompanies');
-        })
-        .catch(err => console.error('err', err))
+        .catch(error => console.error('err', error))
+
     }
-
   }
 
   useEffect(() => {
