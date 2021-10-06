@@ -9,9 +9,10 @@ function JobsProvider({children}) {
     jobsRequestAlert: ''
   });
 
-  const getJobsForUser = ({url, token}) => {
+  const getJobsForUser = ({url, fbIdToken}) => {
+    let body = {fbIdToken}
     fetch(url, {
-      headers: {Authorization: `Bearer ${token}`}
+      body: JSON.stringify(body)
     })
       .then(resp => resp.json())
       .then(json => {

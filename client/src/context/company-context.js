@@ -9,9 +9,10 @@ function CompanyProvider({children}) {
     companyRequestAlert: ''
   });
 
-  const getCompanies = ({url, token}) => {
+  const getCompanies = ({url, fbIdToken}) => {
+    let body = {fbIdToken}
     fetch(url, {
-      headers: {Authorization: `Bearer ${token}`}
+      body: JSON.stringify(body)
     })
       .then(resp => resp.json())
       .then(json => {
