@@ -216,72 +216,81 @@ function JobsForm({type, jobId}) {
 
     if (formValid) {
       if (userEmail && id === 'buttonSave' || id === 'buttonSaveJobEvent') {
-        getUserGuid({userEmail})
-          .then(uGuid => {
-              //handle buttonSave
-              let body = {
-                name: jobName, 
-                status: jobStatus, 
-                description: jobDescription, 
-                url: jobUrl,
-                company_id: createableDefault.value,
-                questions: jobQuestions, 
-                source: jobSource, 
-                user_guid: uGuid
-              }
-              if (type === 'create') {
-                let guid = uuidv4();
-                let curDate = new Date();
-                body.guid = guid;
-                body.created_at = curDate.toISOString();
-                fetch(`http://localhost:3000/api/jobs/`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(body)
-                })
-                .then(resp => {
-                  if (resp.status === 201) {
-                    updateJobsDict(body);
-                  }
-                  return resp.json(); 
-                })
-                .then(json => {
-                  if (json.type === 'error') {
-                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-                  } else if (json.job_guid) {
-                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                    setJobGuid(json.job_guid);
-                  }
-                })
-                .catch(err => console.error('err', err))
-              } else if (type === 'edit' && jobId.length) {
-                fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
-                  method: 'PUT',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(body)
-                })
-                .then(resp => {
-                  if (resp.status === 201) {
-                    body.guid = jobId;
-                    body.created_at = jobCreatedAt;
-                    updateJobsDict(body);
-                  }
-                  return resp.json();
-                })
-                .then(json => {
-                  if (json.type === 'error') {
-                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-                  } else if (json.job_guid) {
-                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                  }
-                })
-                .catch(err => console.error('err', err))
-              }
+
+        user.getIdToken()
+          .then(fbIdToken => {
+
+            getUserGuid({userEmail})
+              .then(uGuid => {
+                //handle buttonSave
+                let body = {
+                  name: jobName, 
+                  status: jobStatus, 
+                  description: jobDescription, 
+                  url: jobUrl,
+                  company_id: createableDefault.value,
+                  questions: jobQuestions, 
+                  source: jobSource, 
+                  user_guid: uGuid,
+                  fbIdToken
+                }
+                if (type === 'create') {
+                  let guid = uuidv4();
+                  let curDate = new Date();
+                  body.guid = guid;
+                  body.created_at = curDate.toISOString();
+                  fetch(`http://localhost:3000/api/jobs/`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                  })
+                  .then(resp => {
+                    if (resp.status === 201) {
+                      updateJobsDict(body);
+                    }
+                    return resp.json(); 
+                  })
+                  .then(json => {
+                    if (json.type === 'error') {
+                      alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                    } else if (json.job_guid) {
+                      alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                      setJobGuid(json.job_guid);
+                    }
+                  })
+                  .catch(err => console.error('err', err))
+                } else if (type === 'edit' && jobId.length) {
+                  fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                  })
+                  .then(resp => {
+                    if (resp.status === 201) {
+                      body.guid = jobId;
+                      body.created_at = jobCreatedAt;
+                      updateJobsDict(body);
+                    }
+                    return resp.json();
+                  })
+                  .then(json => {
+                    if (json.type === 'error') {
+                      alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                    } else if (json.job_guid) {
+                      alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                    }
+                  })
+                  .catch(err => console.error('err', err))
+                }
+            })
+
           })
+          .catch(error => console.error('err', error))
+        
       } 
       if (id === 'buttonSave') {
         setFormStatus('redirectJobs')
@@ -292,45 +301,51 @@ function JobsForm({type, jobId}) {
   //if type=edit, get existing form fields
   React.useEffect(() => {
     if (type === 'edit' && jobId && sessionToken) {
-      let url = `http://localhost:3000/api/jobs/${jobId}`
-      fetch(url, {
-        headers: {
-          //'Authorization': `Bearer ${sessionToken}`
-        }
-      })
-        .then(resp => resp.json())
-        .then(json => {
-          const {company_id, description, name, questions, source, status, url, created_at} = json.job;
-          if (company_id) {
-            let selectOption = {};
-            let company = companyDict[company_id];
-            selectOption.value = company.id;
-            selectOption.label = company.name;
-            setCreateableDefault(selectOption);
-          }
-          if (name) {
-            setJobName(name);
-          }
-          if (status) {
-            setJobStatus(status);
-          }
-          if (url) {
-            setJobUrl(url);
-          }
-          if (description) {
-            setJobDescription(description);
-          }
-          if (questions) {
-            setJobQuestions(questions);
-          }
-          if (source) {
-            setJobSource(source);
-          }
-          if (created_at) {
-            setJobCreatedAt(created_at);
-          }
+      user.getIdToken()
+        .then(fbIdToken => {
+
+          let url = `http://localhost:3000/api/jobs/${jobId}`;
+          let body = {fbIdToken};
+          fetch(url, {
+            body: JSON.stringify(body)
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              const {company_id, description, name, questions, source, status, url, created_at} = json.job;
+              if (company_id) {
+                let selectOption = {};
+                let company = companyDict[company_id];
+                selectOption.value = company.id;
+                selectOption.label = company.name;
+                setCreateableDefault(selectOption);
+              }
+              if (name) {
+                setJobName(name);
+              }
+              if (status) {
+                setJobStatus(status);
+              }
+              if (url) {
+                setJobUrl(url);
+              }
+              if (description) {
+                setJobDescription(description);
+              }
+              if (questions) {
+                setJobQuestions(questions);
+              }
+              if (source) {
+                setJobSource(source);
+              }
+              if (created_at) {
+                setJobCreatedAt(created_at);
+              }
+            })
+            .catch(err => console.error('err', err))
+
         })
-        .catch(err => console.error('err', err))
+        .catch(error => console.error('err', error))
+
    }
   }, [])
 
