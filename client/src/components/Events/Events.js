@@ -48,36 +48,42 @@ function Events(props) {
   const auth = getAuth();
   const user = auth.currentUser;
   let userEmail;
-  let sessionToken;
+  //let sessionToken;
   if (user) {
     userEmail = user.email;
-    sessionToken = user.getIdToken();
+    //sessionToken = user.getIdToken();
   }
 
   const buttonOnClickHandler = (ev) => {
     ev.preventDefault();
 
     if (user) {
-      let sessionToken = user.getIdToken();
+      user.getIdToken()
+        .then(fbIdToken => {
+          let {id, name} = ev.target;
+          let eventGuid = name;
+          let body = {fbIdToken}
+          fetch(`http://localhost:3000/api/events/${eventGuid}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              //'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify(body)
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              if (json.status === 'success') {
+                let copyEventDict = {...eventsDict};
+                delete copyEventDict[eventGuid];
+                setEventsDict(copyEventDict);
+              }
+            })
+            .catch(err => console.error('err', err))
 
-      let {id, name} = ev.target;
-      let eventGuid = name;
-      fetch(`http://localhost:3000/api/events/${eventGuid}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionToken}`
-        }
-      })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.status === 'success') {
-            let copyEventDict = {...eventsDict};
-            delete copyEventDict[eventGuid];
-            setEventsDict(copyEventDict);
-          }
         })
         .catch(err => console.error('err', err))
+
     }
   }
 
