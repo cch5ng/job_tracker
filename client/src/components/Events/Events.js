@@ -48,10 +48,8 @@ function Events(props) {
   const auth = getAuth();
   const user = auth.currentUser;
   let userEmail;
-  //let sessionToken;
   if (user) {
     userEmail = user.email;
-    //sessionToken = user.getIdToken();
   }
 
   const buttonOnClickHandler = (ev) => {
@@ -66,8 +64,7 @@ function Events(props) {
           fetch(`http://localhost:3000/api/events/${eventGuid}`, {
             method: 'DELETE',
             headers: {
-              'Content-Type': 'application/json',
-              //'Authorization': `Bearer ${sessionToken}`
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
           })
@@ -120,6 +117,7 @@ function Events(props) {
           }
     
           let eventsUrl;
+          let body = {fbIdToken}
           if (!jobId && uGuid) {
             eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
           } else if (jobId) {
@@ -127,7 +125,7 @@ function Events(props) {
           }
           if (eventsUrl && sessionToken) {
             fetch(eventsUrl, {
-              headers: {Authorization: `Bearer ${sessionToken}`}
+              body: JSON.stringify(body)
             })
               .then(resp => {
                 if (!resp.ok) {
@@ -148,7 +146,7 @@ function Events(props) {
     
           if (uGuid) {
             let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
-            getJobsForUser({url: jobsUrl, sessionToken});
+            getJobsForUser({url: jobsUrl, fbIdToken});
     
             let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
             getCompanies({url: companiesUrl, fbIdToken});
