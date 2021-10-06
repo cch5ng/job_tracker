@@ -9,8 +9,9 @@ const router = Router();
 //create new job
 //should take into consideration creating a new company (vs an existing company)
 //for now just create a new company
-router.post('/', checkJwt, (req, res, next) => {
-  const {name, status, description, url, company_id, questions, source, user_guid, guid, created_at} = req.body;
+router.post('/', (req, res, next) => {
+  const {name, status, description, url, company_id, questions, source, 
+    user_guid, guid, created_at, fbIdToken} = req.body;
   const error_fields = [];
   const required_fields = ['name', 'status', 'company_id', 'description', 'source'];
 
@@ -37,9 +38,10 @@ router.post('/', checkJwt, (req, res, next) => {
   }
 });
 
-router.put('/update/:job_guid', checkJwt, (req, res, next) => {
+router.put('/update/:job_guid', (req, res, next) => {
   const guid = req.params.job_guid;
-  const {name, status, description, url, company_id, questions, source, user_guid} = req.body;
+  const {name, status, description, url, company_id, questions, 
+    source, user_guid, fbIdToken} = req.body;
   const error_fields = [];
   const required_fields = ['name', 'status', 'company_id', 'description', 'source'];
 
@@ -67,8 +69,9 @@ router.put('/update/:job_guid', checkJwt, (req, res, next) => {
 });
 
 //retrieve all jobs (later search/filter)
-router.get('/all/:user_guid', checkJwt, (req, res, next) => {
+router.get('/all/:user_guid', (req, res, next) => {
   const {user_guid} = req.params;
+  const {fbIdToken} = req.body;
   JobTable.getJobs({user_guid})
     .then(resp => {
       if (resp.status_code === 401) {
@@ -81,8 +84,10 @@ router.get('/all/:user_guid', checkJwt, (req, res, next) => {
 })
 
 //retrieve all jobs (later search/filter)
-router.get('/:job_guid', checkJwt, (req, res, next) => {
+router.get('/:job_guid', (req, res, next) => {
   const {job_guid} = req.params;
+  const {fbIdToken} = req.body;
+
   JobTable.getJobByGuid({job_guid})
     .then(resp => {
       if (resp.status_code === 401) {
@@ -95,8 +100,10 @@ router.get('/:job_guid', checkJwt, (req, res, next) => {
 })
 
 //update job given jobId to set to status archived (maybe reuse the generic put route?)
-router.put('/archive/:job_guid', checkJwt, (req, res, next) => {
+router.put('/archive/:job_guid', (req, res, next) => {
   const {job_guid} = req.params;
+  const {fbIdToken} = req.body;
+
   JobTable.archiveJob({job_guid})
     .then(resp => {
       if (resp.status_code === 401) {
