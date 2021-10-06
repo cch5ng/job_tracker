@@ -111,44 +111,51 @@ function Events(props) {
   const callSecureApi = async (uGuid) => {
     try {
       //const token = await getAccessTokenSilently();
-      if (userEmail) {
-        login({userEmail, sessionToken, userGuid: uGuid})
-      }
 
-      let eventsUrl;
-      if (!jobId && uGuid) {
-        eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
-      } else if (jobId) {
-        eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
-      }
-      if (eventsUrl && sessionToken) {
-        fetch(eventsUrl, {
-          headers: {Authorization: `Bearer ${sessionToken}`}
+      user.getIdToken()
+        .then(fbIdToken => {
+
+          if (userEmail) {
+            login({userEmail, fbIdToken})
+          }
+    
+          let eventsUrl;
+          if (!jobId && uGuid) {
+            eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
+          } else if (jobId) {
+            eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
+          }
+          if (eventsUrl && sessionToken) {
+            fetch(eventsUrl, {
+              headers: {Authorization: `Bearer ${sessionToken}`}
+            })
+              .then(resp => {
+                if (!resp.ok) {
+                  alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
+                } 
+                return resp.json();
+              })
+              .then(json => {
+                if (json.events.length) {
+                  let evDict = json.events ? getDictFromAr(json.events): {};
+                  setEventsDict(evDict);
+                } else if (json.type === 'error') {
+                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
+                }
+              })
+              .catch(err => console.error('error', err))
+          }
+    
+          if (uGuid) {
+            let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
+            getJobsForUser({url: jobsUrl, sessionToken});
+    
+            let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
+            getCompanies({url: companiesUrl, fbIdToken});
+          }
+
         })
-          .then(resp => {
-            if (!resp.ok) {
-              alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
-            } 
-            return resp.json();
-          })
-          .then(json => {
-            if (json.events.length) {
-              let evDict = json.events ? getDictFromAr(json.events): {};
-              setEventsDict(evDict);
-            } else if (json.type === 'error') {
-              alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
-            }
-          })
-          .catch(err => console.error('error', err))
-      }
-
-      if (uGuid) {
-        let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
-        getJobsForUser({url: jobsUrl, sessionToken});
-
-        let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
-        getCompanies({url: companiesUrl, sessionToken});
-      }
+        .catch(error => console.error('err', error))
 
     } catch (error) {
       console.error('error', error)
@@ -180,10 +187,14 @@ function Events(props) {
 
   useEffect(() => {
     if (userEmail) {
-      getUserGuid({userEmail})
-      .then(uGuid => {
-        callSecureApi(uGuid);
-      })
+      user.getIdToken()
+        .then(fbIdToken => {
+          getUserGuid({userEmail, fbIdToken})
+            .then(uGuid => {
+              callSecureApi(uGuid);
+            })
+        })
+        .catch(error => console.error('err', error))
     }
   }, [])
 
