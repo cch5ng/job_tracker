@@ -3,7 +3,6 @@ import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CreatableSelect from 'react-select/creatable';
 import { getAuth } from "firebase/auth";
-//import { useAuth0 } from "@auth0/auth0-react";
 
 import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';

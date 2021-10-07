@@ -38,8 +38,6 @@ function Events(props) {
   const [filterEventTakeHomeTestScheduled, setFilterEventTakeHomeTestScheduled] = useState(true);
   const [filterEventTakeHomeTestUnscheduled, setFilterEventTakeHomeTestUnscheduled] = useState(true);
 
-  //const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  //const { name, picture, email } = user;
   const {login, getUserGuidReq} = useAuth();
   const {jobsDict, getJobsForUser} = useJobs();
   const {companyDict, getCompanies} = useCompany();

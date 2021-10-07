@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {useParams, Redirect} from 'react-router-dom';
 import { getAuth } from "firebase/auth";
-//import { useAuth0 } from "@auth0/auth0-react";
 
 import {useAuth} from '../../context/auth-context';
 import { useAlert, ADD } from '../../context/alert-context';
