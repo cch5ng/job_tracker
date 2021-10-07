@@ -1,8 +1,15 @@
 const { Router, json } = require('express');
+const admin = require("firebase-admin");
+
 const EventTable = require('../tables/event');
 const JobTable = require('../tables/job');
 
-const {checkJwt} = require('../utils');
+if (!admin.apps.length) {
+  var serviceAccount = require(process.env.FIREBASE_ADMIN_KEY_PATH);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 const router = Router();
 
@@ -83,7 +90,7 @@ router.get('/:event_guid', (req, res, next) => {
 })
 
 //get events for given user guid (later search/filter)
-router.get('/user/:user_guid', (req, res, next) => {
+router.post('/user/:user_guid', (req, res, next) => {
   const {user_guid} = req.params;
   const {fbIdToken} = req.body;
   EventTable.getEventsByUserGuid({user_guid})
@@ -98,7 +105,7 @@ router.get('/user/:user_guid', (req, res, next) => {
 })
 
 //get events for given job guid
-router.get('/job/:job_guid', (req, res, next) => {
+router.post('/job/:job_guid', (req, res, next) => {
   const {job_guid} = req.params;
   const {fbIdToken} = req.body;
   EventTable.getEventsByJobGuid({job_guid})
