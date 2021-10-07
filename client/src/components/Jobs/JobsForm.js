@@ -55,16 +55,14 @@ function JobsForm({type, jobId}) {
   const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
-  const {getUserGuid} = useAuth(); //userGuid, 
+  const {getUserGuidReq} = useAuth(); //userGuid, 
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
 
   const auth = getAuth();
   const user = auth.currentUser;
-  //let sessionToken;
   let userEmail;
   if (user) {
-    //sessionToken = user.getIdToken();
     userEmail = user.email;
   }
 
@@ -140,7 +138,7 @@ function JobsForm({type, jobId}) {
 
           let name = newValue.value;
           if (name.length && userEmail) {
-            getUserGuid({userEmail})
+            getUserGuidReq({userEmail, fbIdToken})
               .then(uGuid => {
                 let body = {
                   name,
@@ -220,7 +218,7 @@ function JobsForm({type, jobId}) {
         user.getIdToken()
           .then(fbIdToken => {
 
-            getUserGuid({userEmail})
+            getUserGuidReq({userEmail, fbIdToken})
               .then(uGuid => {
                 //handle buttonSave
                 let body = {
@@ -300,13 +298,14 @@ function JobsForm({type, jobId}) {
 
   //if type=edit, get existing form fields
   React.useEffect(() => {
-    if (type === 'edit' && jobId && sessionToken) {
+    if (type === 'edit' && jobId) {
       user.getIdToken()
         .then(fbIdToken => {
 
           let url = `http://localhost:3000/api/jobs/${jobId}`;
           let body = {fbIdToken};
           fetch(url, {
+            method: 'POST',
             body: JSON.stringify(body)
           })
             .then(resp => resp.json())
