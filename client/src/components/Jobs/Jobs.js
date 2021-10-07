@@ -104,7 +104,10 @@ function Jobs() {
               <Link to={url}>
                 <h2>{job.name}</h2>
                 <div><span className="list_item_label">status</span> {job.status}</div>
-                <div><span className="list_item_label">company</span> {companyName.name}</div>
+                {companyName && companyName.name.length > 0 && (
+                  <div><span className="list_item_label">company</span> {companyName.name}</div>
+                )}
+                
                 <div><span className="list_item_label">url</span> {job.url}</div>
                 <div><span className="list_item_label">description</span> {job.description}</div>
                 <div><span className="list_item_label">questions</span> {job.questions}</div>
