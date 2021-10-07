@@ -49,7 +49,7 @@ const AuthenticatedApp = () => {
           <Route exact path="/events" component={Events} />
           <Route exact path="/companies" component={Companies} />
           <Route exact path="/companies/form/:companyId" component={CompanyForm} />
-          <Route path="/" component={Jobs} />
+          <Route path="/" component={Events} />
         </Switch>
       </main>
     </div>
