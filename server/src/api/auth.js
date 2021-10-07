@@ -3,10 +3,12 @@ var admin = require("firebase-admin");
 
 const AuthTable = require('../tables/auth');
 
-var serviceAccount = require(process.env.FIREBASE_ADMIN_KEY_PATH);
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+if (!admin.apps.length) {
+  var serviceAccount = require(process.env.FIREBASE_ADMIN_KEY_PATH);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 const router = Router();
 
