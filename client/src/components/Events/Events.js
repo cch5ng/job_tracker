@@ -40,7 +40,7 @@ function Events(props) {
 
   //const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   //const { name, picture, email } = user;
-  const {login, getUserGuid} = useAuth();
+  const {login, getUserGuidReq} = useAuth();
   const {jobsDict, getJobsForUser} = useJobs();
   const {companyDict, getCompanies} = useCompany();
   const { alertDispatch } = useAlert();
@@ -105,55 +105,59 @@ function Events(props) {
     }
   }
 
-  const callSecureApi = async (uGuid) => {
+  const callSecureApi = (uGuid, fbIdToken) => {
     try {
-      //const token = await getAccessTokenSilently();
-
-      user.getIdToken()
-        .then(fbIdToken => {
-
-          if (userEmail) {
-            login({userEmail, fbIdToken})
-          }
-    
-          let eventsUrl;
-          let body = {fbIdToken}
-          if (!jobId && uGuid) {
-            eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
-          } else if (jobId) {
-            eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
-          }
-          if (eventsUrl && sessionToken) {
-            fetch(eventsUrl, {
-              body: JSON.stringify(body)
+      if (fbIdToken) {
+        
+        if (userEmail) {
+          login({userEmail, fbIdToken})
+        }
+  
+        let eventsUrl;
+        let body = {fbIdToken}
+        if (!jobId && uGuid) {
+          eventsUrl = `http://localhost:3000/api/events/user/${uGuid}`;
+        } else if (jobId) {
+          eventsUrl = `http://localhost:3000/api/events/job/${jobId}`
+        }
+        if (eventsUrl) {
+          fetch(eventsUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },          
+            body: JSON.stringify(body)
+          })
+            .then(resp => {
+              if (!resp.ok) {
+                alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
+              } 
+              return resp.json();
             })
-              .then(resp => {
-                if (!resp.ok) {
-                  alertDispatch({ type: ADD, payload: {type: 'error', message: `HTTP Status Code: ${resp.status}`} })
-                } 
-                return resp.json();
-              })
-              .then(json => {
-                if (json.events.length) {
-                  let evDict = json.events ? getDictFromAr(json.events): {};
-                  setEventsDict(evDict);
-                } else if (json.type === 'error') {
-                  alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
-                }
-              })
-              .catch(err => console.error('error', err))
-          }
-    
-          if (uGuid) {
-            let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
-            getJobsForUser({url: jobsUrl, fbIdToken});
-    
-            let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
-            getCompanies({url: companiesUrl, fbIdToken});
-          }
+            .then(json => {
+              if (json.events.length) {
+                let evDict = json.events ? getDictFromAr(json.events): {};
+                setEventsDict(evDict);
+              } else if (json.type === 'error') {
+                alertDispatch({ type: ADD, payload: {type: 'error', message: json.message} })
+              }
+            })
+            .catch(err => console.error('error', err))
+        }
+  
+        if (uGuid) {
+          let companiesUrl = `http://localhost:3000/api/company/all/${uGuid}`;
+          getCompanies({url: companiesUrl, fbIdToken});
+            
+          let jobsUrl = `http://localhost:3000/api/jobs/all/${uGuid}`;
+          getJobsForUser({url: jobsUrl, fbIdToken});
 
-        })
-        .catch(error => console.error('err', error))
+        }            
+
+
+      }
+      //  })
+      //  .catch(error => console.error('err', error))
 
     } catch (error) {
       console.error('error', error)
@@ -187,10 +191,14 @@ function Events(props) {
     if (userEmail) {
       user.getIdToken()
         .then(fbIdToken => {
-          getUserGuid({userEmail, fbIdToken})
-            .then(uGuid => {
-              callSecureApi(uGuid);
-            })
+          if (fbIdToken) {
+            getUserGuidReq({userEmail, fbIdToken})
+              .then(uGuid => {
+                
+                callSecureApi(uGuid, fbIdToken);
+              })
+              .catch(error => console.error('err', error))
+          }
         })
         .catch(error => console.error('err', error))
     }
