@@ -5,7 +5,6 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import LoginButton from "../Header/LoginButton";
 import UnauthenticatedNavBar from '../Header/UnauthenticatedNavBar';
 import styles from './UnauthenticatedApp.module.css';
 import splashScreen from '../..//daoud-abismail-unsplash.jpg';
@@ -27,7 +26,6 @@ const UnauthenticatedApp = () => {
           <Route exact path="/">
             <div className={styles.splash_screen_container} >
               <img src={splashScreen} className={styles.splash_screen} />
-              {/* <LoginButton /> */}
             </div>
           </Route>
         </Switch>

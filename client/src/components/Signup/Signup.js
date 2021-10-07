@@ -1,7 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import React, {useState} from 'react';
 import { Redirect } from 'react-router-dom'
-import LoginButton from "../Header/LoginButton";
 
 import { useAuth } from '../../context/auth-context'
 

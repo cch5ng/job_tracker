@@ -8,7 +8,6 @@ import {
 import AuthenticatedNavBar from "../Header/AuthenticatedNavBar";
 import Profile from '../Profile';
 import ProtectedRoute from "../../auth/ProtectedRoute";
-import ExternalApi from '../../views/ExternalApi';
 import Jobs from '../Jobs/Jobs';
 import JobsFormCreate from '../Jobs/JobsFormCreate';
 import JobsFormEdit from '../Jobs/JobsFormEdit';
@@ -38,8 +37,6 @@ const AuthenticatedApp = () => {
       <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
       <main className="main" >
         <Switch>
-          {/* <ProtectedRoute path="/profile" component={Profile} />
-          <ProtectedRoute path="/external-api" component={ExternalApi} /> */}
           <Route exact path="/jobs/new" component={JobsFormCreate} />
           <Route exact path="/jobs/:jobId/events" component={Events} />
           <Route exact path="/jobs/:jobId" component={JobsFormEdit} />
