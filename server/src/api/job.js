@@ -1,8 +1,16 @@
 const { Router } = require('express');
+const admin = require("firebase-admin");
+
 const JobTable = require('../tables/job');
 const CompanyTable = require('../tables/company');
 const AuthTable = require('../tables/auth');
-const {checkJwt} = require('../utils');
+
+if (!admin.apps.length) {
+  var serviceAccount = require(process.env.FIREBASE_ADMIN_KEY_PATH);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 const router = Router();
 
@@ -69,7 +77,7 @@ router.put('/update/:job_guid', (req, res, next) => {
 });
 
 //retrieve all jobs (later search/filter)
-router.get('/all/:user_guid', (req, res, next) => {
+router.post('/all/:user_guid', (req, res, next) => {
   const {user_guid} = req.params;
   const {fbIdToken} = req.body;
   JobTable.getJobs({user_guid})
@@ -84,7 +92,7 @@ router.get('/all/:user_guid', (req, res, next) => {
 })
 
 //retrieve all jobs (later search/filter)
-router.get('/:job_guid', (req, res, next) => {
+router.post('/:job_guid', (req, res, next) => {
   const {job_guid} = req.params;
   const {fbIdToken} = req.body;
 
