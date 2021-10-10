@@ -29,17 +29,31 @@ router.post('/', (req, res, next) => {
     const error_message = `These fields are required: ${error_fields.join(', ')}`;
     res.status(400).json({message: error_message, type: 'error'})
   } else if (job_guid) {
-    EventTable.postEvent({format, contact, notes, description, follow_up, job_guid, date_time})
-      .then(resp => {
-        if (resp.status_code === 401) {
-          res.status(401).json({error: 'Please log in and try again.'})
-        } else {
-          res.status(201).json(resp)
-        }
+
+    admin
+      .auth()
+      .verifyIdToken(fbIdToken)
+      .then((decodedToken) => {
+        const uid = decodedToken.uid;
+
+        EventTable.postEvent({format, contact, notes, description, follow_up, job_guid, date_time})
+          .then(resp => {
+            if (resp.status_code === 401) {
+              res.status(401).json({error: 'Please log in and try again.'})
+            } else {
+              res.status(201).json(resp)
+            }
+          })
+          .catch(error => next(error))    
       })
-      .catch(error => next(error))    
-    } else {
-      res.status(200).json({message: 'Could not save event because there is an issue with the current user email authorization'})
+      .catch((error) => {
+        next(error);
+        // Handle error
+      });
+
+  } else {
+    res.status(200).json({message: 'Could not save event because there is an issue with the current user email authorization'})
+
   }
 });
 
@@ -60,15 +74,27 @@ router.put('/:event_guid', (req, res, next) => {
     const error_message = `These fields are required: ${error_fields.join(', ')}`;
     res.status(400).json({message: error_message, type: 'error'})
   } else if (guid) {
-    EventTable.updateEvent({job_guid, format, contact, notes, description, follow_up, date_time, guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({type: 'error', message: 'Please log in and try again.'})
-      } else {
-        res.status(201).json(resp)
-      }
-    })
-    .catch(error => next(error))    
+
+    admin
+      .auth()
+      .verifyIdToken(fbIdToken)
+      .then((decodedToken) => {
+        const uid = decodedToken.uid;
+        EventTable.updateEvent({job_guid, format, contact, notes, description, follow_up, date_time, guid})
+          .then(resp => {
+            if (resp.status_code === 401) {
+              res.status(401).json({type: 'error', message: 'Please log in and try again.'})
+            } else {
+              res.status(201).json(resp)
+            }
+          })
+          .catch(error => next(error)) 
+      })
+      .catch((error) => {
+        next(error);
+        // Handle error
+      });
+       
   } else {
     res.status(200).json({message: 'Could not save event because there is an issue with the current user email authorization'})
   } 
@@ -78,59 +104,110 @@ router.put('/:event_guid', (req, res, next) => {
 router.get('/:event_guid', (req, res, next) => {
   const {event_guid} = req.params;
   const {fbIdToken} = req.body;
-  EventTable.getEventByGuid({event_guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
-      } else {
-        res.status(201).json(resp)
-      }
+
+  admin
+    .auth()
+    .verifyIdToken(fbIdToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      EventTable.getEventByGuid({event_guid})
+        .then(resp => {
+          if (resp.status_code === 401) {
+            res.status(401).json({error: 'Please log in and try again.'})
+          } else {
+            res.status(201).json(resp)
+          }
+        })
+        .catch(error => next(error))
     })
-    .catch(error => next(error)) 
+    .catch((error) => {
+      next(error);
+      // Handle error
+    });
+   
 })
 
 //get events for given user guid (later search/filter)
 router.post('/user/:user_guid', (req, res, next) => {
   const {user_guid} = req.params;
   const {fbIdToken} = req.body;
-  EventTable.getEventsByUserGuid({user_guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
-      } else {
-        res.status(201).json(resp)
-      }
+
+  admin
+    .auth()
+    .verifyIdToken(fbIdToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      EventTable.getEventsByUserGuid({user_guid})
+        .then(resp => {
+          if (resp.status_code === 401) {
+            res.status(401).json({error: 'Please log in and try again.'})
+          } else {
+            res.status(201).json(resp)
+          }
+        })
+        .catch(error => next(error)) 
     })
-    .catch(error => next(error)) 
+    .catch((error) => {
+      next(error);
+      // Handle error
+    });
+  
 })
+
 
 //get events for given job guid
 router.post('/job/:job_guid', (req, res, next) => {
   const {job_guid} = req.params;
   const {fbIdToken} = req.body;
-  EventTable.getEventsByJobGuid({job_guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
-      } else {
-        res.status(200).json(resp)
-      }
+
+  admin
+    .auth()
+    .verifyIdToken(fbIdToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      EventTable.getEventsByJobGuid({job_guid})
+        .then(resp => {
+          if (resp.status_code === 401) {
+            res.status(401).json({error: 'Please log in and try again.'})
+          } else {
+            res.status(200).json(resp)
+          }
+        })
+        .catch(err => next(err));
     })
-    .catch(err => next(err));
+    .catch((error) => {
+      next(error);
+      // Handle error
+    });
+  
 })
+
 
 router.delete('/:event_guid', (req, res, next) => {
   const {event_guid} = req.params;
   const {fbIdToken} = req.body;
-  EventTable.deleteEvent({event_guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
-      } else {
-        res.status(200).json(resp)
-      }
+
+  admin
+    .auth()
+    .verifyIdToken(fbIdToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      EventTable.deleteEvent({event_guid})
+        .then(resp => {
+          if (resp.status_code === 401) {
+            res.status(401).json({error: 'Please log in and try again.'})
+          } else {
+            res.status(200).json(resp)
+          }
+        })
+        .catch(err => next(err));
     })
-    .catch(err => next(err));
+    .catch((error) => {
+      next(error);
+      // Handle error
+    });
+
+  
 })
 
 module.exports = router;
