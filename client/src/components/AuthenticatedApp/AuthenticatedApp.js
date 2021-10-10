@@ -6,8 +6,6 @@ import {
   Redirect
 } from "react-router-dom";
 import AuthenticatedNavBar from "../Header/AuthenticatedNavBar";
-import Profile from '../Profile';
-import ProtectedRoute from "../../auth/ProtectedRoute";
 import Jobs from '../Jobs/Jobs';
 import JobsFormCreate from '../Jobs/JobsFormCreate';
 import JobsFormEdit from '../Jobs/JobsFormEdit';
