@@ -19,24 +19,24 @@ router.post('/all/:user_guid', (req, res, next) => {
   const {fbIdToken} = req.body;
 
   admin
-  .auth()
-  .verifyIdToken(fbIdToken)
-  .then((decodedToken) => {
-    const uid = decodedToken.uid;
-    
-    CompanyTable.getCompanies({user_guid})
-    .then(resp => {
-      if (resp.status_code === 401) {
-        res.status(401).json({error: 'Please log in and try again.'})
-      } else {
-        res.status(200).json(resp)
-      }
+    .auth()
+    .verifyIdToken(fbIdToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      
+      CompanyTable.getCompanies({user_guid})
+      .then(resp => {
+        if (resp.status_code === 401) {
+          res.status(401).json({error: 'Please log in and try again.'})
+        } else {
+          res.status(200).json(resp)
+        }
+      })
+      .catch(err => next(err));
     })
-    .catch(err => next(err));
-  })
-  .catch((error) => {
-    next(error);
-  });
+    .catch((error) => {
+      next(error);
+    });
 })
 
 router.post('/', (req, res, next) => {
@@ -54,25 +54,25 @@ router.post('/', (req, res, next) => {
     res.status(400).json({message: error_message, type: 'error'})
   } else if (user_guid) {
     admin
-    .auth()
-    .verifyIdToken(fbIdToken)
-    .then((decodedToken) => {
-      const uid = decodedToken.uid;
-      CompanyTable.postCompany({name, user_guid})
-        .then(resp => {
-          if (resp.status_code === 401) {
-            res.status(401).json({error: 'Please log in and try again.'})
-          } else {
-            res.status(201).json(resp)
-          }
-        })
-        .catch(error => next(error))
+      .auth()
+      .verifyIdToken(fbIdToken)
+      .then((decodedToken) => {
+        const uid = decodedToken.uid;
+        CompanyTable.postCompany({name, user_guid})
+          .then(resp => {
+            if (resp.status_code === 401) {
+              res.status(401).json({error: 'Please log in and try again.'})
+            } else {
+              res.status(201).json(resp)
+            }
+          })
+          .catch(error => next(error))
 
-    })
-    .catch((error) => {
-      next(error);
-      // Handle error
-    });
+      })
+      .catch((error) => {
+        next(error);
+        // Handle error
+      });
      
   } else {
     res.status(200).json({message: 'Could not save job because there is an issue with the current user email authorization'})
