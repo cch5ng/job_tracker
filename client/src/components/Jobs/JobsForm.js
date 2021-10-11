@@ -1,9 +1,10 @@
 import * as React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import {useParams, Redirect, useHistory} from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CreatableSelect from 'react-select/creatable';
-import {useAppAuth} from '../../context/auth-context';
+import { getAuth } from "firebase/auth";
+
+import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
 import { useAlert, ADD } from '../../context/alert-context';
@@ -53,13 +54,19 @@ function JobsForm({type, jobId}) {
   const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
-  const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
+  const {getUserGuidReq} = useAuth(); //userGuid, 
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+  let userEmail;
+  if (user) {
+    userEmail = user.email;
+  }
+
   //TEST
   let creatableData = getCreateableDataFromDict(companyDict);
-  console.log('creatableData', creatableData);
 
   const isFormValid = () => {
     let formIsValid = true;
@@ -123,48 +130,51 @@ function JobsForm({type, jobId}) {
   }
 
   const handleSelectChange = (newValue, actionMeta) => {
-    console.group('Value Changed (new)');
-    console.log(newValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
     if (actionMeta.action === 'create-option') {
       //post new company
-      let name = newValue.value;
-      if (name.length) {
-        getUserGuid({userEmail})
-          .then(uGuid => {
-            let body = {
-              name,
-              user_guid: uGuid
-            }
-            let curDate = new Date();
-            body.created_at = curDate.toISOString();
-            fetch(`http://localhost:3000/api/company/`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionToken}`
-              },
-              body: JSON.stringify(body)
-            })
-            .then(resp => {
-              if (resp.status === 201) {
-                updateJobsDict(body);
-              }
-              return resp.json(); 
-            })
-            .then(json => {
-              if (json.type === 'error') {
-                alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-              } else if (json.companyId) {
-                alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                setCreateableDefault({value: json.companyId, label: name});
-                updateCompanyDict({id: json.companyId, name})
-              }
-            })
-            .catch(err => console.error('err', err))
-          })
-      }
+      user.getIdToken()
+        .then(fbIdToken => {
+
+          let name = newValue.value;
+          if (name.length && userEmail) {
+            getUserGuidReq({userEmail, fbIdToken})
+              .then(uGuid => {
+                let body = {
+                  name,
+                  user_guid: uGuid,
+                  fbIdToken
+                }
+                let curDate = new Date();
+                body.created_at = curDate.toISOString();
+                fetch(`http://localhost:3000/api/company/`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(body)
+                })
+                .then(resp => {
+                  if (resp.status === 201) {
+                    updateJobsDict(body);
+                  }
+                  return resp.json(); 
+                })
+                .then(json => {
+                  if (json.type === 'error') {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } else if (json.companyId) {
+                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                    setCreateableDefault({value: json.companyId, label: name});
+                    updateCompanyDict({id: json.companyId, name})
+                  }
+                })
+                .catch(err => console.error('err', err))
+              })
+          }
+
+        })
+        .catch(error => console.error('err', error))
+
     } else if (actionMeta.action === 'select-option') {
       setCreateableDefault(newValue);
     }
@@ -202,75 +212,82 @@ function JobsForm({type, jobId}) {
     let formValid = isFormValid();
 
     if (formValid) {
-      if (id === 'buttonSave' || id === 'buttonSaveJobEvent') {
-        getUserGuid({userEmail})
-          .then(uGuid => {
-              //handle buttonSave
-              let body = {
-                name: jobName, 
-                status: jobStatus, 
-                description: jobDescription, 
-                url: jobUrl,
-                company_id: createableDefault.value,
-                questions: jobQuestions, 
-                source: jobSource, 
-                user_guid: uGuid
-              }
-              if (type === 'create') {
-                let guid = uuidv4();
-                let curDate = new Date();
-                body.guid = guid;
-                body.created_at = curDate.toISOString();
-                fetch(`http://localhost:3000/api/jobs/`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
-                  },
-                  body: JSON.stringify(body)
-                })
-                .then(resp => {
-                  if (resp.status === 201) {
-                    updateJobsDict(body);
-                  }
-                  return resp.json(); 
-                })
-                .then(json => {
-                  if (json.type === 'error') {
-                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-                  } else if (json.job_guid) {
-                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                    setJobGuid(json.job_guid);
-                  }
-                })
-                .catch(err => console.error('err', err))
-              } else if (type === 'edit' && jobId.length) {
-                fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
-                  method: 'PUT',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
-                  },
-                  body: JSON.stringify(body)
-                })
-                .then(resp => {
-                  if (resp.status === 201) {
-                    body.guid = jobId;
-                    body.created_at = jobCreatedAt;
-                    updateJobsDict(body);
-                  }
-                  return resp.json();
-                })
-                .then(json => {
-                  if (json.type === 'error') {
-                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-                  } else if (json.job_guid) {
-                    alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
-                  }
-                })
-                .catch(err => console.error('err', err))
-              }
+      if (userEmail && id === 'buttonSave' || id === 'buttonSaveJobEvent') {
+
+        user.getIdToken()
+          .then(fbIdToken => {
+
+            getUserGuidReq({userEmail, fbIdToken})
+              .then(uGuid => {
+                //handle buttonSave
+                let body = {
+                  name: jobName, 
+                  status: jobStatus, 
+                  description: jobDescription, 
+                  url: jobUrl,
+                  company_id: createableDefault.value,
+                  questions: jobQuestions, 
+                  source: jobSource, 
+                  user_guid: uGuid,
+                  fbIdToken
+                }
+                if (type === 'create') {
+                  let guid = uuidv4();
+                  let curDate = new Date();
+                  body.guid = guid;
+                  body.created_at = curDate.toISOString();
+                  fetch(`http://localhost:3000/api/jobs/`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                  })
+                  .then(resp => {
+                    if (resp.status === 201) {
+                      updateJobsDict(body);
+                    }
+                    return resp.json(); 
+                  })
+                  .then(json => {
+                    if (json.type === 'error') {
+                      alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                    } else if (json.job_guid) {
+                      alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                      setJobGuid(json.job_guid);
+                    }
+                  })
+                  .catch(err => console.error('err', err))
+                } else if (type === 'edit' && jobId.length) {
+                  fetch(`http://localhost:3000/api/jobs/update/${jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                  })
+                  .then(resp => {
+                    if (resp.status === 201) {
+                      body.guid = jobId;
+                      body.created_at = jobCreatedAt;
+                      updateJobsDict(body);
+                    }
+                    return resp.json();
+                  })
+                  .then(json => {
+                    if (json.type === 'error') {
+                      alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                    } else if (json.job_guid) {
+                      alertDispatch({ type: ADD, payload: {type: 'success', message: json.message} });
+                    }
+                  })
+                  .catch(err => console.error('err', err))
+                }
+            })
+
           })
+          .catch(error => console.error('err', error))
+        
       } 
       if (id === 'buttonSave') {
         setFormStatus('redirectJobs')
@@ -280,46 +297,53 @@ function JobsForm({type, jobId}) {
 
   //if type=edit, get existing form fields
   React.useEffect(() => {
-    if (type === 'edit' && jobId && sessionToken) {
-      let url = `http://localhost:3000/api/jobs/${jobId}`
-      fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${sessionToken}`
-        }
-      })
-        .then(resp => resp.json())
-        .then(json => {
-          const {company_id, description, name, questions, source, status, url, created_at} = json.job;
-          if (company_id) {
-            let selectOption = {};
-            let company = companyDict[company_id];
-            selectOption.value = company.id;
-            selectOption.label = company.name;
-            setCreateableDefault(selectOption);
-          }
-          if (name) {
-            setJobName(name);
-          }
-          if (status) {
-            setJobStatus(status);
-          }
-          if (url) {
-            setJobUrl(url);
-          }
-          if (description) {
-            setJobDescription(description);
-          }
-          if (questions) {
-            setJobQuestions(questions);
-          }
-          if (source) {
-            setJobSource(source);
-          }
-          if (created_at) {
-            setJobCreatedAt(created_at);
-          }
+    if (type === 'edit' && jobId) {
+      user.getIdToken()
+        .then(fbIdToken => {
+
+          let url = `http://localhost:3000/api/jobs/${jobId}`;
+          let body = {fbIdToken};
+          fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(body)
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              const {company_id, description, name, questions, source, status, url, created_at} = json.job;
+              if (company_id) {
+                let selectOption = {};
+                let company = companyDict[company_id];
+                selectOption.value = company.id;
+                selectOption.label = company.name;
+                setCreateableDefault(selectOption);
+              }
+              if (name) {
+                setJobName(name);
+              }
+              if (status) {
+                setJobStatus(status);
+              }
+              if (url) {
+                setJobUrl(url);
+              }
+              if (description) {
+                setJobDescription(description);
+              }
+              if (questions) {
+                setJobQuestions(questions);
+              }
+              if (source) {
+                setJobSource(source);
+              }
+              if (created_at) {
+                setJobCreatedAt(created_at);
+              }
+            })
+            .catch(err => console.error('err', err))
+
         })
-        .catch(err => console.error('err', err))
+        .catch(error => console.error('err', error))
+
    }
   }, [])
 

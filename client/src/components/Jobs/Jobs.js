@@ -1,10 +1,11 @@
 import * as React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import classNames from 'classnames/bind';
-import {useAppAuth} from '../../context/auth-context';
+import { getAuth } from "firebase/auth";
+import {Link, useHistory} from 'react-router-dom';
+
+import {useAuth} from '../../context/auth-context';
 import {useJobs} from '../../context/jobs-context';
 import {useCompany} from '../../context/company-context';
-import {Link, useHistory} from 'react-router-dom';
 import {getDictFromAr, getArFromDict, orderArByProp} from '../../utils';
 import styles from './Jobs.module.css';
 import Button from '../FormShared/Button';
@@ -14,9 +15,6 @@ let cx = classNames.bind(styles);
 
 function Jobs() {
   const [jobFilterStr, setJobFilterStr] = React.useState('');
-  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  const { name, picture, email } = user;
-  const { login, getUserGuid, userGuid, userEmail, sessionToken } = useAppAuth();
   const { jobsDict, updateJobsDict } = useJobs();
   const { companyDict } = useCompany();
 
@@ -30,21 +28,29 @@ function Jobs() {
   const handleArchiveButtonClick = (ev) => {
     ev.preventDefault();
     const {name} = ev.target;
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-    if (name && sessionToken) {
-      fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
-        method: 'PUT',
-        headers: {Authorization: `Bearer ${sessionToken}`}
+    user.getIdToken()
+      .then(fbIdToken => {
+        if (user && name) {
+          let body = {fbIdToken}
+          fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
+            method: 'PUT',
+            body: JSON.stringify(body)
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              if (json.status === 'success') {
+                let updatedJob = {...jobsDict[name], status: 'archived'};
+                updateJobsDict(updatedJob);
+              }
+            })
+            .catch(err => console.error('err', err))  
+        }
+    
       })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.status === 'success') {
-            let updatedJob = {...jobsDict[name], status: 'archived'};
-            updateJobsDict(updatedJob);
-          }
-        })
-        .catch(err => console.error('err', err))  
-    }
+      .catch(error => console.error('err', error))
   }
 
   let jobsAr = [];
@@ -98,7 +104,10 @@ function Jobs() {
               <Link to={url}>
                 <h2>{job.name}</h2>
                 <div><span className="list_item_label">status</span> {job.status}</div>
-                <div><span className="list_item_label">company</span> {companyName.name}</div>
+                {companyName && companyName.name.length > 0 && (
+                  <div><span className="list_item_label">company</span> {companyName.name}</div>
+                )}
+                
                 <div><span className="list_item_label">url</span> {job.url}</div>
                 <div><span className="list_item_label">description</span> {job.description}</div>
                 <div><span className="list_item_label">questions</span> {job.questions}</div>

@@ -9,9 +9,14 @@ function CompanyProvider({children}) {
     companyRequestAlert: ''
   });
 
-  const getCompanies = ({url, token}) => {
+  const getCompanies = ({url, fbIdToken}) => {
+    let body = {fbIdToken}
     fetch(url, {
-      headers: {Authorization: `Bearer ${token}`}
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
     })
       .then(resp => resp.json())
       .then(json => {
@@ -43,7 +48,7 @@ function CompanyProvider({children}) {
     }
   }
 
-  let companyState = {...state, getCompanies, updateCompanyDict};
+  let companyState = {...state, companyDict: state.companyDict, getCompanies, updateCompanyDict};
 
   return (
     <CompanyContext.Provider value={companyState}>

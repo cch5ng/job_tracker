@@ -6,9 +6,6 @@ import {
   Redirect
 } from "react-router-dom";
 import AuthenticatedNavBar from "../Header/AuthenticatedNavBar";
-import Profile from '../Profile';
-import ProtectedRoute from "../../auth/ProtectedRoute";
-import ExternalApi from '../../views/ExternalApi';
 import Jobs from '../Jobs/Jobs';
 import JobsFormCreate from '../Jobs/JobsFormCreate';
 import JobsFormEdit from '../Jobs/JobsFormEdit';
@@ -38,17 +35,16 @@ const AuthenticatedApp = () => {
       <AuthenticatedNavBar showNavMenu={showNavMenu} toggleNavMenuDisplay={toggleNavMenuDisplay} />
       <main className="main" >
         <Switch>
-          <ProtectedRoute path="/profile" component={Profile} />
-          <ProtectedRoute path="/external-api" component={ExternalApi} />
-          <ProtectedRoute exact path="/jobs/new" component={JobsFormCreate} />
-          <ProtectedRoute exact path="/jobs/:jobId/events" component={Events} />
-          <ProtectedRoute exact path="/jobs/:jobId" component={JobsFormEdit} />
-          <ProtectedRoute exact path="/jobs" component={Jobs} />
-          <ProtectedRoute exact path="/events/new/:jobId" component={EventsFormCreate} />
-          <ProtectedRoute exact path="/events/edit/:eventId" component={EventsFormEdit} />
-          <ProtectedRoute exact path="/events" component={Events} />
-          <ProtectedRoute exact path="/companies" component={Companies} />
-          <ProtectedRoute exact path="/companies/form/:companyId" component={CompanyForm} />
+          <Route exact path="/jobs/new" component={JobsFormCreate} />
+          <Route exact path="/jobs/:jobId/events" component={Events} />
+          <Route exact path="/jobs/:jobId" component={JobsFormEdit} />
+          <Route exact path="/jobs" component={Jobs} />
+          <Route exact path="/events/new/:jobId" component={EventsFormCreate} />
+          <Route exact path="/events/edit/:eventId" component={EventsFormEdit} />
+          <Route exact path="/events" component={Events} />
+          <Route exact path="/companies" component={Companies} />
+          <Route exact path="/companies/form/:companyId" component={CompanyForm} />
+          <Route path="/" component={Events} />
         </Switch>
       </main>
     </div>

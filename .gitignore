@@ -4,6 +4,7 @@
 /server/.env
 /client/.env
 /server/coverage
+/server/job-tracker-dev-2d2d1-firebase-adminsdk-h4jty-d5faa507bc.json
 /client/coverage
 /client/build
 /server/*/.DS_Store
