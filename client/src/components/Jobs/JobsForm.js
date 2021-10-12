@@ -54,7 +54,7 @@ function JobsForm({type, jobId}) {
   const [jobSourceError, setJobSourceError] = React.useState(false);
   const [jobGuid, setJobGuid] = React.useState(null);
   const [jobCreatedAt, setJobCreatedAt] = React.useState('');
-  const {getUserGuidReq} = useAuth(); //userGuid, 
+  const {getUserGuidReq} = useAuth();
   const { alertDispatch } = useAlert();
   let inputRef = React.useRef(null);
 
@@ -65,7 +65,6 @@ function JobsForm({type, jobId}) {
     userEmail = user.email;
   }
 
-  //TEST
   let creatableData = getCreateableDataFromDict(companyDict);
 
   const isFormValid = () => {
@@ -76,12 +75,6 @@ function JobsForm({type, jobId}) {
     } else {
       setJobNameError(false);
     }
-    // if (!companyName.length) {
-    //   setCompanyNameError(true);
-    //   formIsValid = false;
-    // } else {
-    //   setCompanyNameError(false);
-    // }
     if (!jobDescription.length) {
       setJobDescriptionError(true);
       formIsValid = false;
