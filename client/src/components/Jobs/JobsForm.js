@@ -36,6 +36,7 @@ const JOB_SOURCE_OPTIONS = [
 
 function JobsForm({type, jobId}) {
   const {updateJobsDict, jobsDict} = useJobs();
+
   const {updateCompanyDict, companyDict} = useCompany();
   const [formStatus, setFormStatus] = React.useState('inProgress'); //redirectJobs, redirectEventForm
   const [jobName, setJobName] = React.useState('');
@@ -146,12 +147,7 @@ function JobsForm({type, jobId}) {
                   },
                   body: JSON.stringify(body)
                 })
-                .then(resp => {
-                  if (resp.status === 201) {
-                    updateJobsDict(body);
-                  }
-                  return resp.json(); 
-                })
+                .then(resp => resp.json())
                 .then(json => {
                   if (json.type === 'error') {
                     alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
