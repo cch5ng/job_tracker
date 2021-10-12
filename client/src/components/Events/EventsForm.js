@@ -51,11 +51,9 @@ function EventsForm(props) {
   const [eventGuid, setEventGuid] = useState('');
   const [editJobGuid, setEditJobGuid] = useState('');
 
-  //const {userGuid, sessionToken, getUserGuid, userEmail} = useAppAuth();
   const { alertDispatch } = useAlert();
   const auth = getAuth();
   const user = auth.currentUser;
-  let sessionToken = user.getIdToken();
 
   const isFormValid = () => {
     let formIsValid = true;
@@ -119,135 +117,148 @@ function EventsForm(props) {
         setEventDescription('');
         setEventFollowUp('');
         setEventDateTime('');
-      } else if (type === 'edit') {
-      }
+      } //else if (type === 'edit') {
+      //}
     }
 
-    if (id === 'buttonDelete') {
-      fetch(`http://localhost:3000/api/events/${eventId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionToken}`
-          }
-        })
-        .then(resp => resp.json())
-        .then(json => {
-          setFormSubmitted(true);
-        })
-        .catch(err => console.error('err', err))
-    }
+    user.getIdToken()
+      .then(fbIdToken => {
 
-    let formValid = isFormValid();
-    if (formValid) {
-      if (id === 'buttonSave') {
-        let body = {
-          job_guid: type === 'create' ? createJobId : editJobGuid,
-          format: eventFormat, 
-          contact: eventContact, 
-          notes: eventNotes, 
-          description: eventDescription, 
-          follow_up: eventFollowUp, 
-          date_time: convertLocalDateTimeToISOStr(eventDateTime)
-        }
-        if (type === 'create') {
-          fetch(`http://localhost:3000/api/events/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${sessionToken}`
-            },
-            body: JSON.stringify(body)
-          })
-          .then(resp => resp.json())
-          .then(json => {
-            if (json.type === 'error') {
-              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            } else if (json.event_guid) {
-              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            } 
-          })
-          .catch(err => console.error('err', err))
-        } else if (type === 'edit') {
+        if (id === 'buttonDelete') {
           fetch(`http://localhost:3000/api/events/${eventId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${sessionToken}`
-            },
-            body: JSON.stringify(body)
-          })
-          .then(resp => resp.json())
-          .then(json => {
-            if (json.type === 'error') {
-              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            } else if (json.event_guid) {
-              alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
-            }
-          })
-          .catch(err => console.error('err', err))
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({fbIdToken})
+            })
+            .then(resp => resp.json())
+            .then(json => {
+              setFormSubmitted(true);
+            })
+            .catch(err => console.error('err', err))
         }
-      } 
-  
-      if (id === 'buttonSave') {
-        setFormSubmitted(true);
-      }
-    }
+    
+        let formValid = isFormValid();
+        if (formValid) {
+          if (id === 'buttonSave') {
+            let body = {
+              job_guid: type === 'create' ? createJobId : editJobGuid,
+              format: eventFormat, 
+              contact: eventContact, 
+              notes: eventNotes, 
+              description: eventDescription, 
+              follow_up: eventFollowUp, 
+              date_time: convertLocalDateTimeToISOStr(eventDateTime),
+              fbIdToken
+            }
+            if (type === 'create') {
+              fetch(`http://localhost:3000/api/events/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+              })
+                .then(resp => resp.json())
+                .then(json => {
+                  if (json.type === 'error') {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } else if (json.event_guid) {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } 
+                })
+                .catch(err => console.error('err', err))
+            } else if (type === 'edit') {
+              fetch(`http://localhost:3000/api/events/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+              })
+                .then(resp => resp.json())
+                .then(json => {
+                  if (json.type === 'error') {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  } else if (json.event_guid) {
+                    alertDispatch({ type: ADD, payload: {type: json.type, message: json.message} });
+                  }
+                })
+                .catch(err => console.error('err', err))
+            }
+          } 
+      
+          if (id === 'buttonSave') {
+            setFormSubmitted(true);
+          }
+        }
+
+      })
+      .catch(error => console.error('err', error))
+
   }
+
 
   //if type=edit, get existing form fields
   useEffect(() => {
-    if (type === 'edit' && eventId && sessionToken) {
-      let url = `http://localhost:3000/api/events/${eventId}`
-      fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${sessionToken}`
+    user.getIdToken()
+      .then(fbIdToken => {
+
+        if (type === 'edit' && eventId) {
+          let url = `http://localhost:3000/api/events/${eventId}`
+          fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({fbIdToken})
+          })
+            .then(resp => resp.json())
+            .then(json => {
+              if (json.event) {
+                const {format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
+                if (format) {
+                  setEventFormat(format);
+                }
+                if (contact) {
+                  setEventContact(contact);
+                }
+                if (notes) {
+                  setEventNotes(notes);
+                }
+                if (description) {
+                  setEventDescription(description);
+                }
+                if (follow_up) {
+                  setEventFollowUp(follow_up);
+                }
+                if (job_guid) {
+                  setEditJobGuid(job_guid);
+                }
+                if (date_time) {
+                  let eventDate = new Date(date_time);
+                  let year = eventDate.getFullYear();
+                  let month = eventDate.getMonth() + 1;
+                  month = prettyFormatDate(month);
+                  let date = eventDate.getDate();
+                  date = prettyFormatDate(date);
+                  let hour = eventDate.getHours();
+                  hour = prettyFormatDate(hour);
+                  let minute = eventDate.getMinutes();
+                  minute = prettyFormatDate(minute);
+                  let dateStr = `${year}-${month}-${date}`;
+                  let timeStr = `T${hour}:${minute}`;
+                  setEventDateTime(`${dateStr}${timeStr}`);
+                }
+                if (guid) {
+                  setEventGuid(guid);
+                }
+              }
+            })
+            .catch(err => console.error('err', err))
         }
+
       })
-        .then(resp => resp.json())
-        .then(json => {
-          if (json.event) {
-            const {format, contact, notes, description, follow_up, job_guid, date_time, guid} = json.event;
-            if (format) {
-              setEventFormat(format);
-            }
-            if (contact) {
-              setEventContact(contact);
-            }
-            if (notes) {
-              setEventNotes(notes);
-            }
-            if (description) {
-              setEventDescription(description);
-            }
-            if (follow_up) {
-              setEventFollowUp(follow_up);
-            }
-            if (job_guid) {
-              setEditJobGuid(job_guid);
-            }
-            if (date_time) {
-              let eventDate = new Date(date_time);
-              let year = eventDate.getFullYear();
-              let month = eventDate.getMonth() + 1;
-              month = prettyFormatDate(month);
-              let date = eventDate.getDate();
-              date = prettyFormatDate(date);
-              let hour = eventDate.getHours();
-              hour = prettyFormatDate(hour);
-              let minute = eventDate.getMinutes();
-              minute = prettyFormatDate(minute);
-              let dateStr = `${year}-${month}-${date}`;
-              let timeStr = `T${hour}:${minute}`;
-              setEventDateTime(`${dateStr}${timeStr}`);
-            }
-            if (guid) {
-              setEventGuid(guid);
-            }
-          }
-        })
-        .catch(err => console.error('err', err))
-   }
+      .catch(error => console.error('err', error))
+
   }, [])
 
   if (formSubmitted) {
