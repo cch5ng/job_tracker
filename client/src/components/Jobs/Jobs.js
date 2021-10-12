@@ -18,6 +18,9 @@ function Jobs() {
   const { jobsDict, updateJobsDict } = useJobs();
   const { companyDict } = useCompany();
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const inputOnChangeHandler = (ev) => {
     const {name, value} = ev.target;
     if (name === 'jobFilterStr') {
@@ -28,15 +31,16 @@ function Jobs() {
   const handleArchiveButtonClick = (ev) => {
     ev.preventDefault();
     const {name} = ev.target;
-    const auth = getAuth();
-    const user = auth.currentUser;
 
     user.getIdToken()
       .then(fbIdToken => {
-        if (user && name) {
+        if (user && name && fbIdToken) {
           let body = {fbIdToken}
           fetch(`http://localhost:3000/api/jobs/archive/${name}`, {
             method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
             body: JSON.stringify(body)
           })
             .then(resp => resp.json())
@@ -47,6 +51,8 @@ function Jobs() {
               }
             })
             .catch(err => console.error('err', err))  
+        } else {
+          console.error('err', 'missing fbIdToken')
         }
     
       })
