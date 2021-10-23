@@ -9,6 +9,7 @@ type InputProps = {
   type: string; 
   value: string; 
   name: string;
+  id?: string;
   label: string;
   inline?: boolean;
   placeholder?: string;
@@ -19,7 +20,7 @@ type InputProps = {
 }
 
 const Input = ({type, value, name, inputOnChangeHandler, label, inline, 
-  placeholder, inputRef, required, error}: InputProps) => {
+  placeholder, inputRef, required, error, id}: InputProps) => {
   const inputGroupClassName = cx(
     {
       inputGroupContainer: !inline,
@@ -32,11 +33,28 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline,
   });
   const labelRequired = `${label} *`;
 
+  if (type==='password') {
+    return (
+      <div className={inputGroupClassName}>
+        {label && (
+          <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
+        )}
+        {value !== undefined && (
+          <input type={type} value={value} name={name} 
+            className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
+            placeholder={placeholder} ref={inputRef} />
+        )}
+      </div>
+    )
+  } 
 
   return (
     <div className={inputGroupClassName}>
       {label && (
         <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
+      )}
+      {error && (
+        <span>{error}</span>
       )}
       {value !== undefined && (
         <input type={type} value={value} name={name} 
