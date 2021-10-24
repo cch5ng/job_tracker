@@ -33,20 +33,7 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline,
   });
   const labelRequired = `${label} *`;
 
-  if (type==='password') {
-    return (
-      <div className={inputGroupClassName}>
-        {label && (
-          <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
-        )}
-        {value !== undefined && (
-          <input type={type} value={value} name={name} 
-            className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
-            placeholder={placeholder} ref={inputRef} />
-        )}
-      </div>
-    )
-  } 
+
 
   return (
     <div className={inputGroupClassName}>
