@@ -45,15 +45,26 @@ const Login = () => {
     }
   }
 
-  // const validatePassword = () => {
-
-  // }
+  const validatePassword = () => {
+    if (!password) {
+      setPasswordError('Password is required.')
+    } else {
+      const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+      const found = password.match(regex);
+      if (!found) {
+        setPasswordError('Enter a valid password.')
+      } else {
+        setPasswordError('');
+      }  
+    }
+  }
 
   const formSubmitHandler = (ev) => {
     setLoginError('');
     ev.preventDefault();
 
     validateEmail();
+    validatePassword();
 
     if (!emailError && !passwordError) {
       signInWithEmailAndPassword(auth, email, password)
@@ -73,9 +84,7 @@ const Login = () => {
           console.log('error', error);
           setLoginError(error.message);
       });
-
-    }
-  
+    }  
   }
 
   if (status && status === 'logged in') {
@@ -84,9 +93,7 @@ const Login = () => {
     )
   }
 
-
   return (
-
     <div>
       <h1>Login</h1>
       {loginError.length > 0 && (
@@ -109,19 +116,9 @@ const Login = () => {
           value={password}
           inputOnChangeHandler={inputChangeHandler}
           error={passwordError}
+          help='The password should be at least 8 characters long. Required: one letter, one number, and one special character.'
         />
 
-
-        {/* <div>
-          <label htmlFor="email">Email</label>
-          <input type="text" id="email" name="email" value={email} 
-            onChange={inputChangeHandler} />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" name="password" value={password}
-            onChange={inputChangeHandler} />
-        </div> */}
         <button onClick={formSubmitHandler}>Login</button>
       </form>
     </div>
