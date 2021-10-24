@@ -16,11 +16,12 @@ type InputProps = {
   required?: boolean;
   inputRef?: string;
   error?: boolean;
+  help?: string;
   inputOnChangeHandler(ev: React.FormEvent<HTMLInputElement>): void;
 }
 
 const Input = ({type, value, name, inputOnChangeHandler, label, inline, 
-  placeholder, inputRef, required, error, id}: InputProps) => {
+  placeholder, inputRef, required, error, id, help}: InputProps) => {
   const inputGroupClassName = cx(
     {
       inputGroupContainer: !inline,
@@ -42,6 +43,9 @@ const Input = ({type, value, name, inputOnChangeHandler, label, inline,
       )}
       {error && (
         <span>{error}</span>
+      )}
+      {help && (
+        <span>{help}</span>
       )}
       {value !== undefined && (
         <input type={type} value={value} name={name} 
