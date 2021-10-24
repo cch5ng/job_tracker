@@ -17,11 +17,12 @@ type InputProps = {
   required?: boolean;
   inputRef?: string;
   error?: boolean;
+  help?: string;
   inputOnChangeHandler(ev: React.FormEvent<HTMLInputElement>): void;
 }
 
 const PasswordInput = ({type, value, name, inputOnChangeHandler, label, inline, 
-  placeholder, inputRef, required, error, id}: InputProps) => {
+  placeholder, inputRef, required, error, id, help}: InputProps) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -43,6 +44,12 @@ const PasswordInput = ({type, value, name, inputOnChangeHandler, label, inline,
         {label && (
           <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
         )}
+        {error && (
+          <span>{error}</span>
+        )}
+        {help && (
+          <span>{help}</span>
+        )}
         {value !== undefined && (
           <input type='password' value={value} name={name} 
             className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
@@ -60,21 +67,9 @@ const PasswordInput = ({type, value, name, inputOnChangeHandler, label, inline,
       value={value}
       inputOnChangeHandler={inputOnChangeHandler}
       error={error}
+      help={help}
     />
 
-    // <div className={inputGroupClassName}>
-    //   {label && (
-    //     <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
-    //   )}
-    //   {error && (
-    //     <span>{error}</span>
-    //   )}
-    //   {value !== undefined && (
-    //     <input type='text' value={value} name={name} 
-    //       className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
-    //       placeholder={placeholder} ref={inputRef} />
-    //   )}
-    // </div>
   )
 }
 
