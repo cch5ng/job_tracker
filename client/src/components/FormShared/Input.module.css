@@ -36,6 +36,34 @@
   border-color: #e68882;
 }
 
+.password_input_container {
+  width: 100%;
+  height: 25px;
+  margin-top: 5px;
+  padding-left: 8px;
+  font-size: 14px;
+  border: 1px solid #a6abbd;
+  border-radius: 5px;
+  color: #323232;
+
+}
+
+input[type="password"],
+input.password_input{
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border: 0 solid;
+}
+
+.password_input {
+  width: calc(100% - 25px);
+}
+
+.icon {
+  padding-top: 5px;
+}
+
 @media (min-width: 768px) {
 
   .input {
