@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 
 import { useAuth } from '../../context/auth-context';
 import Input from '../FormShared/Input';
+import PasswordInput from '../FormShared/PasswordInput';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -101,7 +102,7 @@ const Login = () => {
           error={emailError}
         />
 
-        <Input type='password'
+        <PasswordInput type='password'
           id='password'
           name='password'
           label='Password'
