@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import classNames from 'classnames/bind';
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+
 import styles from './Input.module.css';
 import Input from './Input';
 
@@ -38,6 +40,10 @@ const PasswordInput = ({type, value, name, inputOnChangeHandler, label, inline,
   });
   const labelRequired = `${label} *`;
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  }
+
   if (!showPassword) {
     return (
       <div className={inputGroupClassName}>
@@ -51,24 +57,39 @@ const PasswordInput = ({type, value, name, inputOnChangeHandler, label, inline,
           <span>{help}</span>
         )}
         {value !== undefined && (
-          <input type='password' value={value} name={name} 
-            className={inputClassName} onChange={ev => inputOnChangeHandler(ev)}
-            placeholder={placeholder} ref={inputRef} />
+          <div className={styles.password_input_container}>
+
+            <input type='password' value={value} name={name} 
+              className={styles.password_input} onChange={ev => inputOnChangeHandler(ev)}
+              placeholder={placeholder} ref={inputRef} />
+            <AiFillEye className={styles.icon} onClick={(ev) => toggleShowPassword()} />
+          </div>
         )}
       </div>
     )
   } 
 
   return (
-    <Input type='text'
-      id={name}
-      name={name}
-      label='Password'
-      value={value}
-      inputOnChangeHandler={inputOnChangeHandler}
-      error={error}
-      help={help}
-    />
+    <div className={inputGroupClassName}>
+      {label && (
+        <label htmlFor={name} className={styles.label}>{required ? labelRequired : label}</label>
+      )}
+      {error && (
+        <span>{error}</span>
+      )}
+      {help && (
+        <span>{help}</span>
+      )}
+      {value !== undefined && (
+        <div className={styles.password_input_container}>
+
+          <input type='text' value={value} name={name} 
+            className={styles.password_input} onChange={ev => inputOnChangeHandler(ev)}
+            placeholder={placeholder} ref={inputRef} />
+          <AiFillEyeInvisible className={styles.icon} onClick={(ev) => toggleShowPassword()} />
+        </div>
+      )}
+    </div>
 
   )
 }
